@@ -1,18 +1,21 @@
 // firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
-  authDomain: "changefamilysnap.firebaseapp.com",
-  projectId: "changefamilysnap",
-  storageBucket: "changefamilysnap.firebasestorage.app",
-  messagingSenderId: "335835110495",
-  appId: "1:335835110495:web:13194c4bd4579d4f434fea",
-  measurementId: "G-8D5PC0EZ74"
+  apiKey: "TON_API_KEY",
+  authDomain: "TON_PROJECT.firebaseapp.com",
+  projectId: "TON_PROJECT",
+  storageBucket: "TON_PROJECT.appspot.com",
+  messagingSenderId: "TON_ID",
+  appId: "TON_APP_ID",
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-export { app, analytics };
+export { app, auth, db, storage };
