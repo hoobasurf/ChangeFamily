@@ -47,8 +47,8 @@
       const file = fileInput.files[0];
       if(!file) return alert('Choisis un fichier à télécharger');
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
-      await uploadImage(file, auth.currentUser.uid);
-      loadGlobalGallery();
+      const url = await uploadImage(file, auth.currentUser.uid);
+      if(url) addImageToGallery(url, globalGallery);
       fileInput.value = ''; // réinitialise le champ
     };
 
@@ -58,8 +58,8 @@
       const file = e.target.files[0];
       if(!file) return;
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
-      await uploadImage(file, auth.currentUser.uid);
-      loadGlobalGallery();
+      const url = await uploadImage(file, auth.currentUser.uid);
+      if(url) addImageToGallery(url, globalGallery);
       cameraInput.value = '';
     };
 
