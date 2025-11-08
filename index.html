@@ -3,50 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Neon</title>
+  <title>Snap Clone Neon - Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Snap Clone Neon</h1>
 
-    <!-- Upload -->
-    <input type="file" id="file">
-    <button id="download">Télécharger</button>
-
-    <div id="globalGallery"></div>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Mot de passe">
+    
+    <button id="loginBtn">Connexion</button>
+    <button id="signupBtn">Inscription</button>
   </div>
 
   <script type="module">
     import { auth } from './firebase.js';
-    import { uploadImage } from './storage.js';
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-    const fileInput = document.getElementById('file');
-    const globalGallery = document.getElementById('globalGallery');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
 
-    // Vérifie si utilisateur connecté (simplifié)
-    auth.onAuthStateChanged(user => {
-      if(!user) alert('Connecte-toi d’abord !');
-    });
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
 
-    // Upload et afficher l'image
-    document.getElementById('download').onclick = async () => {
-      const file = fileInput.files[0];
-      if(!file) return alert('Choisis un fichier');
-      if(!auth.currentUser) return alert('Connecte-toi');
+    // Inscription
+    signupBtn.onclick = async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      if(!email || !password) return alert("Email et mot de passe requis");
 
-      const url = await uploadImage(file, auth.currentUser.uid);
-
-      if(url) {
-        globalGallery.innerHTML = ''; // supprime ancienne image
-        const img = document.createElement('img');
-        img.src = url;
-        img.className = 'neon-img';
-        globalGallery.appendChild(img);
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        window.location.href = "home.html"; // redirection après inscription
+      } catch(e) {
+        alert(e.message);
       }
-
-      fileInput.value = '';
     };
+
+    // Connexion
+    loginBtn.onclick = async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      if(!email || !password) return alert("Email et mot de passe requis");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "home.html"; // redirection après login
+      } catch(e) {
+        alert(e.message);
+      }
+    };
+
+    // Redirection automatique si déjà connecté
+    onAuthStateChanged(auth, user => {
+      if(user) window.location.href = "home.html";
+    });
   </script>
 </body>
 </html>
