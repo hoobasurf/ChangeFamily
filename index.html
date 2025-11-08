@@ -23,7 +23,7 @@
     </section>
 
     <!-- Section Upload -->
-    <section class="upload-section">
+    <section class="upload-section" style="display:none;">
       <h2 class="neon-text small">Uploader une image</h2>
       <input type="file" id="file" class="glass-input">
       <button id="upload" class="glass-btn">Upload</button>
@@ -47,6 +47,9 @@
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
 
+    const authSection = document.querySelector('.auth-section');
+    const uploadSection = document.querySelector('.upload-section');
+
     // Auth
     document.getElementById('signup').onclick = async () => {
       try {
@@ -59,14 +62,14 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
-        loadGlobalGallery();
+        // loadGlobalGallery(); // fait automatiquement par onAuthStateChanged
       } catch(e) { alert(e.message); }
     };
 
     document.getElementById('logout').onclick = async () => {
       await logout();
       alert('Déconnecté');
-      globalGallery.innerHTML = '';
+      // Les sections seront réinitialisées par onAuthStateChanged
     };
 
     // Upload fichier
@@ -110,9 +113,18 @@
       snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
     }
 
+    // Gestion des sections selon l'état de connexion
     onAuthStateChanged(user => {
-      console.log('Utilisateur connecté :', user);
-      loadGlobalGallery();
+      if(user) {
+        console.log('Utilisateur connecté :', user);
+        authSection.style.display = 'none';
+        uploadSection.style.display = 'block';
+        loadGlobalGallery();
+      } else {
+        authSection.style.display = 'block';
+        uploadSection.style.display = 'none';
+        globalGallery.innerHTML = '';
+      }
     });
   </script>
 </body>
