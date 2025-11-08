@@ -4,21 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Snap Clone Neon - Home</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Snap Clone Neon</h1>
+  <div class="container">
+    <h1>Snap Clone Neon</h1>
 
-  <input type="file" id="file">
-  <button id="download">Télécharger</button>
+    <input type="file" id="file">
+    <button id="download" class="glass-btn">Télécharger</button>
 
-  <div id="globalGallery"></div>
+    <div id="globalGallery"></div>
+  </div>
 
   <script type="module">
-    import { uploadImage } from './storage.js';
     import { auth } from './firebase.js';
+    import { uploadImage } from './storage.js';
 
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
+
+    auth.onAuthStateChanged(user => {
+      if(!user) alert('Connecte-toi d’abord !');
+    });
 
     document.getElementById('download').onclick = async () => {
       const file = fileInput.files[0];
@@ -28,13 +35,19 @@
       const url = await uploadImage(file, auth.currentUser.uid);
 
       if(url) {
-        globalGallery.innerHTML = ''; // supprime l’ancienne image
+        globalGallery.innerHTML = '';
         const img = document.createElement('img');
         img.src = url;
-        img.style.width = "300px"; // pour voir
+        img.className = 'neon-img';
         globalGallery.appendChild(img);
       }
+
+      fileInput.value = '';
     };
+
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
   </script>
 </body>
 </html>
