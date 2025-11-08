@@ -10,6 +10,7 @@
   <div class="container">
     <h1 class="neon-text">Snap Clone Neon</h1>
 
+    <!-- Section Auth -->
     <section class="auth-section">
       <h2 class="neon-text small">Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" class="glass-input">
@@ -21,12 +22,18 @@
       </div>
     </section>
 
+    <!-- Section Upload -->
     <section class="upload-section">
       <h2 class="neon-text small">Uploader une image</h2>
       <input type="file" id="file" class="glass-input">
       <button id="upload" class="glass-btn">Upload</button>
+
+      <!-- Capture iPhone -->
+      <button id="capture" class="glass-btn">Prendre une photo</button>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
     </section>
 
+    <!-- Timeline globale -->
     <h2 class="neon-text small">Timeline globale</h2>
     <div id="globalGallery" class="gallery"></div>
   </div>
@@ -40,7 +47,7 @@
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
 
-    // Connexion / inscription
+    // Auth
     document.getElementById('signup').onclick = async () => {
       try {
         const userCredential = await signup(emailInput.value, passwordInput.value);
@@ -52,7 +59,7 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
-        loadGlobalGallery(); // mettre à jour timeline après login
+        loadGlobalGallery();
       } catch(e) { alert(e.message); }
     };
 
@@ -62,17 +69,34 @@
       globalGallery.innerHTML = '';
     };
 
-    // Upload d’image
+    // Upload fichier
     document.getElementById('upload').onclick = async () => {
       const file = fileInput.files[0];
       if(!file) { alert('Choisis un fichier'); return; }
       if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
+
       const url = await uploadImage(file, auth.currentUser.uid);
       alert('Image uploadée !');
-      loadGlobalGallery(); // mettre à jour timeline globale
+      loadGlobalGallery();
     };
 
-    // Afficher les snaps dans la timeline
+    // Capture iPhone
+    const cameraInput = document.getElementById('cameraInput');
+    const captureBtn = document.getElementById('capture');
+
+    captureBtn.onclick = () => cameraInput.click();
+
+    cameraInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
+
+      const url = await uploadImage(file, auth.currentUser.uid);
+      alert('Photo prise et uploadée !');
+      loadGlobalGallery();
+    };
+
+    // Timeline globale
     function addImageToGallery(url, container) {
       const img = document.createElement('img');
       img.src = url;
@@ -81,9 +105,9 @@
     }
 
     async function loadGlobalGallery() {
-      const snaps = await getAllSnaps();
+      const snapsCol = await getAllSnaps();
       globalGallery.innerHTML = '';
-      snaps.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
+      snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
     }
 
     onAuthStateChanged(user => {
