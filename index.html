@@ -22,25 +22,35 @@
   </div>
 
   <script type="module">
-    import { signup, login } from './auth.js';
+    import { auth } from './firebase.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
 
     document.getElementById('signup').onclick = async () => {
       try {
-        const userCredential = await signup(emailInput.value, passwordInput.value);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth, emailInput.value, passwordInput.value
+        );
         alert('Inscription réussie : ' + userCredential.user.email);
-        window.location.href = "home.html"; // redirection après signup
-      } catch(e) { alert(e.message); }
+        window.location.href = "home.html"; // Redirection après signup
+      } catch(e) {
+        alert(e.message);
+      }
     };
 
     document.getElementById('login').onclick = async () => {
       try {
-        const userCredential = await login(emailInput.value, passwordInput.value);
+        const userCredential = await signInWithEmailAndPassword(
+          auth, emailInput.value, passwordInput.value
+        );
         alert('Connexion réussie : ' + userCredential.user.email);
-        window.location.href = "home.html"; // redirection après login
-      } catch(e) { alert(e.message); }
+        window.location.href = "home.html"; // Redirection après login
+      } catch(e) {
+        alert(e.message);
+      }
     };
   </script>
 </body>
