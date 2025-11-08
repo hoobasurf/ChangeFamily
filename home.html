@@ -29,7 +29,7 @@
 
   <script type="module">
     import { auth, onAuthStateChanged } from './firebase.js';
-    import { uploadImage } from './storage.js';
+    import { uploadImage, getAllSnaps } from './storage.js';
     import { signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const fileInput = document.getElementById('file');
@@ -42,6 +42,23 @@
       window.location.href = "index.html";
     };
 
+    // Ajouter image à la galerie
+    function addImageToGallery(url) {
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'neon-img';
+      globalGallery.prepend(img); // ajoute en premier
+    }
+
+    // Charger timeline depuis Firestore
+    async function loadTimeline() {
+      const snaps = await getAllSnaps();
+      globalGallery.innerHTML = ''; // vide avant ajout
+      snaps.forEach(snap => {
+        if(snap.imageUrl) addImageToGallery(snap.imageUrl);
+      });
+    }
+
     // Télécharger fichier depuis téléphone
     document.getElementById('download').onclick = async () => {
       const file = fileInput.files[0];
@@ -49,11 +66,11 @@
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
 
       const url = await uploadImage(file, auth.currentUser.uid);
+      console.log("🔥 Image uploadée :", url);
 
-      // Affiche uniquement la dernière image
       if(url) {
-        globalGallery.innerHTML = ''; // supprime l'ancienne image
-        addImage(url);
+        // Recharger la timeline complète
+        loadTimeline();
       }
 
       fileInput.value = '';
@@ -67,26 +84,17 @@
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
 
       const url = await uploadImage(file, auth.currentUser.uid);
+      console.log("🔥 Photo capturée :", url);
 
-      if(url) {
-        globalGallery.innerHTML = ''; // supprime l'ancienne image
-        addImage(url);
-      }
+      if(url) loadTimeline();
 
       cameraInput.value = '';
     };
 
-    // Ajouter image à la galerie
-    function addImage(url) {
-      const img = document.createElement('img');
-      img.src = url;
-      img.className = 'neon-img';
-      globalGallery.appendChild(img);
-    }
-
-    // Vérifie si utilisateur connecté
+    // Vérifier si utilisateur connecté
     onAuthStateChanged(auth, user => {
       if(!user) window.location.href = "index.html";
+      else loadTimeline(); // charger toutes les images au démarrage
     });
   </script>
 </body>
