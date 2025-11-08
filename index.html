@@ -27,14 +27,13 @@
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
 
-    // Redirection uniquement après clic
     signupBtn.onclick = async () => {
       const email = emailInput.value;
       const password = passwordInput.value;
       if(!email || !password) return alert("Email et mot de passe requis");
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection ici uniquement
+        window.location.href = "home.html";
       } catch(e) { alert(e.message); }
     };
 
@@ -44,11 +43,10 @@
       if(!email || !password) return alert("Email et mot de passe requis");
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection ici uniquement
+        window.location.href = "home.html";
       } catch(e) { alert(e.message); }
     };
 
-    // Afficher body après chargement pour éviter flash
     window.addEventListener('load', () => {
       document.body.style.visibility = 'visible';
     });
