@@ -10,11 +10,11 @@
   <div class="container">
     <h1 class="neon-text">Snap Clone Neon</h1>
 
-    <!-- Section Upload -->
+    <!-- Section Téléchargement -->
     <section class="upload-section">
-      <h2 class="neon-text small">Uploader une image</h2>
+      <h2 class="neon-text small">Télécharger une image</h2>
       <input type="file" id="file" class="glass-input">
-      <button id="upload" class="glass-btn">Upload</button>
+      <button id="download" class="glass-btn">Télécharger</button>
 
       <button id="capture" class="glass-btn">Prendre une photo</button>
       <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
@@ -28,8 +28,9 @@
   </div>
 
   <script type="module">
-    import { auth, logout, onAuthStateChanged } from './auth.js';
+    import { auth, onAuthStateChanged } from './firebase.js';
     import { uploadImage, getAllSnaps } from './storage.js';
+    import { signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
@@ -37,20 +38,21 @@
 
     // Déconnexion
     document.getElementById('logout').onclick = async () => {
-      await logout();
+      await signOut(auth);
       window.location.href = "index.html";
     };
 
-    // Upload fichier
-    document.getElementById('upload').onclick = async () => {
+    // Télécharger fichier depuis téléphone
+    document.getElementById('download').onclick = async () => {
       const file = fileInput.files[0];
-      if(!file) return alert('Choisis un fichier');
+      if(!file) return alert('Choisis un fichier à télécharger');
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
       await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
+      fileInput.value = ''; // réinitialise le champ
     };
 
-    // Capture iPhone
+    // Prendre photo avec l’appareil
     document.getElementById('capture').onclick = () => cameraInput.click();
     cameraInput.onchange = async (e) => {
       const file = e.target.files[0];
@@ -58,24 +60,29 @@
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
       await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
+      cameraInput.value = '';
     };
 
-    // Timeline
+    // Ajouter image à la galerie
     function addImageToGallery(url, container) {
+      if(!url) return;
       const img = document.createElement('img');
       img.src = url;
       img.className = 'neon-img';
       container.prepend(img);
     }
 
+    // Charger la timeline
     async function loadGlobalGallery() {
       const snapsCol = await getAllSnaps();
-      globalGallery.innerHTML = '';
-      snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
+      globalGallery.innerHTML = ''; // nettoie avant d’ajouter
+      snapsCol.forEach(snap => {
+        if(snap.imageUrl) addImageToGallery(snap.imageUrl, globalGallery);
+      });
     }
 
-    // Redirection si non connecté
-    onAuthStateChanged(user => {
+    // Redirection si non connecté + chargement galerie
+    onAuthStateChanged(auth, user => {
       if(!user) window.location.href = "index.html";
       else loadGlobalGallery();
     });
