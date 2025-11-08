@@ -4,16 +4,22 @@ body, html {
   padding: 0;
   height: 100%;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #1a0a2e, #4b0082); /* violet foncé -> bleu violet */
+  background: linear-gradient(135deg, #1a0a2e, #4b0082);
   display: flex;
   justify-content: center;
   align-items: center;
+  visibility: hidden; /* cacher au départ */
+}
+
+body.loaded {
+  visibility: visible; /* montrer après le chargement */
+  transition: visibility 0.2s ease-in;
 }
 
 .container {
   text-align: center;
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.05); /* glass liquide */
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 0 40px rgba(255, 20, 147, 0.6), 0 0 80px rgba(255, 20, 147, 0.4);
@@ -38,8 +44,8 @@ input[type="password"],
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ff69b4;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
+  background: rgba(255,255,255,0.1) !important;
+  color: #fff !important;
   margin: 10px 0;
   width: 80%;
   font-size: 1rem;
@@ -47,7 +53,7 @@ input[type="password"],
 }
 
 .glass-input::placeholder {
-  color: #ffb6c1;
+  color: #ffb6c1 !important;
 }
 
 /* ---------------- Boutons glass ---------------- */
@@ -57,8 +63,8 @@ button,
   margin: 10px 5px;
   border: none;
   border-radius: 15px;
-  background: rgba(255,20,147,0.3);
-  color: #fff;
+  background: rgba(255,20,147,0.3) !important;
+  color: #fff !important;
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 0 20px rgba(255,20,147,0.5);
@@ -67,7 +73,7 @@ button,
 
 button:hover,
 .glass-btn:hover {
-  background: rgba(255,20,147,0.6);
+  background: rgba(255,20,147,0.6) !important;
   box-shadow: 0 0 40px rgba(255,20,147,0.7);
   transform: scale(1.05);
 }
