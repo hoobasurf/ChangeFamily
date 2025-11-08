@@ -4,98 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Snap Clone Neon - Home</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1 class="neon-text">Snap Clone Neon</h1>
+  <h1>Snap Clone Neon</h1>
 
-    <!-- Section Téléchargement -->
-    <section class="upload-section">
-      <h2 class="neon-text small">Télécharger une image</h2>
-      <input type="file" id="file" class="glass-input">
-      <button id="download" class="glass-btn">Télécharger</button>
+  <input type="file" id="file">
+  <button id="download">Télécharger</button>
 
-      <button id="capture" class="glass-btn">Prendre une photo</button>
-      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
-
-      <button id="logout" class="glass-btn">Déconnexion</button>
-    </section>
-
-    <!-- Timeline -->
-    <h2 class="neon-text small">Timeline</h2>
-    <div id="globalGallery" class="gallery"></div>
-  </div>
+  <div id="globalGallery"></div>
 
   <script type="module">
-    import { auth, onAuthStateChanged } from './firebase.js';
-    import { uploadImage, getAllSnaps } from './storage.js';
-    import { signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { uploadImage } from './storage.js';
+    import { auth } from './firebase.js';
 
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
-    const cameraInput = document.getElementById('cameraInput');
 
-    // Déconnexion
-    document.getElementById('logout').onclick = async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
-
-    // Ajouter image à la galerie
-    function addImageToGallery(url) {
-      const img = document.createElement('img');
-      img.src = url;
-      img.className = 'neon-img';
-      globalGallery.prepend(img); // ajoute en premier
-    }
-
-    // Charger timeline depuis Firestore
-    async function loadTimeline() {
-      const snaps = await getAllSnaps();
-      globalGallery.innerHTML = ''; // vide avant ajout
-      snaps.forEach(snap => {
-        if(snap.imageUrl) addImageToGallery(snap.imageUrl);
-      });
-    }
-
-    // Télécharger fichier depuis téléphone
     document.getElementById('download').onclick = async () => {
       const file = fileInput.files[0];
-      if(!file) return alert('Choisis un fichier à télécharger');
-      if(!auth.currentUser) return alert('Connecte-toi d’abord');
+      if(!file) return alert('Choisis un fichier');
+      if(!auth.currentUser) return alert('Connecte-toi');
 
       const url = await uploadImage(file, auth.currentUser.uid);
-      console.log("🔥 Image uploadée :", url);
 
       if(url) {
-        // Recharger la timeline complète
-        loadTimeline();
+        globalGallery.innerHTML = ''; // supprime l’ancienne image
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.width = "300px"; // pour voir
+        globalGallery.appendChild(img);
       }
-
-      fileInput.value = '';
     };
-
-    // Prendre photo avec l’appareil
-    document.getElementById('capture').onclick = () => cameraInput.click();
-    cameraInput.onchange = async (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      if(!auth.currentUser) return alert('Connecte-toi d’abord');
-
-      const url = await uploadImage(file, auth.currentUser.uid);
-      console.log("🔥 Photo capturée :", url);
-
-      if(url) loadTimeline();
-
-      cameraInput.value = '';
-    };
-
-    // Vérifier si utilisateur connecté
-    onAuthStateChanged(auth, user => {
-      if(!user) window.location.href = "index.html";
-      else loadTimeline(); // charger toutes les images au démarrage
-    });
   </script>
 </body>
 </html>
