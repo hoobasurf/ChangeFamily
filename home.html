@@ -22,14 +22,14 @@
       <button id="logout" class="glass-btn">Déconnexion</button>
     </section>
 
-    <!-- Timeline globale -->
-    <h2 class="neon-text small">Timeline globale</h2>
+    <!-- Timeline -->
+    <h2 class="neon-text small">Timeline</h2>
     <div id="globalGallery" class="gallery"></div>
   </div>
 
   <script type="module">
     import { auth, onAuthStateChanged } from './firebase.js';
-    import { uploadImage, getAllSnaps } from './storage.js';
+    import { uploadImage } from './storage.js';
     import { signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const fileInput = document.getElementById('file');
@@ -49,10 +49,14 @@
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
 
       const url = await uploadImage(file, auth.currentUser.uid);
-      console.log("🔥 Image ajoutée :", url); // debug
-      if(url) addImageToGallery(url, globalGallery);
 
-      fileInput.value = ''; // réinitialise le champ
+      // Affiche uniquement la dernière image
+      if(url) {
+        globalGallery.innerHTML = ''; // supprime l'ancienne image
+        addImage(url);
+      }
+
+      fileInput.value = '';
     };
 
     // Prendre photo avec l’appareil
@@ -63,34 +67,26 @@
       if(!auth.currentUser) return alert('Connecte-toi d’abord');
 
       const url = await uploadImage(file, auth.currentUser.uid);
-      console.log("🔥 Photo capturée :", url); // debug
-      if(url) addImageToGallery(url, globalGallery);
+
+      if(url) {
+        globalGallery.innerHTML = ''; // supprime l'ancienne image
+        addImage(url);
+      }
 
       cameraInput.value = '';
     };
 
     // Ajouter image à la galerie
-    function addImageToGallery(url, container) {
-      if(!url) return;
+    function addImage(url) {
       const img = document.createElement('img');
       img.src = url;
       img.className = 'neon-img';
-      container.prepend(img);
+      globalGallery.appendChild(img);
     }
 
-    // Charger la timeline
-    async function loadGlobalGallery() {
-      const snapsCol = await getAllSnaps();
-      globalGallery.innerHTML = ''; // nettoie avant d’ajouter
-      snapsCol.forEach(snap => {
-        if(snap.imageUrl) addImageToGallery(snap.imageUrl, globalGallery);
-      });
-    }
-
-    // Redirection si non connecté + chargement galerie
+    // Vérifie si utilisateur connecté
     onAuthStateChanged(auth, user => {
       if(!user) window.location.href = "index.html";
-      else loadGlobalGallery();
     });
   </script>
 </body>
