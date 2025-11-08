@@ -4,11 +4,14 @@ import { collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic
 
 // Upload image + ajouter document Firestore
 async function uploadImage(file, userId) {
-  const uniqueName = `${Date.now()}_${file.name}`; // nom unique
+  // nom unique simple pour éviter caractères spéciaux
+  const uniqueName = `${Date.now()}.jpg`;
   const storageRef = ref(storage, `snaps/${userId}/${uniqueName}`);
-  await uploadBytes(storageRef, file);
 
+  await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
+
+  console.log("🔥 URL uploadée :", url); // debug
 
   if(url) {
     await addDoc(collection(db, "snaps"), {
