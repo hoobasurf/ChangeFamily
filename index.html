@@ -3,54 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Neon - Login</title>
+  <title>Snap Clone Neon</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1 class="neon-text">Snap Clone Neon</h1>
+    <h1>Snap Clone Neon</h1>
 
-    <section class="auth-section">
-      <h2 class="neon-text small">Connexion / Inscription</h2>
-      <input type="email" id="email" placeholder="Email" class="glass-input">
-      <input type="password" id="password" placeholder="Mot de passe" class="glass-input">
-      <div class="buttons">
-        <button id="signup" class="glass-btn">S’inscrire</button>
-        <button id="login" class="glass-btn">Se connecter</button>
-      </div>
-    </section>
+    <!-- Upload -->
+    <input type="file" id="file">
+    <button id="download">Télécharger</button>
+
+    <div id="globalGallery"></div>
   </div>
 
   <script type="module">
     import { auth } from './firebase.js';
-    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { uploadImage } from './storage.js';
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+    const fileInput = document.getElementById('file');
+    const globalGallery = document.getElementById('globalGallery');
 
-    document.getElementById('signup').onclick = async () => {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth, emailInput.value, passwordInput.value
-        );
-        alert('Inscription réussie : ' + userCredential.user.email);
-        window.location.href = "home.html"; // Redirection après signup
-      } catch(e) {
-        alert(e.message);
+    // Vérifie si utilisateur connecté (simplifié)
+    auth.onAuthStateChanged(user => {
+      if(!user) alert('Connecte-toi d’abord !');
+    });
+
+    // Upload et afficher l'image
+    document.getElementById('download').onclick = async () => {
+      const file = fileInput.files[0];
+      if(!file) return alert('Choisis un fichier');
+      if(!auth.currentUser) return alert('Connecte-toi');
+
+      const url = await uploadImage(file, auth.currentUser.uid);
+
+      if(url) {
+        globalGallery.innerHTML = ''; // supprime ancienne image
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'neon-img';
+        globalGallery.appendChild(img);
       }
-    };
 
-    document.getElementById('login').onclick = async () => {
-      try {
-        const userCredential = await signInWithEmailAndPassword(
-          auth, emailInput.value, passwordInput.value
-        );
-        alert('Connexion réussie : ' + userCredential.user.email);
-        window.location.href = "home.html"; // Redirection après login
-      } catch(e) {
-        alert(e.message);
-      }
+      fileInput.value = '';
     };
   </script>
 </body>
