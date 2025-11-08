@@ -1,53 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Neon - Home</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snap Clone Neon - Home</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Snap Clone Neon</h1>
+<div class="container">
+  <h1>Timeline Neon</h1>
 
-    <input type="file" id="file">
-    <button id="download" class="glass-btn">Télécharger</button>
+  <!-- Upload direct et bouton caméra -->
+  <input type="file" id="fileInput" accept="image/*" capture="environment" class="glass-input">
+  <button id="uploadBtn" class="glass-btn">Télécharger / Prendre photo</button>
 
-    <div id="globalGallery"></div>
-  </div>
+  <!-- Timeline des images -->
+  <div id="globalGallery"></div>
+</div>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { uploadImage } from './storage.js';
+<script type="module">
+import { app, storage, auth } from './firebase.js';
+import { ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 
-    const fileInput = document.getElementById('file');
-    const globalGallery = document.getElementById('globalGallery');
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
+const gallery = document.getElementById('globalGallery');
 
-    auth.onAuthStateChanged(user => {
-      if(!user) alert('Connecte-toi d’abord !');
-    });
+const storageRef = ref(storage, 'images/');
 
-    document.getElementById('download').onclick = async () => {
-      const file = fileInput.files[0];
-      if(!file) return alert('Choisis un fichier');
-      if(!auth.currentUser) return alert('Connecte-toi');
+// Fonction pour afficher les images dans la timeline
+async function loadImages() {
+  gallery.innerHTML = '';
+  const list = await listAll(storageRef);
+  for(const item of list.items) {
+    const url = await getDownloadURL(item);
+    const img = document.createElement('img');
+    img.src = url;
+    img.className = 'neon-img';
+    gallery.appendChild(img);
+  }
+}
 
-      const url = await uploadImage(file, auth.currentUser.uid);
+// Upload direct avec effet néon
+uploadBtn.onclick = async () => {
+  const file = fileInput.files[0];
+  if(!file) return alert("Choisissez une photo !");
+  const fileRef = ref(storage, 'images/' + file.name);
+  await uploadBytes(fileRef, file);
+  loadImages();
+};
 
-      if(url) {
-        globalGallery.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = url;
-        img.className = 'neon-img';
-        globalGallery.appendChild(img);
-      }
-
-      fileInput.value = '';
-    };
-
-    window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-    });
-  </script>
+window.addEventListener('load', loadImages);
+</script>
 </body>
 </html>
