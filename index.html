@@ -3,22 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Test Firebase</title>
+  <title>Snap Clone Firebase</title>
 </head>
 <body>
-  <h1>Test Firebase sur iPhone</h1>
-  <p>Clique sur le bouton pour vérifier la connexion Firebase :</p>
-  <button id="test">Tester Firebase</button>
+  <h1>Snap Clone Test Firebase</h1>
+
+  <h2>Connexion / Inscription</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button id="signup">S’inscrire</button>
+  <button id="login">Se connecter</button>
+  <button id="logout">Déconnexion</button>
+
+  <h2>Uploader une image</h2>
+  <input type="file" id="file">
+  <button id="upload">Upload</button>
 
   <script type="module">
-    // Import Firebase depuis ton fichier firebase.js
-    import { app } from './firebase.js';
+    import { signup, login, logout, onAuthStateChanged, auth } from './auth.js';
+    import { uploadImage } from './storage.js';
 
-    // Quand tu cliques sur le bouton
-    document.getElementById('test').onclick = () => {
-      alert("🔥 Firebase OK !");
-      console.log("Firebase app :", app);
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const fileInput = document.getElementById('file');
+
+    document.getElementById('signup').onclick = async () => {
+      try {
+        const userCredential = await signup(emailInput.value, passwordInput.value);
+        alert('Inscription réussie : ' + userCredential.user.email);
+      } catch(e) { alert(e.message); }
     };
+
+    document.getElementById('login').onclick = async () => {
+      try {
+        const userCredential = await login(emailInput.value, passwordInput.value);
+        alert('Connexion réussie : ' + userCredential.user.email);
+      } catch(e) { alert(e.message); }
+    };
+
+    document.getElementById('logout').onclick = async () => {
+      await logout();
+      alert('Déconnecté');
+    };
+
+    document.getElementById('upload').onclick = async () => {
+      const file = fileInput.files[0];
+      if(!file) { alert('Choisis un fichier'); return; }
+      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
+      const url = await uploadImage(file, auth.currentUser.uid);
+      alert('Image uploadée : ' + url);
+      console.log('URL image :', url);
+    };
+
+    onAuthStateChanged(user => {
+      console.log('Utilisateur connecté :', user);
+    });
   </script>
 </body>
 </html>
