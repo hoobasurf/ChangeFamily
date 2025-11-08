@@ -23,7 +23,7 @@
     </section>
 
     <!-- Section Upload -->
-    <section class="upload-section" style="display:none;">
+    <section class="upload-section">
       <h2 class="neon-text small">Uploader une image</h2>
       <input type="file" id="file" class="glass-input">
       <button id="upload" class="glass-btn">Upload</button>
@@ -47,9 +47,6 @@
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
 
-    const authSection = document.querySelector('.auth-section');
-    const uploadSection = document.querySelector('.upload-section');
-
     // Auth
     document.getElementById('signup').onclick = async () => {
       try {
@@ -62,6 +59,9 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
+
+        // Naviguer vers la page suivante si nécessaire
+        // window.location.href = "home.html"; // décommente si tu as une page home.html
       } catch(e) { alert(e.message); }
     };
 
@@ -76,8 +76,7 @@
       if(!file) { alert('Choisis un fichier'); return; }
       if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
 
-      const url = await uploadImage(file, auth.currentUser.uid);
-      alert('Image uploadée !');
+      await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
     };
 
@@ -92,8 +91,7 @@
       if(!file) return;
       if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
 
-      const url = await uploadImage(file, auth.currentUser.uid);
-      alert('Photo prise et uploadée !');
+      await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
     };
 
@@ -111,16 +109,10 @@
       snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
     }
 
-    // Gestion des sections selon l'état de connexion
+    // Toujours afficher les deux sections + timeline
     onAuthStateChanged(user => {
       if(user) {
-        authSection.style.display = 'none';
-        uploadSection.style.display = 'block';
         loadGlobalGallery();
-      } else {
-        authSection.style.display = 'block';
-        uploadSection.style.display = 'none';
-        globalGallery.innerHTML = '';
       }
     });
   </script>
