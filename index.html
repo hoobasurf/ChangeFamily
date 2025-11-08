@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snap Clone Test Firebase</title>
+</head>
+<body>
+  <h1>Test Firebase sur iPhone</h1>
+  <p>Clique sur le bouton pour vérifier la connexion Firebase :</p>
+  <button id="test">Tester Firebase</button>
+
+  <script type="module">
+    // Import Firebase depuis ton fichier firebase.js
+    import { app } from './firebase.js';
+
+    // Quand tu cliques sur le bouton
+    document.getElementById('test').onclick = () => {
+      alert("🔥 Firebase OK !");
+      console.log("Firebase app :", app);
+    };
+  </script>
+</body>
+</html>
