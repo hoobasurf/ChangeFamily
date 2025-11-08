@@ -3,10 +3,20 @@ import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/fireba
 import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 async function uploadImage(file, userId) {
-  const storageRef = ref(storage, `snaps/${userId}/${file.name}`);
+  const uniqueName = `${Date.now()}_${file.name}`; // évite doublons
+  const storageRef = ref(storage, `snaps/${userId}/${uniqueName}`);
   await uploadBytes(storageRef, file);
+
   const url = await getDownloadURL(storageRef);
-  await addDoc(collection(db, "snaps"), { userId, imageUrl: url, timestamp: Date.now() });
+
+  if(url) {
+    await addDoc(collection(db, "snaps"), {
+      userId,
+      imageUrl: url,
+      timestamp: Date.now()
+    });
+  }
+
   return url;
 }
 
