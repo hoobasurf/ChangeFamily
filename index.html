@@ -62,14 +62,12 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
-        // loadGlobalGallery(); // fait automatiquement par onAuthStateChanged
       } catch(e) { alert(e.message); }
     };
 
     document.getElementById('logout').onclick = async () => {
       await logout();
       alert('Déconnecté');
-      // Les sections seront réinitialisées par onAuthStateChanged
     };
 
     // Upload fichier
@@ -116,7 +114,6 @@
     // Gestion des sections selon l'état de connexion
     onAuthStateChanged(user => {
       if(user) {
-        console.log('Utilisateur connecté :', user);
         authSection.style.display = 'none';
         uploadSection.style.display = 'block';
         loadGlobalGallery();
