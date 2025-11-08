@@ -1,0 +1,75 @@
+/* style.css */
+
+body {
+  background: linear-gradient(135deg, #1f0033, #5c007a);
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 400px;
+  width: 100%;
+}
+
+.neon-text {
+  color: #ff6aff;
+  text-shadow: 0 0 5px #ff6aff, 0 0 10px #ff6aff, 0 0 20px #ff6aff, 0 0 40px #ff00ff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.neon-text.small {
+  font-size: 1.2em;
+}
+
+.glass-input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.glass-input::placeholder {
+  color: #ffb3ff;
+}
+
+.glass-btn {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 0, 255, 0.2);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 0, 255, 0.5);
+  box-shadow: 0 0 25px #ff6aff, 0 0 50px #ff00ff;
+  transform: scale(1.05);
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.neon-img {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 0 10px #ff6aff, 0 0 20px #ff00ff;
+}
