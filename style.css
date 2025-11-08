@@ -1,13 +1,21 @@
-/* ---------------- Fond et centrage ---------------- */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #1a0a2e, #4b0082);
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(270deg, #1a0a2e, #4b0082, #1a0a2e);
+  background-size: 600% 600%;
+  animation: gradientBG 15s ease infinite;
+  visibility: hidden;
+}
+
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
 .container {
@@ -19,22 +27,14 @@ body, html {
   box-shadow: 0 0 40px rgba(255, 20, 147, 0.6), 0 0 80px rgba(255, 20, 147, 0.4);
 }
 
-/* ---------------- Titres néon ---------------- */
 h1 {
   color: #ff14b0;
   font-size: 2.5rem;
-  text-shadow:
-    0 0 5px #ff14b0,
-    0 0 10px #ff14b0,
-    0 0 20px #ff14b0,
-    0 0 40px #ff69b4;
+  text-shadow: 0 0 5px #ff14b0, 0 0 10px #ff14b0, 0 0 20px #ff14b0, 0 0 40px #ff69b4;
   margin-bottom: 20px;
 }
 
-/* ---------------- Input glass ---------------- */
-input[type="email"],
-input[type="password"],
-.glass-input {
+input[type="email"], input[type="password"], input[type="file"], .glass-input {
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ff69b4;
@@ -46,13 +46,9 @@ input[type="password"],
   text-align: center;
 }
 
-.glass-input::placeholder {
-  color: #ffb6c1;
-}
+input::placeholder { color: #ffb6c1; }
 
-/* ---------------- Boutons glass ---------------- */
-button,
-.glass-btn {
+button, .glass-btn {
   padding: 10px 20px;
   margin: 10px 5px;
   border: none;
@@ -65,44 +61,28 @@ button,
   transition: all 0.3s ease;
 }
 
-button:hover,
-.glass-btn:hover {
+button:hover, .glass-btn:hover {
   background: rgba(255,20,147,0.6);
   box-shadow: 0 0 40px rgba(255,20,147,0.7);
   transform: scale(1.05);
 }
 
-/* ---------------- Timeline et images ---------------- */
 #globalGallery {
   margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
-#globalGallery img,
-.neon-img {
+#globalGallery img, .neon-img {
   width: 300px;
   border-radius: 20px;
-  box-shadow:
-    0 0 20px #ff14b0,
-    0 0 40px #ff69b4,
-    0 0 60px #ff14b0;
+  box-shadow: 0 0 20px #ff14b0, 0 0 40px #ff69b4, 0 0 60px #ff14b0;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-#globalGallery img:hover,
-.neon-img:hover {
+#globalGallery img:hover, .neon-img:hover {
   transform: scale(1.05);
-  box-shadow:
-    0 0 30px #ff14b0,
-    0 0 60px #ff69b4,
-    0 0 90px #ff14b0;
-}
-
-/* ---------------- Input file ---------------- */
-input[type="file"] {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ff69b4;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  margin-bottom: 15px;
+  box-shadow: 0 0 30px #ff14b0, 0 0 60px #ff69b4, 0 0 90px #ff14b0;
 }
