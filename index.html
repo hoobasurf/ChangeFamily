@@ -27,18 +27,20 @@
       <button id="upload" class="glass-btn">Upload</button>
     </section>
 
-    <div id="gallery" class="gallery"></div>
+    <h2 class="neon-text small">Timeline globale</h2>
+    <div id="globalGallery" class="gallery"></div>
   </div>
 
   <script type="module">
     import { signup, login, logout, onAuthStateChanged, auth } from './auth.js';
-    import { uploadImage } from './storage.js';
+    import { uploadImage, getAllSnaps } from './storage.js';
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const fileInput = document.getElementById('file');
-    const gallery = document.getElementById('gallery');
+    const globalGallery = document.getElementById('globalGallery');
 
+    // Connexion / inscription
     document.getElementById('signup').onclick = async () => {
       try {
         const userCredential = await signup(emailInput.value, passwordInput.value);
@@ -50,33 +52,43 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
+        loadGlobalGallery(); // mettre à jour timeline après login
       } catch(e) { alert(e.message); }
     };
 
     document.getElementById('logout').onclick = async () => {
       await logout();
       alert('Déconnecté');
-      gallery.innerHTML = '';
+      globalGallery.innerHTML = '';
     };
 
+    // Upload d’image
     document.getElementById('upload').onclick = async () => {
       const file = fileInput.files[0];
       if(!file) { alert('Choisis un fichier'); return; }
       if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
       const url = await uploadImage(file, auth.currentUser.uid);
       alert('Image uploadée !');
-      addImageToGallery(url);
+      loadGlobalGallery(); // mettre à jour timeline globale
     };
 
-    function addImageToGallery(url) {
+    // Afficher les snaps dans la timeline
+    function addImageToGallery(url, container) {
       const img = document.createElement('img');
       img.src = url;
       img.className = 'neon-img';
-      gallery.prepend(img);
+      container.prepend(img);
+    }
+
+    async function loadGlobalGallery() {
+      const snaps = await getAllSnaps();
+      globalGallery.innerHTML = '';
+      snaps.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
     }
 
     onAuthStateChanged(user => {
       console.log('Utilisateur connecté :', user);
+      loadGlobalGallery();
     });
   </script>
 </body>
