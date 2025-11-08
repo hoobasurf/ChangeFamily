@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Neon</title>
+  <title>Snap Clone Neon - Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1 class="neon-text">Snap Clone Neon</h1>
 
-    <!-- Section Auth -->
     <section class="auth-section">
       <h2 class="neon-text small">Connexion / Inscription</h2>
       <input type="email" id="email" placeholder="Email" class="glass-input">
@@ -18,40 +17,21 @@
       <div class="buttons">
         <button id="signup" class="glass-btn">S’inscrire</button>
         <button id="login" class="glass-btn">Se connecter</button>
-        <button id="logout" class="glass-btn">Déconnexion</button>
       </div>
     </section>
-
-    <!-- Section Upload -->
-    <section class="upload-section">
-      <h2 class="neon-text small">Uploader une image</h2>
-      <input type="file" id="file" class="glass-input">
-      <button id="upload" class="glass-btn">Upload</button>
-
-      <!-- Capture iPhone -->
-      <button id="capture" class="glass-btn">Prendre une photo</button>
-      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
-    </section>
-
-    <!-- Timeline globale -->
-    <h2 class="neon-text small">Timeline globale</h2>
-    <div id="globalGallery" class="gallery"></div>
   </div>
 
   <script type="module">
-    import { signup, login, logout, onAuthStateChanged, auth } from './auth.js';
-    import { uploadImage, getAllSnaps } from './storage.js';
+    import { signup, login } from './auth.js';
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const fileInput = document.getElementById('file');
-    const globalGallery = document.getElementById('globalGallery');
 
-    // Auth
     document.getElementById('signup').onclick = async () => {
       try {
         const userCredential = await signup(emailInput.value, passwordInput.value);
         alert('Inscription réussie : ' + userCredential.user.email);
+        window.location.href = "home.html"; // redirection après signup
       } catch(e) { alert(e.message); }
     };
 
@@ -59,62 +39,9 @@
       try {
         const userCredential = await login(emailInput.value, passwordInput.value);
         alert('Connexion réussie : ' + userCredential.user.email);
-
-        // Naviguer vers la page suivante si nécessaire
-        // window.location.href = "home.html"; // décommente si tu as une page home.html
+        window.location.href = "home.html"; // redirection après login
       } catch(e) { alert(e.message); }
     };
-
-    document.getElementById('logout').onclick = async () => {
-      await logout();
-      alert('Déconnecté');
-    };
-
-    // Upload fichier
-    document.getElementById('upload').onclick = async () => {
-      const file = fileInput.files[0];
-      if(!file) { alert('Choisis un fichier'); return; }
-      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
-
-      await uploadImage(file, auth.currentUser.uid);
-      loadGlobalGallery();
-    };
-
-    // Capture iPhone
-    const cameraInput = document.getElementById('cameraInput');
-    const captureBtn = document.getElementById('capture');
-
-    captureBtn.onclick = () => cameraInput.click();
-
-    cameraInput.onchange = async (e) => {
-      const file = e.target.files[0];
-      if(!file) return;
-      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
-
-      await uploadImage(file, auth.currentUser.uid);
-      loadGlobalGallery();
-    };
-
-    // Timeline globale
-    function addImageToGallery(url, container) {
-      const img = document.createElement('img');
-      img.src = url;
-      img.className = 'neon-img';
-      container.prepend(img);
-    }
-
-    async function loadGlobalGallery() {
-      const snapsCol = await getAllSnaps();
-      globalGallery.innerHTML = '';
-      snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
-    }
-
-    // Toujours afficher les deux sections + timeline
-    onAuthStateChanged(user => {
-      if(user) {
-        loadGlobalGallery();
-      }
-    });
   </script>
 </body>
 </html>
