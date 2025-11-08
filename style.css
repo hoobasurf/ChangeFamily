@@ -1,10 +1,10 @@
-/* Fond et centrage */
+/* ---------------- Fond et centrage ---------------- */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #1a0a2e, #4b0082);
+  background: linear-gradient(135deg, #1a0a2e, #4b0082); /* violet foncé -> bleu violet */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,13 +13,13 @@ body, html {
 .container {
   text-align: center;
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05); /* glass liquide */
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 0 40px rgba(255, 20, 147, 0.6), 0 0 80px rgba(255, 20, 147, 0.4);
 }
 
-/* Texte néon */
+/* ---------------- Titres néon ---------------- */
 h1 {
   color: #ff14b0;
   font-size: 2.5rem;
@@ -31,10 +31,30 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Bouton glass */
-button {
-  padding: 10px 20px;
+/* ---------------- Input glass ---------------- */
+input[type="email"],
+input[type="password"],
+.glass-input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ff69b4;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
   margin: 10px 0;
+  width: 80%;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.glass-input::placeholder {
+  color: #ffb6c1;
+}
+
+/* ---------------- Boutons glass ---------------- */
+button,
+.glass-btn {
+  padding: 10px 20px;
+  margin: 10px 5px;
   border: none;
   border-radius: 15px;
   background: rgba(255,20,147,0.3);
@@ -45,14 +65,20 @@ button {
   transition: all 0.3s ease;
 }
 
-button:hover {
+button:hover,
+.glass-btn:hover {
   background: rgba(255,20,147,0.6);
   box-shadow: 0 0 40px rgba(255,20,147,0.7);
   transform: scale(1.05);
 }
 
-/* Image néon */
-#globalGallery img {
+/* ---------------- Timeline et images ---------------- */
+#globalGallery {
+  margin-top: 20px;
+}
+
+#globalGallery img,
+.neon-img {
   width: 300px;
   border-radius: 20px;
   box-shadow:
@@ -62,10 +88,21 @@ button:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-#globalGallery img:hover {
+#globalGallery img:hover,
+.neon-img:hover {
   transform: scale(1.05);
   box-shadow:
     0 0 30px #ff14b0,
     0 0 60px #ff69b4,
     0 0 90px #ff14b0;
+}
+
+/* ---------------- Input file ---------------- */
+input[type="file"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ff69b4;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  margin-bottom: 15px;
 }
