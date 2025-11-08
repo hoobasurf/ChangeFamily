@@ -10,11 +10,11 @@
   <div class="container">
     <h1>Snap Clone Neon</h1>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Mot de passe">
+    <input type="email" id="email" placeholder="Email" class="glass-input">
+    <input type="password" id="password" placeholder="Mot de passe" class="glass-input">
     
-    <button id="loginBtn">Connexion</button>
-    <button id="signupBtn">Inscription</button>
+    <button id="loginBtn" class="glass-btn">Connexion</button>
+    <button id="signupBtn" class="glass-btn">Inscription</button>
   </div>
 
   <script type="module">
@@ -23,39 +23,29 @@
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
 
-    // Inscription
     signupBtn.onclick = async () => {
       const email = emailInput.value;
       const password = passwordInput.value;
       if(!email || !password) return alert("Email et mot de passe requis");
-
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection après inscription
-      } catch(e) {
-        alert(e.message);
-      }
+        window.location.href = "home.html";
+      } catch(e) { alert(e.message); }
     };
 
-    // Connexion
     loginBtn.onclick = async () => {
       const email = emailInput.value;
       const password = passwordInput.value;
       if(!email || !password) return alert("Email et mot de passe requis");
-
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection après login
-      } catch(e) {
-        alert(e.message);
-      }
+        window.location.href = "home.html";
+      } catch(e) { alert(e.message); }
     };
 
-    // Redirection automatique si déjà connecté
     onAuthStateChanged(auth, user => {
       if(user) window.location.href = "home.html";
     });
