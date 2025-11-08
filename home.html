@@ -16,10 +16,9 @@
       <input type="file" id="file" class="glass-input">
       <button id="upload" class="glass-btn">Upload</button>
 
-      <!-- Capture iPhone -->
       <button id="capture" class="glass-btn">Prendre une photo</button>
       <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
-      
+
       <button id="logout" class="glass-btn">Déconnexion</button>
     </section>
 
@@ -39,33 +38,29 @@
     // Déconnexion
     document.getElementById('logout').onclick = async () => {
       await logout();
-      alert('Déconnecté !');
-      window.location.href = "index.html"; // retour à la page login
+      window.location.href = "index.html";
     };
 
     // Upload fichier
     document.getElementById('upload').onclick = async () => {
       const file = fileInput.files[0];
-      if(!file) { alert('Choisis un fichier'); return; }
-      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
-
+      if(!file) return alert('Choisis un fichier');
+      if(!auth.currentUser) return alert('Connecte-toi d’abord');
       await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
     };
 
     // Capture iPhone
-    const captureBtn = document.getElementById('capture');
-    captureBtn.onclick = () => cameraInput.click();
+    document.getElementById('capture').onclick = () => cameraInput.click();
     cameraInput.onchange = async (e) => {
       const file = e.target.files[0];
       if(!file) return;
-      if(!auth.currentUser) { alert('Connecte-toi d’abord'); return; }
-
+      if(!auth.currentUser) return alert('Connecte-toi d’abord');
       await uploadImage(file, auth.currentUser.uid);
       loadGlobalGallery();
     };
 
-    // Timeline globale
+    // Timeline
     function addImageToGallery(url, container) {
       const img = document.createElement('img');
       img.src = url;
@@ -79,13 +74,10 @@
       snapsCol.forEach(snap => addImageToGallery(snap.imageUrl, globalGallery));
     }
 
-    // Vérifie si utilisateur connecté sinon retour login
+    // Redirection si non connecté
     onAuthStateChanged(user => {
-      if(!user) {
-        window.location.href = "index.html"; // redirection si non connecté
-      } else {
-        loadGlobalGallery();
-      }
+      if(!user) window.location.href = "index.html";
+      else loadGlobalGallery();
     });
   </script>
 </body>
