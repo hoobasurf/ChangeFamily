@@ -1,34 +1,11 @@
-import { storage, db } from './firebase.js';
+import { storage } from './firebase.js';
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
-import { collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// Upload image + ajouter document Firestore
-async function uploadImage(file, userId) {
-  const uniqueName = `${Date.now()}.jpg`;
-  const storageRef = ref(storage, `snaps/${userId}/${uniqueName}`);
+export async function uploadImage(file, userId) {
+  const name = `${Date.now()}.jpg`;
+  const storageRef = ref(storage, `snaps/${userId}/${name}`);
 
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
-
-  console.log("🔥 URL uploadée :", url);
-
-  if(url) {
-    await addDoc(collection(db, "snaps"), {
-      userId,
-      imageUrl: url,
-      timestamp: Date.now()
-    });
-  }
-
   return url;
 }
-
-// Récupérer tous les snaps triés par timestamp
-async function getAllSnaps() {
-  const snapsCol = collection(db, "snaps");
-  const snapsQuery = query(snapsCol, orderBy("timestamp", "desc"));
-  const snapsSnapshot = await getDocs(snapsQuery);
-  return snapsSnapshot.docs.map(doc => doc.data());
-}
-
-export { uploadImage, getAllSnaps };
