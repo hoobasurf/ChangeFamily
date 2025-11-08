@@ -1,12 +1,10 @@
-// firebase.js
-// Import Firebase depuis le CDN
+// Import Firebase SDK depuis CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// 🔑 Remplace les valeurs par celles de ton projet Firebase
+// Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
   authDomain: "changefamilysnap.firebaseapp.com",
@@ -17,13 +15,10 @@ const firebaseConfig = {
   measurementId: "G-8D5PC0EZ74"
 };
 
-// Initialise Firebase
+// Init Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
-const db = getFirestore(app);
 const storage = getStorage(app);
+const db = getFirestore(app);
 
-console.log("🔥 Firebase OK");
-
-export { app, analytics, auth, db, storage };
+export { app, auth, storage, db };
