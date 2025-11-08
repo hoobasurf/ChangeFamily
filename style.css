@@ -19,9 +19,7 @@ body {
   margin-bottom: 20px;
 }
 
-.neon-text.small {
-  font-size: 1.2em;
-}
+.neon-text.small { font-size: 1.2em; }
 
 .glass-input {
   width: 100%;
@@ -35,9 +33,7 @@ body {
   box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
 }
 
-.glass-input::placeholder {
-  color: #ffb3ff;
-}
+.glass-input::placeholder { color: #ffb3ff; }
 
 .glass-btn {
   padding: 10px 20px;
@@ -66,7 +62,6 @@ body {
   margin-top: 20px;
 }
 
-/* Néon animé sur les images */
 @keyframes neonGlow {
   0%, 100% { box-shadow: 0 0 10px #ff6aff, 0 0 20px #ff00ff; }
   50% { box-shadow: 0 0 25px #ff6aff, 0 0 50px #ff00ff; }
