@@ -1,24 +1,19 @@
-// Import Firebase SDK depuis CDN
+// Import Firebase depuis CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-// Config Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
-  authDomain: "changefamilysnap.firebaseapp.com",
-  projectId: "changefamilysnap",
-  storageBucket: "changefamilysnap.firebasestorage.app",
-  messagingSenderId: "335835110495",
-  appId: "1:335835110495:web:13194c4bd4579d4f434fea",
-  measurementId: "G-8D5PC0EZ74"
+  apiKey: "TA_API_KEY",
+  authDomain: "TON_PROJECT.firebaseapp.com",
+  projectId: "TON_PROJECT",
+  storageBucket: "TON_PROJECT.appspot.com",
+  messagingSenderId: "TON_ID",
+  appId: "TON_APP_ID"
 };
 
-// Init Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
-const db = getFirestore(app);
 
-export { app, auth, storage, db };
+export { app, auth, storage };
