@@ -1,62 +1,58 @@
-body, html {
-  margin:0; padding:0; height:100%;
-  font-family: Arial, sans-serif;
-  display:flex; justify-content:center; align-items:center;
-  background: linear-gradient(-45deg,#1a0a2e,#4b0082,#8b00ff,#ff1493);
-  background-size:400% 400%;
-  animation: gradientBG 15s ease infinite;
+/* ---------------- Fond animé ---------------- */
+#background {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background: url('futuristic-city-forest.jpg') center/cover no-repeat;
+  animation: backgroundShift 20s linear infinite alternate;
+  z-index:0;
+}
+@keyframes backgroundShift {
+  0% {transform: translate(0,0) scale(1);}
+  50% {transform: translate(-20px,10px) scale(1.02);}
+  100% {transform: translate(0,0) scale(1);}
 }
 
-@keyframes gradientBG {
-  0% {background-position:0% 50%;}
-  50% {background-position:100% 50%;}
-  100% {background-position:0% 50%;}
-}
-
+/* ---------------- Container ---------------- */
+body, html { margin:0; padding:0; height:100%; font-family:Arial, sans-serif; overflow:hidden; }
 .container {
+  position:relative; z-index:1;
   text-align:center;
   backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.05);
-  border-radius:20px;
-  padding:30px;
-  box-shadow:0 0 40px rgba(255,20,147,0.6),0 0 80px rgba(255,20,147,0.4);
+  background: rgba(0,0,0,0.3);
+  border-radius:20px; padding:30px;
+  box-shadow:0 0 40px #ff14b0, 0 0 80px #ff69b4;
 }
 
-h1 {
-  color:#ff14b0;
-  font-size:2.5rem;
-  text-shadow:0 0 5px #ff14b0,0 0 10px #ff14b0,0 0 20px #ff14b0,0 0 40px #ff69b4;
-  margin-bottom:20px;
+/* ---------------- Input glass ---------------- */
+input[type="email"], input[type="password"], input[type="file"], .glass-input {
+  padding:10px; border-radius:10px; border:1px solid #ff69b4;
+  background: rgba(255,255,255,0.1); color:#fff; margin:10px 0; width:80%;
+  font-size:1rem; text-align:center;
 }
+input::placeholder { color:#ffb6c1; }
 
-.glass-btn {
-  padding:12px 25px;
-  margin:10px 5px;
-  border:none;
-  border-radius:20px;
-  background: rgba(255,20,147,0.3);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  box-shadow:0 0 20px rgba(255,20,147,0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+/* ---------------- Boutons glass ---------------- */
+button, .glass-btn {
+  padding:10px 20px; margin:10px 5px; border:none; border-radius:15px;
+  background: rgba(255,20,147,0.3); color:#fff; font-weight:bold; cursor:pointer;
+  box-shadow:0 0 20px rgba(255,20,147,0.5); transition: all 0.3s ease;
 }
-
-.glass-btn:hover, .glass-btn:active {
-  box-shadow:0 0 20px #ff14b0,0 0 40px #ff69b4,0 0 60px #ff14b0,0 0 80px #ff69b4;
+button:hover, .glass-btn:hover {
+  background: rgba(255,20,147,0.6);
+  box-shadow:0 0 40px #ff14b0;
   transform: scale(1.05);
 }
 
-.neon-img {
-  width:300px;
-  border-radius:20px;
-  box-shadow:0 0 10px #ff14b0,0 0 20px #ff69b4,0 0 30px #ff14b0,0 0 40px #ff69b4;
-  margin-top:15px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* ---------------- Timeline ---------------- */
+#globalGallery {
+  margin-top:20px;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:20px;
 }
-
-.neon-img:hover {
+#globalGallery img, .neon-img {
+  width:200px; border-radius:20px;
+  box-shadow:0 0 20px #ff14b0,0 0 40px #ff69b4,0 0 60px #ff14b0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+#globalGallery img:hover, .neon-img:hover {
   transform: scale(1.05);
-  box-shadow:0 0 30px #ff14b0,0 0 60px #ff69b4,0 0 90px #ff14b0;
+  box-shadow:0 0 40px #ff14b0,0 0 80px #ff69b4,0 0 120px #ff14b0;
 }
