@@ -8,11 +8,14 @@
 </head>
 <body>
   <div id="background"></div>
+
   <div class="container">
     <h1>Snap Clone Neon</h1>
 
+    <!-- Choix de fichier (photo ou photothèque) -->
     <input type="file" id="file" accept="image/*" capture="environment">
-    <button id="uploadBtn" class="glass-btn">Prendre / Télécharger Photo</button>
+    <button id="uploadBtn" class="glass-btn">Télécharger</button>
+    <button id="cameraBtn" class="glass-btn">Prendre Photo</button>
 
     <div id="globalGallery"></div>
   </div>
@@ -22,13 +25,15 @@
     import { uploadImage } from './storage.js';
 
     const fileInput = document.getElementById('file');
-    const globalGallery = document.getElementById('globalGallery');
     const uploadBtn = document.getElementById('uploadBtn');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const globalGallery = document.getElementById('globalGallery');
 
     auth.onAuthStateChanged(user => {
       if(!user) alert('Connecte-toi d’abord !');
     });
 
+    // Téléchargement depuis fichier / photothèque
     uploadBtn.onclick = async () => {
       const file = fileInput.files[0];
       if(!file) return alert('Choisis un fichier');
@@ -39,10 +44,14 @@
         const img = document.createElement('img');
         img.src = url;
         img.className = 'neon-img';
-        globalGallery.prepend(img); // nouvelle image en haut
+        globalGallery.prepend(img);
       }
-
       fileInput.value = '';
+    };
+
+    // Ouvrir caméra directement
+    cameraBtn.onclick = () => {
+      fileInput.click();
     };
   </script>
 </body>
