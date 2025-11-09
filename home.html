@@ -1,67 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timeline</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snap Clone Neon - Home</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body style="flex-direction: column;">
+<body>
+  <div class="container">
+    <h1>Snap Clone Neon</h1>
 
-<h2>Timeline</h2>
+    <!-- Bouton pour choisir une image normalement -->
+    <input type="file" id="file" accept="image/*">
 
-<div class="timeline" id="timeline"></div>
+    <!-- 🔥 Nouveau bouton caméra -->
+    <input type="file" id="camera" accept="image/*" capture="environment" hidden>
+    <button id="cameraBtn" class="glass-btn">📸 Prendre une photo</button>
 
-<input type="file" id="fileInput" accept="image/*" hidden>
-<button class="upload-btn" onclick="fileInput.click()">Prendre / Choisir une photo</button>
+    <button id="download" class="glass-btn">Télécharger</button>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    <div id="globalGallery"></div>
+  </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
-  authDomain: "changefamilysnap.firebaseapp.com",
-  projectId: "changefamilysnap",
-  storageBucket: "changefamilysnap.firebasestorage.app",
-  messagingSenderId: "335835110495",
-  appId: "1:335835110495:web:13194c4bd4579d4f434fea",
-  measurementId: "G-8D5PC0EZ74"
-};
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { uploadImage } from './storage.js';
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-const auth = getAuth(app);
+    const fileInput = document.getElementById('file');
+    const cameraInput = document.getElementById('camera');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const globalGallery = document.getElementById('globalGallery');
 
-onAuthStateChanged(auth, user => {
-  if (!user) location.href = "index.html";
-});
+    // Ouvre la caméra quand on clique sur le bouton
+    cameraBtn.addEventListener("click", () => {
+      cameraInput.click();
+    });
 
-const timeline = document.getElementById("timeline");
+    // Quand une photo est prise avec la caméra → on l’affiche direct
+    cameraInput.addEventListener("change", () => {
+      const file = cameraInput.files[0];
+      if (!)file) return;
 
-const loadImages = async () => {
-  timeline.innerHTML = "";
-  const list = await listAll(ref(storage, "uploads/"));
-  list.items.forEach(async item => {
-    const url = await getDownloadURL(item);
-    timeline.innerHTML += `<img src="${url}">`;
-  });
-}
+      globalGallery.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.className = "neon-img";
+      globalGallery.appendChild(img);
+    });
 
-fileInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  const storageRef = ref(storage, "uploads/" + Date.now());
-  await uploadBytes(storageRef, file);
-  loadImages();
-});
+    auth.onAuthStateChanged(user => {
+      if(!user) alert('Connecte-toi d’abord !');
+    });
 
-loadImages();
+    document.getElementById('download').onclick = async () => {
+      const file = fileInput.files[0];
+      if(!file) return alert('Choisis un fichier');
+      if(!auth.currentUser) return alert('Connecte-toi');
 
-window.addEventListener("load", () => {
-  document.body.style.opacity = "1";
-});
-</script>
+      const url = await uploadImage(file, auth.currentUser.uid);
 
+      if(url) {
+        globalGallery.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'neon-img';
+        globalGallery.appendChild(img);
+      }
+
+      fileInput.value = '';
+    };
+  </script>
 </body>
 </html>
