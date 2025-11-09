@@ -1,51 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Snap Clone Neon</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snap Clone Neon - Home</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>Snap Clone Neon</h1>
+  <div class="container">
+    <h1>Snap Clone Neon</h1>
 
-  <input type="file" id="camera" accept="image/*" capture="environment" style="opacity:0; position:absolute; z-index:-1;">
-  <button id="cameraBtn" class="glass-btn">📸 Prendre une photo</button>
+    <input type="file" id="file">
+    <button id="download" class="glass-btn">Télécharger</button>
 
-  <div id="globalGallery"></div>
-</div>
+    <div id="globalGallery"></div>
+  </div>
 
-<script type="module">
-import { storage } from './firebase.js';
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+  <script type="module">
+    import { auth, storage } from './firebase.js';
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 
-const cameraInput = document.getElementById('camera');
-const cameraBtn = document.getElementById('cameraBtn');
-const gallery = document.getElementById('globalGallery');
+    const fileInput = document.getElementById('file');
+    const globalGallery = document.getElementById('globalGallery');
 
-cameraBtn.addEventListener("click", () => {
-  cameraInput.click();
-});
+    auth.onAuthStateChanged(user => {
+      if(!user) alert('Connecte-toi d’abord !');
+    });
 
-cameraInput.addEventListener("change", async () => {
-  const file = cameraInput.files[0];
-  if (!file) return;
+    document.getElementById('download').onclick = async () => {
+      const file = fileInput.files[0];
+      if(!file) return alert('Choisis un fichier');
+      if(!auth.currentUser) return alert('Connecte-toi');
 
-  // Création d'un chemin unique pour chaque image
-  const storageRef = ref(storage, 'photos/' + Date.now() + '_' + file.name);
-  
-  // Upload
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
+      const storageRef = ref(storage, `images/${auth.currentUser.uid}/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
 
-  // Affichage dans la timeline
-  const img = document.createElement("img");
-  img.src = url;
-  img.className = "neon-img";
+      if(url) {
+        globalGallery.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'neon-img';
+        globalGallery.appendChild(img);
+      }
 
-  gallery.prepend(img); // nouvelles images en haut
-});
-</script>
+      fileInput.value = '';
+    };
+
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
 </body>
 </html>
