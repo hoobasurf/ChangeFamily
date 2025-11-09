@@ -19,8 +19,7 @@
 
   <script type="module">
     import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -33,7 +32,7 @@
       if(!email || !password) return alert("Email et mot de passe requis");
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection après inscription
+        window.location.href = "home.html";
       } catch(e) { alert(e.message); }
     };
 
@@ -43,7 +42,7 @@
       if(!email || !password) return alert("Email et mot de passe requis");
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html"; // redirection après login
+        window.location.href = "home.html";
       } catch(e) { alert(e.message); }
     };
 
