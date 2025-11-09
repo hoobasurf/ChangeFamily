@@ -1,55 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <title>Snap Clone Neon - Login</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Snap Clone Neon</h1>
 
-    <input type="email" id="email" placeholder="Email" class="glass-input">
-    <input type="password" id="password" placeholder="Mot de passe" class="glass-input">
-    
-    <button id="loginBtn" class="glass-btn">Connexion</button>
-    <button id="signupBtn" class="glass-btn">Inscription</button>
-  </div>
+<div class="auth-card">
+  <h2>Connexion</h2>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Mot de passe">
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const signupBtn = document.getElementById('signupBtn');
+  <button class="auth-btn" onclick="login()">Se connecter</button>
+  <button class="auth-btn" onclick="register()">S’inscrire</button>
+</div>
 
-    signupBtn.onclick = async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      if(!email || !password) return alert("Email et mot de passe requis");
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html";
-      } catch(e) { alert(e.message); }
-    };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-    loginBtn.onclick = async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      if(!email || !password) return alert("Email et mot de passe requis");
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html";
-      } catch(e) { alert(e.message); }
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
+  authDomain: "changefamilysnap.firebaseapp.com",
+  projectId: "changefamilysnap",
+  storageBucket: "changefamilysnap.firebasestorage.app",
+  messagingSenderId: "335835110495",
+  appId: "1:335835110495:web:13194c4bd4579d4f434fea",
+  measurementId: "G-8D5PC0EZ74"
+};
 
-    window.addEventListener('load', () => {
-      document.body.style.visibility = 'visible';
-    });
-  </script>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => location.href = "home.html")
+    .catch(err => alert(err.message));
+}
+
+window.register = () => {
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => location.href = "home.html")
+    .catch(err => alert(err.message));
+}
+
+window.addEventListener("load", () => {
+  document.body.style.opacity = "1";
+});
+</script>
+
 </body>
 </html>
