@@ -7,49 +7,43 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="background"></div>
   <div class="container">
     <h1>Snap Clone Neon</h1>
 
-    <input type="file" id="file">
-    <button id="download" class="glass-btn">Télécharger</button>
+    <input type="file" id="file" accept="image/*" capture="environment">
+    <button id="uploadBtn" class="glass-btn">Prendre / Télécharger Photo</button>
 
     <div id="globalGallery"></div>
   </div>
 
   <script type="module">
-    import { auth, storage } from './firebase.js';
-    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+    import { auth } from './firebase.js';
+    import { uploadImage } from './storage.js';
 
     const fileInput = document.getElementById('file');
     const globalGallery = document.getElementById('globalGallery');
+    const uploadBtn = document.getElementById('uploadBtn');
 
     auth.onAuthStateChanged(user => {
       if(!user) alert('Connecte-toi d’abord !');
     });
 
-    document.getElementById('download').onclick = async () => {
+    uploadBtn.onclick = async () => {
       const file = fileInput.files[0];
       if(!file) return alert('Choisis un fichier');
       if(!auth.currentUser) return alert('Connecte-toi');
 
-      const storageRef = ref(storage, `images/${auth.currentUser.uid}/${file.name}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-
+      const url = await uploadImage(file, auth.currentUser.uid);
       if(url) {
-        globalGallery.innerHTML = '';
         const img = document.createElement('img');
         img.src = url;
         img.className = 'neon-img';
-        globalGallery.appendChild(img);
+        globalGallery.prepend(img); // nouvelle image en haut
       }
 
       fileInput.value = '';
     };
-
-    window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-    });
   </script>
 </body>
 </html>
