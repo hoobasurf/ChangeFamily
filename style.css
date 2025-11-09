@@ -23,12 +23,11 @@ body, html { margin:0; padding:0; height:100%; font-family:Arial, sans-serif; ov
 }
 
 /* ---------------- Input glass ---------------- */
-input[type="email"], input[type="password"], input[type="file"], .glass-input {
+input[type="file"], .glass-input {
   padding:10px; border-radius:10px; border:1px solid #ff69b4;
   background: rgba(255,255,255,0.1); color:#fff; margin:10px 0; width:80%;
   font-size:1rem; text-align:center;
 }
-input::placeholder { color:#ffb6c1; }
 
 /* ---------------- Boutons glass ---------------- */
 button, .glass-btn {
