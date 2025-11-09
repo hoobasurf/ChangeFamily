@@ -1,74 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snap Clone Neon - Home</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snap Clone Neon</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Snap Clone Neon</h1>
+<div class="container">
+  <h1>Snap Clone Neon</h1>
 
-    <!-- Bouton pour choisir une image normalement -->
-    <input type="file" id="file" accept="image/*">
+  <input type="file" id="camera" accept="image/*" capture="environment" style="opacity:0; position:absolute; z-index:-1;">
+  <button id="cameraBtn" class="glass-btn">📸 Prendre une photo</button>
 
-    <!-- 🔥 Nouveau bouton caméra -->
-    <input type="file" id="camera" accept="image/*" capture="environment" hidden>
-    <button id="cameraBtn" class="glass-btn">📸 Prendre une photo</button>
+  <div id="globalGallery"></div>
+</div>
 
-    <button id="download" class="glass-btn">Télécharger</button>
+<script type="module">
+import { storage } from './firebase.js';
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 
-    <div id="globalGallery"></div>
-  </div>
+const cameraInput = document.getElementById('camera');
+const cameraBtn = document.getElementById('cameraBtn');
+const gallery = document.getElementById('globalGallery');
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { uploadImage } from './storage.js';
+cameraBtn.addEventListener("click", () => {
+  cameraInput.click();
+});
 
-    const fileInput = document.getElementById('file');
-    const cameraInput = document.getElementById('camera');
-    const cameraBtn = document.getElementById('cameraBtn');
-    const globalGallery = document.getElementById('globalGallery');
+cameraInput.addEventListener("change", async () => {
+  const file = cameraInput.files[0];
+  if (!file) return;
 
-    // Ouvre la caméra quand on clique sur le bouton
-    cameraBtn.addEventListener("click", () => {
-      cameraInput.click();
-    });
+  // Création d'un chemin unique pour chaque image
+  const storageRef = ref(storage, 'photos/' + Date.now() + '_' + file.name);
+  
+  // Upload
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
 
-    // Quand une photo est prise avec la caméra → on l’affiche direct
-    cameraInput.addEventListener("change", () => {
-      const file = cameraInput.files[0];
-      if (!)file) return;
+  // Affichage dans la timeline
+  const img = document.createElement("img");
+  img.src = url;
+  img.className = "neon-img";
 
-      globalGallery.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.className = "neon-img";
-      globalGallery.appendChild(img);
-    });
-
-    auth.onAuthStateChanged(user => {
-      if(!user) alert('Connecte-toi d’abord !');
-    });
-
-    document.getElementById('download').onclick = async () => {
-      const file = fileInput.files[0];
-      if(!file) return alert('Choisis un fichier');
-      if(!auth.currentUser) return alert('Connecte-toi');
-
-      const url = await uploadImage(file, auth.currentUser.uid);
-
-      if(url) {
-        globalGallery.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = url;
-        img.className = 'neon-img';
-        globalGallery.appendChild(img);
-      }
-
-      fileInput.value = '';
-    };
-  </script>
+  gallery.prepend(img); // nouvelles images en haut
+});
+</script>
 </body>
 </html>
