@@ -1,55 +1,26 @@
-import { storage, db } from './firebase.js';
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+// ✅ storage.js
 
-// Upload image + ajouter document Firestore
-export async function uploadImage(file, userId) {
-  const name = `${Date.now()}.jpg`;
-  const storageRef = ref(storage, `snaps/${userId}/${name}`);
-  
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-
-  // Ajouter dans Firestore (timestamp si tu veux plus tard)
-  await addDoc(collection(db, "snaps"), {
-    userId,
-    imageUrl: url,
-    timestamp: Date.now()
-  });
-
-  return url;
-}
-
-export async function getMessagesForUser(uid) {
-    // temporaire (mock data)
-    return [
-        { username: "prettyone", last: "Hello!", avatar: "avatar-default.png" },
-        { username: "kate123", last: "Great photo!", avatar: "avatar-default.png" }
-    ];
-}
-import { db } from "./firebase.js";
+import { storage } from "./firebase.js";
 import {
-  collection, addDoc, serverTimestamp, onSnapshot, query, orderBy
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 
-export async function addMessage(room, text, uid) {
-  await addDoc(collection(db, "chats", room, "messages"), {
-    text,
-    uid,
-    createdAt: serverTimestamp()
-  });
+// ✅ envoi photo
+export async function uploadImage(userId, blob) {
+  const imageRef = ref(storage, `public/${userId}/${Date.now()}.jpg`);
+  await uploadBytes(imageRef, blob);
 }
 
-export function listenToMessages(room, callback) {
-  const q = query(
-    collection(db, "chats", room, "messages"),
-    orderBy("createdAt", "asc")
-  );
+// ✅ récupère la dernière photo du user
+export async function getLastImageForUser(userId) {
+  const folderRef = ref(storage, `public/${userId}`);
+  const res = await listAll(folderRef);
 
-  onSnapshot(q, snapshot => {
-    snapshot.docChanges().forEach(change => {
-      const msg = change.doc.data();
-      callback(msg);
-    });
-  });
+  if (res.items.length === 0) return null;
+
+  const last = res.items[res.items.length - 1];
+  return await getDownloadURL(last);
 }
