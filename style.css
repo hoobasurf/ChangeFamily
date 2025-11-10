@@ -1,3 +1,19 @@
+/* 💫 Fond page index (login) */
+.bg-index {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: url('neon-grid.jpg') no-repeat center center;
+  background-size: cover; /* couvre tout l'écran */
+  background-color: black; /* si image non chargée */
+  
+  z-index: -1; /* derrière tout le reste */
+  filter: brightness(0.7); /* léger assombrissement pour lisibilité */
+}
+
 /* 🌆 Fond page home uniquement */
 .bg-home {
   position: fixed;
