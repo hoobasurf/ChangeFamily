@@ -186,3 +186,35 @@ button:hover, .glass-btn:hover {
   border: 4px solid white;
   background: transparent;
 }
+
+.profile-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-top: 12vh;
+}
+
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid #ff00ff;
+  box-shadow: 0 0 25px #ff00ff;
+  object-fit: cover;
+}
+
+textarea {
+  width: 250px;
+  height: 80px;
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  margin-top: 15px;
+}
+
+.btn.neon {
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 15px #ff00ff;
+}
