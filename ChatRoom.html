@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Room</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="screen-bg">
+
+<div class="screen">
+
+    <div class="chat-header">
+        <button onclick="history.back()">←</button>
+        <span id="chat-username">...</span>
+    </div>
+
+    <div id="messages" class="messages"></div>
+
+    <div class="message-input">
+        <input id="messageText" type="text" placeholder="Écris ton message...">
+        <button id="sendBtn">➤</button>
+    </div>
+</div>
+
+<script type="module">
+import { auth, onAuthStateChanged } from "./auth.js";
+import { addMessage, listenToMessages } from "./storage.js";
+
+const room = new URLSearchParams(window.location.search).get("room");
+const messagesContainer = document.getElementById("messages");
+const sendBtn = document.getElementById("sendBtn");
+const messageText = document.getElementById("messageText");
+
+document.getElementById("chat-username").innerText = room;
+
+onAuthStateChanged(auth, user => {
+    if (!user) return;
+
+    listenToMessages(room, msg => {
+        const div = document.createElement("div");
+        div.classList.add("bubble", msg.uid === user.uid ? "me" : "them");
+        div.innerText = msg.text;
+        messagesContainer.appendChild(div);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+
+    sendBtn.addEventListener("click", () => {
+        const text = messageText.value.trim();
+        if (text === "") return;
+        addMessage(room, text, user.uid);
+        messageText.value = "";
+    });
+});
+</script>
+</body>
+</html>
