@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profil</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body class="screen-bg">
+<body>
 
 <div class="screen">
     <h2>Profil</h2>
@@ -14,16 +15,21 @@
     <div class="profile-card">
         <img src="avatar-default.png" id="avatar" class="avatar big">
         <h3 id="username"></h3>
-        <p id="bio">Aucun message pour le moment…</p>
+
+        <label>Confidentialité :</label>
+        <select id="privacy">
+            <option value="public">🌍 Public</option>
+            <option value="private">🔒 Privé</option>
+        </select>
     </div>
 </div>
 
-<nav class="bottom-nav">
-    <a href="home.html">🏠</a>
-    <a href="camera.html">📸</a>
-    <a href="chat.html">💬</a>
-    <a href="profile.html">👤</a>
-</nav>
+<!-- ✅ NAVIGATION UNIQUE -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+</div>
 
 <script type="module">
 import { auth, onAuthStateChanged } from "./auth.js";
