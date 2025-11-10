@@ -19,3 +19,11 @@ export async function uploadImage(file, userId) {
 
   return url;
 }
+
+export async function getMessagesForUser(uid) {
+    // temporaire (mock data)
+    return [
+        { username: "prettyone", last: "Hello!", avatar: "avatar-default.png" },
+        { username: "kate123", last: "Great photo!", avatar: "avatar-default.png" }
+    ];
+}
