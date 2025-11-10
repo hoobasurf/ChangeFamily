@@ -8,15 +8,22 @@
 
   background: url('futuristic-city-forest.jpg') no-repeat;
   
-  /* 👇 Remonte l'image + dézoom pour voir plus */
-  background-position: center 25%;  /* Remonte l’image (0% = tout en haut, 50% = centre) */
-  background-size: 90%;             /* 90% au lieu de cover = moins zoomé, on voit plus */
+  /* 👇 Remonte + dézoom */
+  background-position: center 25%;
+  background-size: 75%; /* 🔹 Dézoom encore plus (avant 90%) */
 
   background-repeat: no-repeat;
-  background-color: black; /* si l'image ne remplit pas tout, ça reste noir élégant */
+  background-color: black;
 
   z-index: 0;
   pointer-events: none;
+  animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+  0% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-25px,15px) scale(1.03); }
+  100% { transform: translate(0,0) scale(1); }
 }
 @keyframes backgroundShift {
   0% {transform: translate(0,0) scale(1);}
