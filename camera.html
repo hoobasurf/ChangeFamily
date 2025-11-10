@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camera</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="bg-home"></div>
+<body class="screen-bg">
 
-  <div class="camera-screen">
-    <video id="cameraPreview" autoplay></video>
-    <button id="captureBtn" class="camera-btn"></button>
-  </div>
+<div class="screen">
+    <h2>Camera</h2>
 
-  <script src="camera.js" type="module"></script>
+    <video id="cameraPreview" autoplay class="camera-frame"></video>
+    <button id="captureBtn" class="capture-btn"></button>
+</div>
+
+<nav class="bottom-nav">
+    <a href="home.html">🏠</a>
+    <a href="camera.html">📸</a>
+    <a href="profile.html">👤</a>
+</nav>
+
+<script type="module" src="camera.js"></script>
+
 </body>
 </html>
