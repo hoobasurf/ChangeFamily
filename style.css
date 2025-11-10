@@ -55,3 +55,23 @@ button:hover, .glass-btn:hover {
   transform: scale(1.05);
   box-shadow:0 0 40px #ff14b0,0 0 80px #ff69b4,0 0 120px #ff14b0;
 }
+/* Fond page connexion */
+.bg-index {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: url('login-bg.jpg') center/cover no-repeat;
+  z-index: -1;
+}
+
+/* Fond page home */
+.bg-home {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: url('futuristic-city-forest.jpg') center/cover no-repeat;
+  z-index: -1;
+  animation: bgMove 25s infinite alternate ease-in-out;
+}
+
+/* Animation légère */
+@keyframes bgMove {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
+}
