@@ -172,3 +172,17 @@ button:hover, .glass-btn:hover {
   color: white;
 }
 
+.camera-screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.camera-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: transparent;
+}
