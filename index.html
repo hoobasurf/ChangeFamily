@@ -19,8 +19,15 @@
     <input id="loginInput" placeholder="Email ou Pseudo">
     <input id="passwordInput" type="password" placeholder="Mot de passe">
 
-    <button id="loginBtn" class="glass-btn">Connexion</button>
-    <button id="signupBtn" class="glass-btn">Inscription</button>
+    <div class="btn-group">
+      <button id="loginBtn" class="glass-btn neon-btn">Connexion</button>
+      <button id="signupBtn" class="glass-btn neon-btn">Inscription</button>
+    </div>
+  </div>
+
+  <!-- Logo en bas -->
+  <div class="logo-container">
+    <img src="45327C9C-54BF-410B-99AF-8F969D3BB532.png" alt="LOOV logo" class="loov-logo">
   </div>
 
   <!-- Script Firebase -->
@@ -66,7 +73,7 @@
     });
   </script>
 
-  <!-- Service Worker séparé -->
+  <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
