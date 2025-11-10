@@ -34,3 +34,115 @@ body {
   opacity: 1;
   transform: scale(1.2);
 }
+
+/* === EFFETS DE PULSATION NÉON DOUCE === */
+
+/* Animation clé : respiration lumineuse */
+@keyframes neonPulse {
+  0% {
+    box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff;
+  }
+  50% {
+    box-shadow: 0 0 30px #ff00ff, 0 0 60px #9d00ff;
+  }
+  100% {
+    box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff;
+  }
+}
+
+/* Animation clé : respiration lumière du logo */
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 15px #ff00ff);
+  }
+  50% {
+    filter: drop-shadow(0 0 35px #ff33ff);
+  }
+  100% {
+    filter: drop-shadow(0 0 15px #ff00ff);
+  }
+}
+
+/* Application de l'effet sur les boutons */
+.glass-btn {
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+/* Application de l'effet sur le logo */
+.loov-logo {
+  animation: logoGlow 4s ease-in-out infinite;
+}
+
+/* === STYLE SPÉCIAL POUR LA PAGE INDEX === */
+
+/* Conteneur principal */
+.container {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 100%;
+}
+
+/* Champs de saisie */
+.container input {
+  display: block;
+  width: 260px;
+  margin: 10px auto;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+
+/* Groupe de boutons */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+/* Boutons néon + effet glass */
+.glass-btn {
+  width: 220px;
+  padding: 14px;
+  font-size: 1.2rem;
+  border: 2px solid #ff00ff;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 0, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff00ff, 0 0 50px #9d00ff;
+}
+
+/* Logo LOOV en bas centré */
+.logo-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.loov-logo {
+  width: 150px;
+  filter: drop-shadow(0 0 25px #ff00ff);
+}
