@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#ff00ff">
+  <meta name="theme-color" content="#ff00ff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bienvenue</title>
@@ -27,7 +27,7 @@
   <script type="module">
     import { auth } from './firebase.js';
     import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
-    from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
     const loginInput = document.getElementById('loginInput');
     const passwordInput = document.getElementById('passwordInput');
@@ -64,13 +64,15 @@
     window.addEventListener('load', () => {
       document.body.style.visibility = 'visible';
     });
-    <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-  .then(() => console.log("Service Worker OK ✅"))
-  .catch(error => console.log("SW error", error));
-}
-</script>
+  </script>
+
+  <!-- Service Worker séparé -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("Service Worker OK ✅"))
+        .catch(error => console.log("SW error", error));
+    }
   </script>
 </body>
 </html>
