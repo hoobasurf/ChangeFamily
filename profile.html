@@ -7,18 +7,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="bg-home"></div>
 
-  <div class="profile-card glass">
-    <img id="userPhoto" class="avatar">
-    <h2 id="userName"></h2>
-    <p id="userBio"></p>
-  </div>
+<div class="bg-home"></div>
 
-  <nav class="bottom-nav">
-    <a href="home.html">🏠</a>
-    <a href="camera.html">📸</a>
-    <a href="profile.html">👤</a>
-  </nav>
+<div class="profile-container">
+
+  <!-- Photo de profil -->
+  <img id="profilePic" class="profile-photo" src="default-avatar.png">
+
+  <!-- Choisir une nouvelle photo -->
+  <input type="file" id="newPhoto" accept="image/*" style="display:none;">
+  <label for="newPhoto" class="btn neon">Changer la photo</label>
+
+  <!-- Pseudo -->
+  <h2 id="displayName">Chargement...</h2>
+
+  <!-- Bio -->
+  <textarea id="bioInput" placeholder="Écris ta bio ici..."></textarea>
+
+  <button id="saveProfile" class="btn neon">Sauvegarder</button>
+</div>
+
+<!-- Navigation -->
+<div class="bottom-nav">
+  <a href="home.html">🏠</a>
+  <a href="camera.html">📷</a>
+  <a href="profile.html">👤</a>
+</div>
+
+<script src="profile.js" type="module"></script>
 </body>
 </html>
