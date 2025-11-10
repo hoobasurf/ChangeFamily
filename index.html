@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <h1>Bienvenue</h1>
+  <title>Bienvenue</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Fond d'écran -->
   <div class="bg-index"></div>
+
+  <!-- Encadré de connexion -->
   <div class="container">
-    <h1>Snap Clone Neon</h1>
+    <h1>Bienvenue</h1>
 
     <input id="loginInput" placeholder="Email ou Pseudo">
     <input id="passwordInput" type="password" placeholder="Mot de passe">
@@ -18,7 +21,7 @@
     <button id="signupBtn" class="glass-btn">Inscription</button>
   </div>
 
-
+  <!-- Script Firebase -->
   <script type="module">
     import { auth } from './firebase.js';
     import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
