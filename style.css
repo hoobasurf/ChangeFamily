@@ -13,7 +13,6 @@
   animation: bgMove 20s ease-in-out infinite alternate;
 }
 
-/* Animation douce du fond */
 @keyframes bgMove {
   0% { transform: scale(1) translate(0,0); }
   50% { transform: scale(1.03) translate(-15px,10px); }
@@ -53,12 +52,12 @@ body, html {
   color: #fff;
 }
 
-/* 🌸 Encadré de connexion — petit, centré et légèrement plus haut */
+/* 🌸 Encadré de connexion — encore plus haut (≈1,5cm) */
 .container {
   position: relative;
   z-index: 1;
   text-align: center;
-  margin-top: 12vh; /* 🔹 plus haut (~1.5cm) */
+  margin-top: 8vh; /* 🔹 plus haut que précédemment */
   padding: 15px 20px;
   max-width: 200px;
   min-height: 180px;
@@ -78,34 +77,46 @@ body, html {
   box-shadow: 0 0 25px #ff14b0, 0 0 60px #ff69b4;
 }
 
-/* 🌈 Titre "Bienvenue" effet néon */
+/* ---------------- Titre "Bienvenue" néon clignotant ---------------- */
 h1 {
   font-size: 1.8rem;
   font-weight: bold;
   text-transform: uppercase;
+  text-align: center; /* 🔹 centré */
   color: #ff69b4;
   text-shadow:
     0 0 5px #ff69b4,
     0 0 10px #ff14b0,
     0 0 20px #ff14b0,
     0 0 40px #ff69b4;
-  animation: neonPulse 2s ease-in-out infinite alternate;
+  animation: neonBlink 1.2s infinite alternate; /* 🔹 clignotement */
   margin-bottom: 15px;
 }
 
-@keyframes neonPulse {
+@keyframes neonBlink {
   0% {
     text-shadow:
-      0 0 5px #ff69b4,
-      0 0 10px #ff14b0,
-      0 0 20px #ff14b0;
+      0 0 2px #ff69b4,
+      0 0 4px #ff14b0,
+      0 0 6px #ff14b0,
+      0 0 10px #ff69b4;
+    opacity: 0.6;
+  }
+  50% {
+    text-shadow:
+      0 0 8px #ff69b4,
+      0 0 16px #ff14b0,
+      0 0 24px #ff14b0,
+      0 0 40px #ff69b4;
+    opacity: 1;
   }
   100% {
     text-shadow:
-      0 0 10px #ff69b4,
-      0 0 20px #ff14b0,
-      0 0 40px #ff14b0,
-      0 0 60px #ff69b4;
+      0 0 4px #ff69b4,
+      0 0 8px #ff14b0,
+      0 0 12px #ff14b0,
+      0 0 20px #ff69b4;
+    opacity: 0.7;
   }
 }
 
