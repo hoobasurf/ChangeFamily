@@ -1,132 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Timeline</title>
-
-<style>
-
-/* 🌆 BACKGROUND FUTURISTE ANIMÉ */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial;
-    height: 100vh;
-    overflow: hidden;
-    background: url('futuristic-city-forest.jpg') no-repeat center center fixed;
-    background-size: cover;
-    animation: zoom 25s infinite alternate ease-in-out;
-}
-
-@keyframes zoom {
-    from { transform: scale(1); }
-    to { transform: scale(1.08); }
-}
-
-/* Overlay sombre léger */
-body::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    z-index: 0;
-}
-
-/* CONTAINER PRINCIPAL */
-.container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-
-/* INPUT FILE */
-input[type="file"] {
-    display: none;
-}
-
-/* BOUTONS NÉON */
-.btn {
-    background: rgba(0,0,0,0.3);
-    border: 2px solid #ff00ff;
-    color: white;
-    padding: 14px 25px;
-    border-radius: 15px;
-    font-size: 16px;
-    margin: 10px;
-    cursor: pointer;
-    box-shadow: 0 0 10px #ff00ff, inset 0 0 8px #ff00ff;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px #ff00ff, inset 0 0 15px #ff00ff;
-}
-
-/* Effet clic Glass liquide */
-.btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 0 30px #ff00ff, inset 0 0 20px #ff00ff;
-}
-
-/* Aperçu image */
-#preview {
-    width: 260px;
-    height: 260px;
-    object-fit: cover;
-    border-radius: 20px;
-    display: none;
-    margin-top: 15px;
-    border: 3px solid #ff00ff;
-    box-shadow: 0 0 15px #ff00ff;
-}
-
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<link rel="stylesheet" href="style.css">
 </head>
+<body class="screen-bg">
 
-<body>
+<div class="screen">
+    <h2>Home</h2>
 
-<div class="bg-home"></div>
+    <div class="post-card">
+        <div class="post-header">
+            <img src="avatar-default.png" class="avatar">
+            <span class="post-username">pseudo</span>
+        </div>
 
-<div class="container">
+        <img id="lastPicture" class="post-picture">
 
-    <label for="file" class="btn">Choisir un fichier</label>
-    <input type="file" id="file" accept="image/*">
-
-
-
-    <img id="preview">
-
+        <div class="post-footer">
+            <span>❤️ 12</span>
+            <span>💬 3</span>
+        </div>
+    </div>
 </div>
 
-<script>
-// PREVIEW AVANT UPLOAD
-const fileInput = document.getElementById("file");
-const preview = document.getElementById("preview");
+<nav class="bottom-nav">
+    <a href="home.html">🏠</a>
+    <a href="camera.html">📸</a>
+    <a href="profile.html">👤</a>
+</nav>
 
-fileInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (file) {
-        preview.style.display = "block";
-        preview.src = URL.createObjectURL(file);
-    }
+<script type="module">
+import { auth, onAuthStateChanged } from "./auth.js";
+import { getLastImageForUser } from "./storage.js";
+
+onAuthStateChanged(auth, async user => {
+    if (!user) return;
+
+    const url = await getLastImageForUser(user.uid);
+    if (url) document.getElementById("lastPicture").src = url;
 });
-
-// BOUTON UPLOAD (préparation, pas encore Firebase pour l’instant)
-document.getElementById("uploadBtn").addEventListener("click", () => {
-    if (!fileInput.files[0]) {
-        alert("Choisis une image avant");
-        return;
-    }
-
-    alert("Ready pour upload Firebase ✅ (on l’ajoute ensuite)");
-});
-
 </script>
 
 </body>
