@@ -1,47 +1,38 @@
-import { auth } from './firebase.js';
+// ✅ auth.js
+
+import { auth } from "./firebase.js";
 import {
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
+  createUserWithEmailAndPassword,
+  updateProfile,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-const loginInput = document.getElementById("loginInput");
-const passwordInput = document.getElementById("passwordInput");
-const loginBtn = document.getElementById("loginBtn");
+export { auth, onAuthStateChanged };
 
-function convertLoginToEmail(login) {
-  if (login.includes("@")) {
-    return login; // déjà un email
-  }
-  return `${login.toLowerCase()}@user-pseudo.app`; // pseudo → faux email Firebase
-}
+// ✅ Fonction Login / SignUp avec email OU pseudo
+export async function loginOrSignup(identifier, password) {
 
-loginBtn.addEventListener("click", async () => {
-  const login = loginInput.value.trim();
-  const password = passwordInput.value.trim();
-  if (!login || !password) return alert("Remplis les champs");
+    let email = identifier;
 
-  const email = convertLoginToEmail(login);
-
-  try {
-    // Tentative connexion
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "home.html";
-  } catch {
-    // Si échec → création du compte
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      window.location.href = "home.html";
-    } catch (err) {
-      alert("Erreur : " + err.message);
+    // Si l'utilisateur met un pseudo → convertir en email interne
+    if (!identifier.includes("@")) {
+        email = identifier + "@changeFamily.app"; 
     }
-  }
-});
 
-async function logout() {
-  await signOut(auth);
-  window.location.href = "index.html";
+    try {
+        // 🔹 Tente de se connecter
+        await signInWithEmailAndPassword(auth, email, password);
+        return "login";
+    } catch (e) {
+        // 🔹 Sinon crée un compte
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        // 🔹 Enregistre le pseudo
+        await updateProfile(auth.currentUser, {
+            displayName: identifier
+        });
+
+        return "signup";
+    }
 }
-
-export { logout, auth, onAuthStateChanged };
