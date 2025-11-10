@@ -11,8 +11,8 @@
   <div class="container">
     <h1>Snap Clone Neon</h1>
 
-  <input id="loginInput" placeholder="Email ou Pseudo">
-<input id="passwordInput" type="password" placeholder="Mot de passe">
+    <input id="loginInput" placeholder="Email ou Pseudo">
+    <input id="passwordInput" type="password" placeholder="Mot de passe">
 
     <button id="loginBtn" class="glass-btn">Connexion</button>
     <button id="signupBtn" class="glass-btn">Inscription</button>
@@ -21,17 +21,24 @@
 
   <script type="module">
     import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+    from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+    const loginInput = document.getElementById('loginInput');
+    const passwordInput = document.getElementById('passwordInput');
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
 
+    function convertLoginToEmail(login) {
+      if (login.includes("@")) return login;
+      return `${login.toLowerCase()}@user-pseudo.app`;
+    }
+
     signupBtn.onclick = async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      if(!email || !password) return alert("Email et mot de passe requis");
+      const email = convertLoginToEmail(loginInput.value.trim());
+      const password = passwordInput.value.trim();
+      if(!email || !password) return alert("Email/Pseudo et mot de passe requis");
+
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         window.location.href = "home.html";
@@ -39,9 +46,10 @@
     };
 
     loginBtn.onclick = async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      if(!email || !password) return alert("Email et mot de passe requis");
+      const email = convertLoginToEmail(loginInput.value.trim());
+      const password = passwordInput.value.trim();
+      if(!email || !password) return alert("Email/Pseudo et mot de passe requis");
+
       try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "home.html";
