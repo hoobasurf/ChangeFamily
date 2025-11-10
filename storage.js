@@ -27,3 +27,29 @@ export async function getMessagesForUser(uid) {
         { username: "kate123", last: "Great photo!", avatar: "avatar-default.png" }
     ];
 }
+import { db } from "./firebase.js";
+import {
+  collection, addDoc, serverTimestamp, onSnapshot, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+export async function addMessage(room, text, uid) {
+  await addDoc(collection(db, "chats", room, "messages"), {
+    text,
+    uid,
+    createdAt: serverTimestamp()
+  });
+}
+
+export function listenToMessages(room, callback) {
+  const q = query(
+    collection(db, "chats", room, "messages"),
+    orderBy("createdAt", "asc")
+  );
+
+  onSnapshot(q, snapshot => {
+    snapshot.docChanges().forEach(change => {
+      const msg = change.doc.data();
+      callback(msg);
+    });
+  });
+}
