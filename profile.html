@@ -1,40 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profil</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="screen-bg">
 
-<div class="bg-home"></div>
+<div class="screen">
+    <h2>Profil</h2>
 
-<div class="profile-container">
-
-  <!-- Photo de profil -->
-  <img id="profilePic" class="profile-photo" src="default-avatar.png">
-
-  <!-- Choisir une nouvelle photo -->
-  <input type="file" id="newPhoto" accept="image/*" style="display:none;">
-  <label for="newPhoto" class="btn neon">Changer la photo</label>
-
-  <!-- Pseudo -->
-  <h2 id="displayName">Chargement...</h2>
-
-  <!-- Bio -->
-  <textarea id="bioInput" placeholder="Écris ta bio ici..."></textarea>
-
-  <button id="saveProfile" class="btn neon">Sauvegarder</button>
+    <div class="profile-card">
+        <img src="avatar-default.png" id="avatar" class="avatar big">
+        <h3 id="username"></h3>
+        <p id="bio">Aucun message pour le moment…</p>
+    </div>
 </div>
 
-<!-- Navigation -->
-<div class="bottom-nav">
-  <a href="home.html">🏠</a>
-  <a href="camera.html">📷</a>
-  <a href="profile.html">👤</a>
-</div>
+<nav class="bottom-nav">
+    <a href="home.html">🏠</a>
+    <a href="camera.html">📸</a>
+    <a href="profile.html">👤</a>
+</nav>
 
-<script src="profile.js" type="module"></script>
+<script type="module">
+import { auth, onAuthStateChanged } from "./auth.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        document.getElementById("username").textContent = user.email;
+    }
+});
+</script>
+
 </body>
 </html>
