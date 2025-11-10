@@ -6,12 +6,13 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-s
 
 // ✅ Mets ici TES CODES FIREBASE (copie depuis console.firebase.com)
 const firebaseConfig = {
-  apiKey: "TA_CLE_API",
-  authDomain: "TON_PROJET.firebaseapp.com",
-  projectId: "TON_PROJET",
-  storageBucket: "TON_PROJET.appspot.com",
-  messagingSenderId: "xxx",
-  appId: "xxx"
+  apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
+  authDomain: "changefamilysnap.firebaseapp.com",
+  projectId: "changefamilysnap",
+  storageBucket: "changefamilysnap.firebasestorage.app",
+  messagingSenderId: "335835110495",
+  appId: "1:335835110495:web:13194c4bd4579d4f434fea",
+  measurementId: "G-8D5PC0EZ74"
 };
 
 const app = initializeApp(firebaseConfig);
