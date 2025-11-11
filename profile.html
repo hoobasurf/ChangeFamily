@@ -10,24 +10,40 @@
 </head>
 <body>
 
-  <main class="profile-content">
-    <!-- Avatar / Selfie -->
-    <img src="avatar-default.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+<main class="profile-content">
+
+    <!-- Avatar avec paillettes scintillantes -->
+    <div class="avatar-container">
+        <img src="avatar-default.png" alt="Avatar" class="profile-avatar" id="avatarImg">
+        <div class="avatar-sparkle"></div>
+    </div>
 
     <!-- Pseudo futuriste pailleté -->
-    <div class="profile-pseudo" id="profilePseudo">Anonyme</div>
+    <div class="profile-pseudo" id="pseudoDisplay">Anonyme</div>
 
     <!-- Bouton modifier -->
-    <button class="edit-profile-btn" id="editProfileBtn">Modifier</button>
-  </main>
+    <button class="edit-profile-btn" id="editProfile">Modifier</button>
 
-  <!-- Dock de navigation -->
-  <div class="bottom-nav">
+    <!-- Panneau édition (hidden par défaut) -->
+    <div id="editPanel" class="edit-panel hidden">
+        <input type="file" id="avatarFile" accept="image/*" hidden>
+        <button id="chooseAvatar">Choisir une photo</button>
+        <button id="openCameraAvatar">Prendre un selfie</button>
+        <video id="selfieCam" autoplay hidden></video>
+        <button id="takeSelfie" hidden>Capturer</button>
+        <input type="text" id="pseudoInput" placeholder="Nouveau pseudo">
+        <button id="savePseudo">Enregistrer pseudo</button>
+    </div>
+
+</main>
+
+<!-- Dock navigation -->
+<div class="bottom-nav">
     <a href="home.html"><i class="fa-solid fa-house"></i></a>
     <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
     <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
     <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
-  </div>
+</div>
 
 </body>
 </html>
