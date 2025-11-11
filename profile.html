@@ -1,50 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="screen">
-  <h2>Profile</h2>
+  <h2>Profil</h2>
 
-  <!-- Avatar -->
-  <div class="profile-box">
-    <img id="profilePic" class="avatar large" src="avatar-default.png">
-  </div>
+  <img id="avatarImg" class="avatar large" src="avatar-default.png">
 
-  <!-- Pseudo affiché -->
-  <h3 id="displayName">Pseudo</h3>
+  <h3 id="pseudoDisplay">Mon pseudo</h3>
 
-  <!-- Bio -->
-  <textarea id="bioInput" placeholder="Ma bio..."></textarea>
-  <button id="saveProfile">Enregistrer</button>
+  <input id="pseudoInput" placeholder="Changer pseudo">
+  <button id="savePseudo">Enregistrer pseudo</button>
 
-  <!-- Upload photo avatar -->
-  <div class="btn-row">
-    <label for="newPhoto" class="btn">Changer photo</label>
-    <input type="file" id="newPhoto" accept="image/*" hidden>
-  </div>
+  <input type="file" id="avatarFile" accept="image/*" hidden>
+  <button id="chooseAvatar">Choisir photo</button>
+  <button id="openCameraAvatar">Prendre un selfie</button>
 
-  <!-- Générer avatar automatique -->
-  <div class="btn-row">
-    <button id="genAvatarBtn" class="btn">✨ Générer Avatar</button>
-  </div>
-
+  <video id="selfieCam" autoplay playsinline hidden></video>
+  <button id="takeSelfie" hidden>📸 Capturer</button>
 </div>
 
-<!-- Navigation -->
 <div class="bottom-nav">
-  <a href="home.html"><i class="fa-solid fa-house"></i></a>
-  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+  <a href="home.html">🏠</a>
+  <a href="camera.html">📸</a>
+  <a href="profile.html" class="active">👤</a>
 </div>
 
 <script type="module" src="profile.js"></script>
-
 </body>
 </html>
