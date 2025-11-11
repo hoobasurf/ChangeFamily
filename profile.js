@@ -1,7 +1,13 @@
 import { auth, storage, db } from "./firebase.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
-import { updateProfile } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import {
+  ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+import {
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {
+  doc, setDoc, getDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const avatarImg = document.getElementById("avatarImg");
 const fileInput = document.getElementById("avatarFile");
@@ -9,62 +15,69 @@ const chooseAvatar = document.getElementById("chooseAvatar");
 const openCam = document.getElementById("openCameraAvatar");
 const cam = document.getElementById("selfieCam");
 const takeSelfie = document.getElementById("takeSelfie");
+const pseudoDisplay = document.getElementById("pseudoDisplay");
 const pseudoInput = document.getElementById("pseudoInput");
 const savePseudo = document.getElementById("savePseudo");
-const pseudoDisplay = document.getElementById("pseudoDisplay");
+const panel = document.getElementById("editPanel");
+const editProfile = document.getElementById("editProfile");
 
-let stream = null;
+let selfieBlob = null;
 
-// ✅ Charger données utilisateur
+// ✅ afficher / cacher panneau
+editProfile.onclick = () => {
+  panel.classList.toggle("hidden");
+};
+
+// ✅ chargement profil
 auth.onAuthStateChanged(async user => {
   if (!user) return;
-  pseudoDisplay.textContent = user.displayName || "Sans pseudo";
-  if (user.photoURL) avatarImg.src = user.photoURL;
 
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (snap.exists()) {
-    if (snap.data().photoURL) avatarImg.src = snap.data().photoURL;
-    if (snap.data().pseudo) pseudoDisplay.textContent = snap.data().pseudo;
+  pseudoDisplay.textContent = user.displayName || "Sans pseudo";
+
+  const docSnap = await getDoc(doc(db, "users", user.uid));
+  if (docSnap.exists()) {
+    if (docSnap.data().photoURL) avatarImg.src = docSnap.data().photoURL;
+    if (docSnap.data().pseudo) pseudoDisplay.textContent = docSnap.data().pseudo;
   }
 });
 
-// ✅ Choisir image depuis galerie
+// ✅ ouvrir galerie
 chooseAvatar.onclick = () => fileInput.click();
-fileInput.onchange = () => uploadAvatar(fileInput.files[0]);
-
-// ✅ Ouvrir caméra selfie
-openCam.onclick = async () => {
-  stream = await navigator.mediaDevices.getUserMedia({ 
-    video: { facingMode: "user" } 
-  });
-  cam.srcObject = stream;
-  cam.hidden = false;
-  takeSelfie.hidden = false;
+fileInput.onchange = () => {
+  if (fileInput.files[0]) uploadAvatar(fileInput.files[0]);
 };
 
-// ✅ Prendre selfie sans effet miroir enregistré
+// ✅ ouvrir caméra selfie
+openCam.onclick = async () => {
+  cam.hidden = false;
+  takeSelfie.hidden = false;
+
+  cam.srcObject = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user" }
+  });
+};
+
+// ✅ prendre selfie
 takeSelfie.onclick = () => {
   const canvas = document.createElement("canvas");
   canvas.width = cam.videoWidth;
   canvas.height = cam.videoHeight;
-  const ctx = canvas.getContext("2d");
+  canvas.getContext("2d").drawImage(cam, 0, 0);
 
-  ctx.translate(canvas.width, 0);
-  ctx.scale(-1, 1);
-  ctx.drawImage(cam, 0, 0);
-
-  canvas.toBlob(blob => uploadAvatar(new File([blob], "selfie.jpg", { type: "image/jpeg" })));
-  stream.getTracks().forEach(t => t.stop());
-  cam.hidden = true;
-  takeSelfie.hidden = true;
+  canvas.toBlob(blob => {
+    selfieBlob = new File([blob], "selfie.jpg", { type: "image/jpeg" });
+    uploadAvatar(selfieBlob);
+  });
 };
 
-// ✅ Upload avatar
+// ✅ upload avatar dans Firebase
 async function uploadAvatar(file) {
   const user = auth.currentUser;
-  const refImg = ref(storage, `avatar/${user.uid}.jpg`);
-  await uploadBytes(refImg, file);
-  const url = await getDownloadURL(refImg);
+  const path = `avatar/${user.uid}.jpg`;
+  const fileRef = ref(storage, path);
+
+  await uploadBytes(fileRef, file);
+  const url = await getDownloadURL(fileRef);
 
   await updateProfile(user, { photoURL: url });
   await setDoc(doc(db, "users", user.uid), { photoURL: url }, { merge: true });
@@ -72,7 +85,7 @@ async function uploadAvatar(file) {
   avatarImg.src = url;
 }
 
-// ✅ Enregistrer pseudo
+// ✅ enregistrer pseudo
 savePseudo.onclick = async () => {
   const user = auth.currentUser;
   const pseudo = pseudoInput.value.trim();
@@ -82,5 +95,5 @@ savePseudo.onclick = async () => {
   await setDoc(doc(db, "users", user.uid), { pseudo }, { merge: true });
 
   pseudoDisplay.textContent = pseudo;
-  pseudoInput.value = "";
+  panel.classList.add("hidden");
 };
