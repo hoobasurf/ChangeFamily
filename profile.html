@@ -5,35 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profil</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<div class="screen">
-  <h2 style="text-align:center;">Profil</h2>
+<div class="screen profile-screen">
 
-  <center>
-    <img id="avatarImg" src="avatar-default.png" class="avatar" 
-         style="width:120px;height:120px;border-radius:50%;object-fit:cover;">
-  </center>
+  <div class="profile-card">
+    <img id="avatarImg" src="avatar-default.png" class="avatar-img">
+    <h2 id="pseudoDisplay">Sans pseudo</h2>
+  </div>
 
-  <center style="margin-top:10px;">
-    <button id="chooseAvatar" class="glass-btn">Galerie</button>
-    <button id="openCameraAvatar" class="glass-btn">Selfie</button>
-  </center>
+  <div class="profile-actions">
+    <button id="chooseAvatar">🖼 Galerie</button>
+    <button id="openCameraAvatar">📸 Selfie</button>
+  </div>
 
   <input type="file" id="avatarFile" accept="image/*" hidden>
 
-  <center>
-    <video id="selfieCam" autoplay hidden 
-           style="width:80%;border-radius:15px;margin-top:10px;transform:scaleX(-1);"></video>
-    <button id="takeSelfie" class="glass-btn" hidden>📸 Prendre</button>
-  </center>
+  <div class="camera-container">
+    <video id="selfieCam" autoplay hidden></video>
+    <button id="takeSelfie" hidden class="snap-btn">⚪</button>
+  </div>
 
-  <center style="margin-top:15px;">
-    <h3 id="pseudoDisplay">Sans pseudo</h3>
+  <div class="pseudo-box">
     <input id="pseudoInput" placeholder="Ton pseudo">
-    <button id="savePseudo" class="glass-btn">Enregistrer</button>
-  </center>
+    <button id="savePseudo">✔ Enregistrer</button>
+  </div>
+
 </div>
 
 <div class="bottom-nav">
