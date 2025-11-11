@@ -559,4 +559,31 @@ body::before {
   box-shadow: 0 0 20px #ff00ff;
 }
 
+  /* 🌠 Paillettes néon qui tombent */
+.sparkle {
+  position: fixed;
+  top: -10px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #ff00ff, #8a2be2, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 8px #ff00ff,
+    0 0 15px #cc00ff,
+    0 0 25px #7700ff;
+  animation: sparkleFall linear forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@keyframes sparkleFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
 
