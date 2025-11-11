@@ -1,42 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#ff00ff">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
 <div class="screen">
-    <h2>Home</h2>
-
-    <!-- ✅ Feed dynamique sera injecté ici par home.js -->
-    <div id="feed"></div>
-
+  <h2 style="text-align:center;margin-top:15px;">Accueil</h2>
+  <div id="feed" style="padding:15px; height:75vh; overflow-y:auto;"></div>
 </div>
 
-<!-- ✅ NAVIGATION UNIQUE -->
+<!-- ✅ NAVIGATION -->
 <div class="bottom-nav">
   <a href="home.html" class="active"><i class="fa-solid fa-house"></i></a>
   <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
   <a href="profile.html"><i class="fa-solid fa-user"></i></a>
 </div>
 
-<!-- Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-  .then(() => console.log("Service Worker OK ✅"))
-  .catch(error => console.log("SW error", error));
-}
-</script>
-
-<!-- Home script (feed + posts) -->
 <script type="module" src="home.js"></script>
-
 </body>
 </html>
