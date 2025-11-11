@@ -334,68 +334,51 @@ body::before {
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
 
+/* ===================== */
+/* BOTTOM NAV FUTURISTE  */
+/* ===================== */
 .bottom-nav {
   position: fixed;
-  bottom: 20px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 480px;
-  height: 70px;
-  background: rgba(0,0,0,0.3);
+  height: 62px;
+  background: rgba(0,0,0,0.25);
   backdrop-filter: blur(20px);
-  border-radius: 35px;
+  border-radius: 30px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .bottom-nav .nav-btn {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-decoration: none;
-  color: #b200ff;
-  font-size: 24px;
-  position: relative;
-  transition: transform 0.2s, text-shadow 0.2s;
-}
-
-.bottom-nav .nav-btn .nav-label {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 10px;
-  color: #b200ff;
-  text-shadow:
-    0 0 4px #ff66ff,
-    0 2px 6px rgba(178,0,255,0.5);
-  margin-top: 2px;
+  align-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #9f00ff;
+  background: transparent;
+  box-shadow: 0 0 8px #9f00ff33, 0 0 15px #9f00ff22;
+  transition: all 0.3s ease;
 }
 
 .bottom-nav .nav-btn i {
-  color: #b200ff;
-  -webkit-text-stroke: 1px #b200ff; /* léger contour néon */
-  text-shadow:
-    0 1px 2px rgba(178,0,255,0.5),
-    0 2px 4px rgba(178,0,255,0.3),
-    0 4px 6px rgba(178,0,255,0.2);
-  transition: transform 0.2s, text-shadow 0.2s;
+  color: transparent; /* intérieur transparent */
+  font-size: 24px;
+  -webkit-text-stroke: 1px #9f00ff; /* contour violet néon */
+}
+
+.bottom-nav .nav-btn.active {
+  border-color: #ff66ff;
+  box-shadow: 0 0 12px #ff66ff88, 0 0 25px #b100ff44;
 }
 
 .bottom-nav .nav-btn.active i {
-  text-shadow:
-    0 2px 4px #ff66ff,
-    0 4px 6px #b200ff,
-    0 6px 10px #ff99ff;
-}
-
-.bottom-nav .nav-btn:hover i {
-  transform: scale(1.2);
-  text-shadow:
-    0 3px 6px #ff66ff,
-    0 6px 10px #b200ff,
-    0 8px 14px #ff99ff;
+  -webkit-text-stroke-color: #ff66ff;
 }
 
 /* ===================== */
