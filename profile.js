@@ -1,71 +1,86 @@
-// profile.js
-import { auth, db } from './firebase.js';
-import { doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-import { uploadAvatarDataUrl, generateAvatarDataUrl } from './avatar.js';
+import { auth, storage, db } from "./firebase.js";
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+import { updateProfile } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-const profilePic = document.getElementById("profilePic") || document.getElementById("avatar");
-const fileInput = document.getElementById("newPhoto") || document.createElement('input');
-fileInput.type = 'file';
-fileInput.accept = 'image/*';
+const avatarImg = document.getElementById("avatarImg");
+const fileInput = document.getElementById("avatarFile");
+const chooseAvatar = document.getElementById("chooseAvatar");
+const openCam = document.getElementById("openCameraAvatar");
+const cam = document.getElementById("selfieCam");
+const takeSelfie = document.getElementById("takeSelfie");
+const pseudoInput = document.getElementById("pseudoInput");
+const savePseudo = document.getElementById("savePseudo");
+const pseudoDisplay = document.getElementById("pseudoDisplay");
 
-const displayName = document.getElementById("displayName") || document.getElementById("username");
-const bioInput = document.getElementById("bioInput") || document.getElementById("bio");
-const saveBtn = document.getElementById("saveProfile");
+let stream = null;
 
+// ✅ Charger données utilisateur
 auth.onAuthStateChanged(async user => {
-  if (!user) return (window.location.href = "index.html");
+  if (!user) return;
+  pseudoDisplay.textContent = user.displayName || "Sans pseudo";
+  if (user.photoURL) avatarImg.src = user.photoURL;
 
-  // ensure user doc exists
-  const uRef = doc(db, 'users', user.uid);
-  const snap = await getDoc(uRef);
-  if (!snap.exists()) {
-    await setDoc(uRef, {
-      uid: user.uid,
-      pseudo: user.displayName || (user.email ? user.email.split('@')[0] : 'user'),
-      bio: '',
-      photoURL: null,
-      createdAt: new Date()
-    });
+  const snap = await getDoc(doc(db, "users", user.uid));
+  if (snap.exists()) {
+    if (snap.data().photoURL) avatarImg.src = snap.data().photoURL;
+    if (snap.data().pseudo) pseudoDisplay.textContent = snap.data().pseudo;
   }
-
-  const data = (await getDoc(uRef)).data();
-  displayName.textContent = data.pseudo || user.displayName || 'Utilisateur';
-  if (bioInput) bioInput.value = data.bio || '';
-  if (profilePic) profilePic.src = data.photoURL || 'avatar-default.png';
 });
 
-// upload photo chosen by file input
-fileInput.addEventListener('change', async e => {
-  const f = e.target.files[0];
-  if (!f) return;
-  // convert to dataURL then upload or upload bytes directly (simple approach)
-  const reader = new FileReader();
-  reader.onload = async () => {
-    const dataUrl = reader.result; // base64
-    // upload as avatar
-    const url = await uploadAvatarDataUrl(auth.currentUser.uid, dataUrl);
-    await updateDoc(doc(db, 'users', auth.currentUser.uid), { photoURL: url });
-    profilePic.src = url;
-  };
-  reader.readAsDataURL(f);
-});
+// ✅ Choisir image depuis galerie
+chooseAvatar.onclick = () => fileInput.click();
+fileInput.onchange = () => uploadAvatar(fileInput.files[0]);
 
-// generate avatar button (you need to add a button with id="genAvatarBtn")
-const genBtn = document.getElementById('genAvatarBtn');
-if (genBtn) {
-  genBtn.addEventListener('click', async () => {
-    const name = displayName.textContent || 'U';
-    const dataUrl = generateAvatarDataUrl({ name, color: '#ffd17a', color2: '#ff8fb2' });
-    const url = await uploadAvatarDataUrl(auth.currentUser.uid, dataUrl);
-    await updateDoc(doc(db, 'users', auth.currentUser.uid), { photoURL: url });
-    profilePic.src = url;
+// ✅ Ouvrir caméra selfie
+openCam.onclick = async () => {
+  stream = await navigator.mediaDevices.getUserMedia({ 
+    video: { facingMode: "user" } 
   });
+  cam.srcObject = stream;
+  cam.hidden = false;
+  takeSelfie.hidden = false;
+};
+
+// ✅ Prendre selfie sans effet miroir enregistré
+takeSelfie.onclick = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = cam.videoWidth;
+  canvas.height = cam.videoHeight;
+  const ctx = canvas.getContext("2d");
+
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(cam, 0, 0);
+
+  canvas.toBlob(blob => uploadAvatar(new File([blob], "selfie.jpg", { type: "image/jpeg" })));
+  stream.getTracks().forEach(t => t.stop());
+  cam.hidden = true;
+  takeSelfie.hidden = true;
+};
+
+// ✅ Upload avatar
+async function uploadAvatar(file) {
+  const user = auth.currentUser;
+  const refImg = ref(storage, `avatar/${user.uid}.jpg`);
+  await uploadBytes(refImg, file);
+  const url = await getDownloadURL(refImg);
+
+  await updateProfile(user, { photoURL: url });
+  await setDoc(doc(db, "users", user.uid), { photoURL: url }, { merge: true });
+
+  avatarImg.src = url;
 }
 
-// save bio button
-if (saveBtn) {
-  saveBtn.addEventListener('click', async () => {
-    await updateDoc(doc(db, 'users', auth.currentUser.uid), { bio: bioInput.value || '' });
-    alert('Profil mis à jour ✅');
-  });
-}
+// ✅ Enregistrer pseudo
+savePseudo.onclick = async () => {
+  const user = auth.currentUser;
+  const pseudo = pseudoInput.value.trim();
+  if (!pseudo) return;
+
+  await updateProfile(user, { displayName: pseudo });
+  await setDoc(doc(db, "users", user.uid), { pseudo }, { merge: true });
+
+  pseudoDisplay.textContent = pseudo;
+  pseudoInput.value = "";
+};
