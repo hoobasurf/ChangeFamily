@@ -1,5 +1,4 @@
-// ✅ auth.js
-
+// auth.js — fonctions d'authentification (email ou pseudo)
 import { auth } from "./firebase.js";
 import {
   signInWithEmailAndPassword,
@@ -10,29 +9,32 @@ import {
 
 export { auth, onAuthStateChanged };
 
-// ✅ Fonction Login / SignUp avec email OU pseudo
+/**
+ * loginOrSignup(identifier, password)
+ * - identifier : email ou pseudo (si pseudo, on transforme en pseudo@domain)
+ * - renvoie "login" ou "signup"
+ */
 export async function loginOrSignup(identifier, password) {
+  if (!identifier || !password) throw new Error("identifier and password required");
 
-    let email = identifier;
+  let email = identifier;
+  if (!identifier.includes("@")) {
+    // conversion pseudo -> email interne
+    email = `${identifier.toLowerCase()}@user-pseudo.app`;
+  }
 
-    // Si l'utilisateur met un pseudo → convertir en email interne
+  try {
+    // tenter login
+    await signInWithEmailAndPassword(auth, email, password);
+    return "login";
+  } catch (err) {
+    // si échec de login => crée le compte
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+
+    // définir displayName sur le pseudo (si pseudo fourni)
     if (!identifier.includes("@")) {
-        email = identifier + "@changeFamily.app"; 
+      await updateProfile(auth.currentUser, { displayName: identifier });
     }
-
-    try {
-        // 🔹 Tente de se connecter
-        await signInWithEmailAndPassword(auth, email, password);
-        return "login";
-    } catch (e) {
-        // 🔹 Sinon crée un compte
-        await createUserWithEmailAndPassword(auth, email, password);
-
-        // 🔹 Enregistre le pseudo
-        await updateProfile(auth.currentUser, {
-            displayName: identifier
-        });
-
-        return "signup";
-    }
+    return "signup";
+  }
 }
