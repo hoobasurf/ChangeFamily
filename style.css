@@ -238,3 +238,47 @@ body {
   margin-top: 10px;
   text-align: center;
 }
+
+.avatar-big {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 15px;
+}
+
+.pseudo-big {
+  margin-top: 10px;
+  font-size: 22px;
+}
+
+.mini-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  backdrop-filter: blur(8px);
+}
+
+.edit-panel {
+  margin-top: 20px;
+  padding: 15px;
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.15);
+  border-radius: 15px;
+}
+
+.edit-panel.hidden {
+  display: none;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #ff00ff;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
