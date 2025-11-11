@@ -1,74 +1,46 @@
-// home.js
-import { auth, db } from './firebase.js';
-import {
-  collection, query, where, orderBy, onSnapshot, getDocs
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+const feed = document.getElementById("feed");
 
-const feed = document.getElementById('feed') || document.getElementById('globalGallery');
+// Charger les posts en temps réel, les plus récents en premier
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
-async function isFriend(viewerUid, ownerUid) {
-  if (viewerUid === ownerUid) return true;
-  // friends/{viewerUid}/list documents with field friendUid
-  const fRef = collection(db, 'friends', viewerUid, 'list');
-  const q = query(fRef);
-  const snap = await getDocs(q);
-  let ok = false;
-  snap.forEach(d => {
-    if (d.data().friendUid === ownerUid) ok = true;
-  });
-  return ok;
-}
+onSnapshot(q, snapshot => {
+  feed.innerHTML = "";
 
-auth.onAuthStateChanged(async user => {
-  if (!user) return window.location.href = 'index.html';
+  snapshot.forEach(doc => {
+    const post = doc.data();
 
-  // realtime listener for posts ordered by timestamp desc
-  const postsCol = collection(db, 'posts');
-  const q = query(postsCol, orderBy('timestamp', 'desc'));
+    const card = document.createElement("div");
+    card.style.background = "rgba(255,255,255,0.12)";
+    card.style.backdropFilter = "blur(12px)";
+    card.style.padding = "10px";
+    card.style.borderRadius = "15px";
+    card.style.marginBottom = "15px";
+    card.style.boxShadow = "0 0 10px rgba(255,0,255,0.3)";
 
-  onSnapshot(q, async snapshot => {
-    feed.innerHTML = '';
-    for (const docChange of snapshot.docs) {
-      const p = docChange.data();
-      const canSee = (p.visibility === 'public') || await isFriend(user.uid, p.uid) || (p.uid === user.uid);
-      if (!canSee) continue;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <img src="${post.avatar || "avatar-default.png"}" 
+             style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+        <b>${post.pseudo || "Anonyme"}</b>
+      </div>
 
-      const card = document.createElement('div');
-      card.className = 'post';
+      <div style="width:100%;">
+        ${
+          post.type === "video"
+          ? `<video src="${post.url}" style="width:100%;border-radius:12px;" autoplay muted loop playsinline></video>`
+          : `<img src="${post.url}" style="width:100%;border-radius:12px;">`
+        }
+      </div>
 
-      const header = document.createElement('div');
-      header.className = 'post-header';
-      header.innerHTML = `<img src="${p.ownerAvatar || 'avatar-default.png'}" class="avatar"> <strong>${p.pseudo}</strong>`;
-      card.appendChild(header);
+      <div style="margin-top:8px;font-size:18px;display:flex;gap:15px;">
+        <span>❤️</span>
+        <span>💬</span>
+      </div>
+    `;
 
-      const img = document.createElement('img');
-      img.src = p.photoURL;
-      img.className = 'post-img';
-      card.appendChild(img);
-
-      const footer = document.createElement('div');
-      footer.className = 'post-footer';
-      footer.innerHTML = `<div>${p.caption || ''}</div>
-                          <div class="post-actions">
-                            <button class="likeBtn" data-id="${docChange.id}">❤️ ${p.likesCount || 0}</button>
-                            <button class="commentBtn">💬</button>
-                          </div>`;
-      card.appendChild(footer);
-
-      feed.appendChild(card);
-    }
-
-    // attach like handlers after DOM created
-    document.querySelectorAll('.likeBtn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const postId = e.currentTarget.dataset.id;
-        // simple increment (no transaction shown here — ideal: use transaction)
-        const postRef = doc(db, 'posts', postId);
-        await updateDoc(postRef, { likesCount: ( (await getDoc(postRef)).data().likesCount || 0) + 1 });
-        // UI will update from onSnapshot realtime
-      });
-    });
+    feed.appendChild(card);
   });
 });
