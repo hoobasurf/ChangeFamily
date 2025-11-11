@@ -42,10 +42,12 @@ body::before {
 /* LOGO + EFFETS NEON    */
 /* ===================== */
 .logo-container {
+  position: fixed;
+  top: calc(50% - 100px); /* ajuste pour que le logo descende vers le champ utilisateur */
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 .loov-logo {
@@ -65,12 +67,11 @@ body::before {
 .container {
   text-align: center;
   position: absolute;
-  top: 50%; /* exactement au milieu de l’écran */
+  top: calc(50% + 1.5cm); /* descend tout le container de 1,5 cm */
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -55%);
   width: 100%;
 }
-
 .container input, .glass-btn {
   display: block;
   width: 260px;
