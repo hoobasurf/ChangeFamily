@@ -1,30 +1,28 @@
-const editBtn = document.getElementById("editProfileBtn");
+// Affiche / cache panneau édition
+const editBtn = document.getElementById("editBtn");
 const editPanel = document.getElementById("editPanel");
-const saveBtn = document.getElementById("saveProfileBtn");
+const saveBtn = document.getElementById("saveBtn");
 const profilePseudo = document.getElementById("profilePseudo");
-const newPseudoInput = document.getElementById("newPseudo");
-const newAvatarInput = document.getElementById("newAvatar");
-const profileAvatar = document.querySelector(".profile-avatar");
+const profileAvatar = document.getElementById("profileAvatar");
 
-// Ouvre/ferme le panneau édition
 editBtn.addEventListener("click", () => {
   editPanel.classList.toggle("hidden");
 });
 
-// Enregistre les modifications
+// Enregistrer pseudo et avatar
 saveBtn.addEventListener("click", () => {
-  // Changer pseudo
-  const newPseudo = newPseudoInput.value.trim();
+  const newPseudo = document.getElementById("newPseudo").value.trim();
+  const newAvatarFile = document.getElementById("newAvatar").files[0];
+
   if(newPseudo) profilePseudo.textContent = newPseudo;
 
-  // Changer avatar
-  const file = newAvatarInput.files[0];
-  if(file){
+  if(newAvatarFile){
     const reader = new FileReader();
-    reader.onload = e => profileAvatar.src = e.target.result;
-    reader.readAsDataURL(file);
+    reader.onload = () => {
+      profileAvatar.src = reader.result;
+    }
+    reader.readAsDataURL(newAvatarFile);
   }
 
-  // Fermer le panneau
   editPanel.classList.add("hidden");
 });
