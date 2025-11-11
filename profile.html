@@ -42,21 +42,17 @@
 <!-- ✅ NAVIGATION FUTURISTE -->
 <!-- ===================== -->
 <div class="bottom-nav">
-  <a href="profile.html" class="nav-btn active" data-page="profil">
+  <a href="profile.html" class="nav-btn" data-page="profile">
     <i class="fa-solid fa-user"></i>
-    <span class="nav-label">Profil</span>
   </a>
   <a href="story.html" class="nav-btn" data-page="story">
     <i class="fa-solid fa-house"></i>
-    <span class="nav-label">Story</span>
   </a>
   <a href="camera.html" class="nav-btn" data-page="photo">
     <i class="fa-solid fa-camera"></i>
-    <span class="nav-label">Photo</span>
   </a>
   <a href="chat.html" class="nav-btn" data-page="chat">
     <i class="fa-solid fa-comment"></i>
-    <span class="nav-label">Chat</span>
   </a>
 </div>
 
@@ -182,6 +178,18 @@ function launchSparkles(){
     setTimeout(()=>sparkle.remove(),4000);
   }
 }
+
+<script>
+  const currentPage = window.location.pathname.split("/").pop().split(".")[0];
+  document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
+    if(btn.dataset.page === currentPage) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+</script>
+  
 </script>
 
 </body>
