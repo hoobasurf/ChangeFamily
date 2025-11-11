@@ -3,38 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profil</title>
+<title>Accueil</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- ===================== -->
-<!-- PAGE PROFIL           -->
+<!-- HEADER PROFIL AVATAR   -->
 <!-- ===================== -->
 <div class="profile-content">
-  
-  <!-- Avatar + Paillettes -->
+
+  <!-- Avatar avec cercle fixe -->
   <div class="avatar-container">
     <img src="avatar-default.png" alt="Avatar" class="profile-avatar">
-    <div class="avatar-sparkle"></div>
   </div>
 
-  <!-- Pseudo futuriste -->
-  <div class="profile-pseudo" id="pseudo">Utilisateur</div>
-
-  <!-- Bouton Modifier -->
-  <button class="edit-profile-btn" id="editBtn">Modifier</button>
-
-  <!-- Panneau édition caché par défaut -->
-  <div class="edit-panel hidden" id="editPanel">
-    <input type="file" id="avatarInput" accept="image/*">
-    <button id="saveBtn">Enregistrer</button>
-  </div>
+  <!-- Pseudo futuriste contour rose néon -->
+  <div class="profile-pseudo" id="pseudo">MonPseudo</div>
 
 </div>
 
 <!-- ===================== -->
-<!-- FEED                  -->
+<!-- FEED POSTS            -->
 <!-- ===================== -->
 <div id="feed"></div>
 
@@ -48,34 +38,106 @@
 </div>
 
 <script type="module">
-// Gestion bouton Modifier
-const editBtn = document.getElementById('editBtn');
-const editPanel = document.getElementById('editPanel');
-const avatarInput = document.getElementById('avatarInput');
-const saveBtn = document.getElementById('saveBtn');
-const profileAvatar = document.querySelector('.profile-avatar');
-const pseudoDiv = document.getElementById('pseudo');
+// ======= SIMULATION POSTS =======
+const feed = document.getElementById('feed');
 
-editBtn.onclick = () => {
-  editPanel.classList.toggle('hidden');
-};
+// Exemple de posts pour tester
+const posts = [
+  { id: 1, pseudo: "Alice", avatar: "avatar1.png", url: "post1.png", type: "image", likes: 5, comments: 2 },
+  { id: 2, pseudo: "Bob", avatar: "avatar2.png", url: "post2.mp4", type: "video", likes: 8, comments: 3 }
+];
 
-// Charger avatar choisi
-avatarInput.onchange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    profileAvatar.src = event.target.result;
-  };
-  reader.readAsDataURL(file);
-};
+function renderFeed() {
+  feed.innerHTML = "";
+  posts.forEach(post => {
+    const card = document.createElement("div");
+    card.className = "post-card";
+    card.innerHTML = `
+      <div class="post-header">
+        <img src="${post.avatar}" class="avatar" />
+        <b class="poster-name">${post.pseudo}</b>
+      </div>
 
-// Simuler sauvegarde
-saveBtn.onclick = () => {
-  alert('Avatar enregistré !');
-  editPanel.classList.add('hidden');
-};
+      <div class="post-media">
+        ${
+          post.type === "video"
+            ? `<video src="${post.url}" autoplay muted loop playsinline></video>`
+            : `<img src="${post.url}" alt="post" />`
+        }
+      </div>
+
+      <div class="post-actions">
+        <span class="like-btn" data-id="${post.id}">❤️ <span class="like-count">${post.likes}</span></span>
+        <span class="comment-btn" data-id="${post.id}">💬 <span class="comment-count">${post.comments}</span></span>
+      </div>
+
+      <div class="comments" id="comments-${post.id}"></div>
+
+      <div class="comment-input" id="comment-input-${post.id}" style="display:none;">
+        <input type="text" placeholder="Écrire un commentaire..." />
+        <button>Envoyer</button>
+      </div>
+    `;
+    feed.appendChild(card);
+  });
+}
+
+renderFeed();
+
+// ======= INTERACTIONS LIKE / COMMENT =======
+document.addEventListener("click", e => {
+  // Like
+  if(e.target.closest(".like-btn")){
+    const btn = e.target.closest(".like-btn");
+    const countEl = btn.querySelector(".like-count");
+    countEl.textContent = parseInt(countEl.textContent) + 1;
+
+    // Lancer paillettes
+    launchSparkles();
+  }
+
+  // Comment input toggle
+  if(e.target.closest(".comment-btn")){
+    const btn = e.target.closest(".comment-btn");
+    const postId = btn.dataset.id;
+    const inputDiv = document.getElementById(`comment-input-${postId}`);
+    inputDiv.style.display = inputDiv.style.display === "none" ? "flex" : "none";
+    if(inputDiv.style.display !== "none"){
+      const input = inputDiv.querySelector("input");
+      setTimeout(()=>input.focus(),50);
+    }
+  }
+
+  // Envoyer commentaire
+  if(e.target.tagName === "BUTTON" && e.target.parentElement.classList.contains("comment-input")){
+    const input = e.target.parentElement.querySelector("input");
+    if(!input.value) return;
+    const postId = e.target.parentElement.id.replace("comment-input-","");
+    const commentDiv = document.getElementById(`comments-${postId}`);
+    const pseudo = "Moi";
+    const text = input.value;
+    commentDiv.innerHTML += `<p><b class="pseudo">${pseudo}</b> : ${text}</p>`;
+    input.value="";
+    launchSparkles();
+  }
+});
+
+// ======= PAILLETTES =======
+function launchSparkles(){
+  const sparkleCount = 30;
+  for(let i=0;i<sparkleCount;i++){
+    const sparkle = document.createElement("div");
+    sparkle.className="sparkle";
+    sparkle.style.left = Math.random()*100+"vw";
+    sparkle.style.width = (4+Math.random()*6)+"px";
+    sparkle.style.height = sparkle.style.width;
+    sparkle.style.animationDuration = 1.5+Math.random()*2+"s";
+    sparkle.style.opacity = 0.6 + Math.random()*0.4;
+    sparkle.style.transform = `scale(${0.6+Math.random()*1.4})`;
+    document.body.appendChild(sparkle);
+    setTimeout(()=>sparkle.remove(),4000);
+  }
+}
 </script>
 
 </body>
