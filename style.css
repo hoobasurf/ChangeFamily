@@ -387,3 +387,39 @@ body::before {
   opacity: 1;
   transform: scale(1.2);
 }
+
+/* 🎇 Paillettes autour de l'avatar */
+.profile-avatar {
+  position: relative;
+  display: block;
+  margin: 25px auto 10px auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid transparent;
+  box-shadow:
+    0 0 15px #ff00ff,
+    0 0 25px #ff66ff,
+    0 0 35px #a000ff,
+    0 0 45px #ff33ff;
+}
+
+/* Ajouter pseudo futuriste pailleté */
+.profile-pseudo {
+  font-weight: 700;
+  font-size: 22px;
+  color: #ff99ff;
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow:
+    0 0 4px #ff7aff,
+    0 0 10px #b100ff,
+    0 0 18px rgba(124,0,255,0.7);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08), transparent 10%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 10%);
+  background-blend-mode: screen;
+  padding: 0 6px;
+  border-radius: 4px;
+}
