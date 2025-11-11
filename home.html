@@ -3,23 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Accueil - ChangeFamily</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script defer src="home.js"></script>
 </head>
 <body>
 
-<div class="screen">
-  <h2 style="text-align:center;margin-top:15px;">Accueil</h2>
-  <div id="feed" class="feed-container"></div>
-</div>
+  <!-- En-tête de la page -->
+  <header class="header">
+    <h1>ChangeFamily</h1>
+  </header>
 
-<div class="bottom-nav">
-  <a href="home.html" class="active"><i class="fa-solid fa-house"></i></a>
-  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
-</div>
+  <!-- Contenu principal défilable -->
+  <main class="scrollable">
+    <div class="posts-container">
+      <!-- Exemple de publication -->
+      <div class="post">
+        <img src="futuristic-city-forest.jpg" alt="Image de publication">
+        <div class="post-actions">
+          <button class="like-btn">❤️ Like</button>
+          <button class="comment-btn">💬 Commenter</button>
+        </div>
+      </div>
 
-<script type="module" src="home.js"></script>
+      <!-- Ajoute ici tes autres posts -->
+    </div>
+  </main>
+
+  <!-- Dock de navigation -->
+  <footer class="dock">
+    <a href="home.html" class="dock-item active">🏠</a>
+    <a href="camera.html" class="dock-item">📷</a>
+    <a href="chat.html" class="dock-item">💬</a>
+    <a href="profile.html" class="dock-item">👤</a>
+  </footer>
+
 </body>
 </html>
