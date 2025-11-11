@@ -1,63 +1,18 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Camera</title>
-<link rel="stylesheet" href="style.css">
-<!-- styles inline pour le bouton caméra afin de ne pas modifier ton style.css -->
-<style>
-  body,html{height:100%;margin:0;}
-  .cam-wrap {position:relative;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:transparent;}
-  video#cam {width:100%;height:75vh;object-fit:cover;background:#000;}
-  .controls {position:fixed;bottom:34px;left:0;right:0;display:flex;justify-content:center;gap:18px;align-items:center;pointer-events:none;}
-  .btn-circle {pointer-events:all;width:82px;height:82px;border-radius:50%;background:linear-gradient(180deg,#fff,#ffd6ff);border:6px solid rgba(255,255,255,0.9);box-shadow:0 8px 30px rgba(123,17,255,0.18);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;}
-  .btn-small {pointer-events:all;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .top-bar {position:fixed;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:center;z-index:30}
-  .previewModal {position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:50}
-  .previewCard {width:92%;max-width:420px;border-radius:18px;background:rgba(255,255,255,0.02);padding:12px;backdrop-filter:blur(8px)}
-  .previewCard img, .previewCard video {width:100%;border-radius:12px;display:block}
-  .row {display:flex;gap:8px;justify-content:center;margin-top:10px}
-  .row button{padding:8px 12px;border-radius:10px;border:none;cursor:pointer}
-</style>
-</head>
 <body>
-  <div class="cam-wrap">
-    <div class="top-bar">
-      <a href="home.html" style="color:white;text-decoration:none">← Retour</a>
-      <div style="color:white;font-weight:600">Camera</div>
-      <div></div>
-    </div>
 
-    <video id="cam" autoplay playsinline></video>
+<video id="cameraPreview" autoplay></video>
 
-    <div class="controls">
-      <button id="flipBtn" class="btn-small" title="Changer caméra">🔁</button>
-      <div id="shutter" class="btn-circle" title="Prendre photo"></div>
-      <button id="chooseBtn" class="btn-small" title="Choisir fichier">📁</button>
-    </div>
+<!-- UI CAMERA SNAP -->
+<div class="camera-ui">
+  <button id="switchCam">🔁</button>
+  <button id="takePhoto">●</button>
+</div>
 
-    <input id="fileInput" type="file" accept="image/*,video/*" style="display:none">
-
-    <!-- Aperçu modal -->
-    <div id="previewModal" class="previewModal">
-      <div class="previewCard">
-        <div id="previewMedia"></div>
-        <div class="row">
-          <button id="useAsAvatarBtn">Utiliser comme avatar</button>
-          <button id="publishPostBtn">Publier dans le feed</button>
-          <button id="cancelPreviewBtn">Annuler</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bottom-nav" style="z-index:20;">
-    <a href="home.html"><i class="fa-solid fa-house"></i></a>
-    <a href="camera.html" class="active"><i class="fa-solid fa-camera"></i></a>
-    <a href="profile.html"><i class="fa-solid fa-user"></i></a>
-  </div>
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a class="active"><i class="fa-solid fa-camera"></i></a>
+  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+</div>
 
 <script type="module" src="camera.js"></script>
 </body>
-</html>
