@@ -282,3 +282,53 @@ body {
   color: white;
   font-weight: bold;
 }
+
+/* --- Correction du scroll sur la page d'accueil --- */
+.scrollable {
+  overflow-y: auto;
+  height: calc(100vh - 70px); /* garde la hauteur visible sous le dock */
+  padding-bottom: 80px;
+}
+
+/* --- Dock de navigation --- */
+.dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #8a2be2; /* ton violet */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.dock-item {
+  color: white;
+  text-decoration: none;
+  font-size: 22px;
+}
+
+.dock-item.active {
+  font-weight: bold;
+}
+
+/* --- Exemple de mise en forme des posts --- */
+.posts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px;
+}
+
+.post img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
