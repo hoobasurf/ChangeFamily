@@ -9,15 +9,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Fond d'écran -->
   <div class="bg-index"></div>
 
-  <!-- Encadré de connexion -->
   <div class="container">
     <h1>Bienvenue</h1>
 
-    <input id="loginInput" placeholder="Email ou Pseudo">
-    <input id="passwordInput" type="password" placeholder="Mot de passe">
+    <input id="loginInput" placeholder="Email ou Pseudo" autocomplete="username">
+    <input id="passwordInput" type="password" placeholder="Mot de passe" autocomplete="current-password">
 
     <div class="btn-group">
       <button id="loginBtn" class="glass-btn neon-btn">Connexion</button>
@@ -25,12 +23,10 @@
     </div>
   </div>
 
-  <!-- Logo en bas -->
   <div class="logo-container">
     <img src="loovi.png" alt="LOOV logo" class="loov-logo">
   </div>
 
-  <!-- Script Firebase -->
   <script type="module">
     import { auth } from './firebase.js';
     import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
@@ -42,38 +38,54 @@
     const signupBtn = document.getElementById('signupBtn');
 
     function convertLoginToEmail(login) {
+      if (!login) return "";
       if (login.includes("@")) return login;
       return `${login.toLowerCase()}@user-pseudo.app`;
     }
 
     signupBtn.onclick = async () => {
-      const email = convertLoginToEmail(loginInput.value.trim());
+      const identifier = loginInput.value.trim();
       const password = passwordInput.value.trim();
-      if(!email || !password) return alert("Email/Pseudo et mot de passe requis");
+      if (!identifier || !password) return alert("Email/Pseudo et mot de passe requis");
 
+      const email = convertLoginToEmail(identifier);
       try {
         await createUserWithEmailAndPassword(auth, email, password);
+        // si pseudo (sans @), on met displayName => utile pour profil
+        if (!identifier.includes("@")) {
+          try { await auth.currentUser.updateProfile({ displayName: identifier }); } catch {}
+        }
         window.location.href = "home.html";
-      } catch(e) { alert(e.message); }
+      } catch(e) {
+        alert(e.message);
+      }
     };
 
     loginBtn.onclick = async () => {
-      const email = convertLoginToEmail(loginInput.value.trim());
+      const identifier = loginInput.value.trim();
       const password = passwordInput.value.trim();
-      if(!email || !password) return alert("Email/Pseudo et mot de passe requis");
+      if (!identifier || !password) return alert("Email/Pseudo et mot de passe requis");
 
+      const email = convertLoginToEmail(identifier);
       try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "home.html";
-      } catch(e) { alert(e.message); }
+      } catch(e) {
+        alert(e.message);
+      }
     };
 
-    window.addEventListener('load', () => {
-      document.body.style.visibility = 'visible';
+    // optional: if already logged in, redirect to home
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // if already on login page and user logged in, go home
+        if (location.pathname.endsWith("index.html") || location.pathname.endsWith("/")) {
+          location.href = "home.html";
+        }
+      }
     });
   </script>
 
-  <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
