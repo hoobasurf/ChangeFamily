@@ -1,81 +1,46 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ff00ff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenue</title>
+  <title>Connexion - Loov</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
+  <!-- Container central -->
   <div class="container">
-    <h1>Bienvenue</h1>
-
-    <input id="loginInput" placeholder="Email ou Pseudo">
-    <input id="passwordInput" type="password" placeholder="Mot de passe">
-
+    <img src="https://via.placeholder.com/150x150.png?text=Logo" alt="Logo" class="loov-logo">
     <div class="btn-group">
-      <button id="loginBtn" class="glass-btn">Connexion</button>
-      <button id="signupBtn" class="glass-btn">Inscription</button>
+      <input type="text" placeholder="Pseudo" />
+      <input type="password" placeholder="Mot de passe" />
+      <button class="glass-btn">Connexion</button>
+      <button class="glass-btn">Inscription</button>
     </div>
   </div>
 
-  <div class="logo-container">
-    <img src="loovi.png" class="loov-logo">
+  <!-- Paillettes flottantes -->
+  <div class="sparkle"></div>
+
+  <!-- Dock de navigation bottom -->
+  <div class="bottom-nav">
+    <i class="fas fa-home active"></i>
+    <i class="fas fa-search"></i>
+    <i class="fas fa-plus-circle"></i>
+    <i class="fas fa-user"></i>
   </div>
 
-<script type="module">
-import { auth } from "./firebase.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } 
-  from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-
-// ⛔ AUCUNE REDIRECTION AUTOMATIQUE ICI
-
-const loginInput = document.getElementById("loginInput");
-const passwordInput = document.getElementById("passwordInput");
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
-
-function convert(login) {
-  if (login.includes("@")) return login;
-  return login.toLowerCase() + "@user.app";
-}
-
-// ✅ INSCRIPTION
-signupBtn.onclick = async () => {
-  const email = convert(loginInput.value.trim());
-  const pass = passwordInput.value.trim();
-  if (!email || !pass) return alert("Remplis tous les champs");
-
-  try {
-    await createUserWithEmailAndPassword(auth, email, pass);
-    alert("Inscription OK ✅");
-    location.href = "home.html"; // ✅ redirection manuelle seulement ici
-  } catch (e) {
-    alert(e.message);
-  }
-};
-
-// ✅ CONNEXION
-loginBtn.onclick = async () => {
-  const email = convert(loginInput.value.trim());
-  const pass = passwordInput.value.trim();
-  if (!email || !pass) return alert("Remplis tous les champs");
-
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    alert("Connexion OK ✅");
-    location.href = "home.html"; // ✅ redirection manuelle seulement ici
-  } catch (e) {
-    alert("Connexion échouée : " + e.message);
-  }
-};
-
-// ✅ (optionnel) Force déconnexion au chargement si tu veux tester
-await signOut(auth);
-console.log("✅ Déconnecté au lancement (mode test)");
-</script>
+  <script>
+    // Générer plusieurs paillettes aléatoires
+    const numSparkles = 15;
+    for (let i = 0; i < numSparkles; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = Math.random() * 100 + 'vw';
+      sparkle.style.animationDuration = (3 + Math.random() * 3) + 's';
+      sparkle.style.width = sparkle.style.height = (4 + Math.random() * 4) + 'px';
+      document.body.appendChild(sparkle);
+    }
+  </script>
 </body>
 </html>
