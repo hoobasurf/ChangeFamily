@@ -1,3 +1,7 @@
+// ===============================
+// home.js – Gestion du feed et interactions
+// ===============================
+
 import { db, auth, onAuthStateChanged } from "./firebase.js";
 import {
   collection,
@@ -16,7 +20,7 @@ let unsubscribeFeed = null; // pour annuler l'écoute précédente
 let scrollListenerAdded = false;
 let lastScroll = 0;
 
-// 🧠 Récupère l'utilisateur connecté
+// 🧠 Surveille l'état de l'utilisateur connecté
 onAuthStateChanged(auth, user => {
   currentUser = user || null;
   if (user) {
@@ -24,21 +28,20 @@ onAuthStateChanged(auth, user => {
   } else {
     console.log("Aucun utilisateur connecté");
   }
-  // (Re)charge le feed quand l'état auth change
   chargerFeed();
 });
 
 // ===============================
-// 🔄 Fonction principale
+// 🔄 Fonction principale : charger le feed
 // ===============================
 function chargerFeed() {
-  // Si on avait déjà un listener, on l'annule pour éviter doublons
+  // Annule l'écoute précédente pour éviter doublons
   if (unsubscribeFeed) {
     unsubscribeFeed();
     unsubscribeFeed = null;
   }
 
-  // Ajoute le listener de scroll une seule fois
+  // Ajoute un seul listener de scroll
   if (!scrollListenerAdded) {
     feed.addEventListener("scroll", () => {
       lastScroll = feed.scrollTop;
@@ -48,10 +51,8 @@ function chargerFeed() {
 
   const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
-  // onSnapshot renvoie une fonction unsubscribe
   unsubscribeFeed = onSnapshot(q, snapshot => {
-    // Reconstruire le feed
-    feed.innerHTML = "";
+    feed.innerHTML = ""; // vide le feed avant reconstruction
 
     snapshot.forEach(docSnap => {
       const post = docSnap.data();
@@ -100,17 +101,18 @@ function chargerFeed() {
       feed.appendChild(card);
     });
 
-    // Restaurer la position du scroll après rendu DOM (via RAF)
+    // Restaurer la position du scroll
     requestAnimationFrame(() => {
-      // Si le contenu est plus petit que la position sauvegardée, clamp
       const maxScroll = Math.max(0, feed.scrollHeight - feed.clientHeight);
       feed.scrollTop = Math.min(lastScroll, maxScroll);
     });
 
-    // ----------- Attache les listeners (après rendu) -----------
-    // Like
+    // =====================
+    // Attacher les interactions
+    // =====================
+
+    // Likes
     document.querySelectorAll(".like-btn").forEach(btn => {
-      // enlever les listeners précédents si nécessaire
       btn.onclick = async () => {
         if (!currentUser) return alert("Connecte-toi pour liker !");
         const postId = btn.dataset.id;
@@ -136,7 +138,7 @@ function chargerFeed() {
         const inputDiv = document.getElementById(`comment-input-${postId}`);
         if (!inputDiv) return;
         inputDiv.style.display = inputDiv.style.display === "none" ? "flex" : "none";
-        // focus l'input si on l'affiche
+
         if (inputDiv.style.display !== "none") {
           const input = inputDiv.querySelector("input");
           setTimeout(() => input?.focus(), 50);
@@ -144,7 +146,7 @@ function chargerFeed() {
       };
     });
 
-    // Envoi commentaire
+    // Envoyer commentaire
     document.querySelectorAll(".comment-input button").forEach(btn => {
       btn.onclick = async () => {
         if (!currentUser) return alert("Connecte-toi pour commenter !");
@@ -169,10 +171,8 @@ function chargerFeed() {
             })
           });
 
-          // Vide le champ et ferme l'input (optionnel)
-          input.value = "";
-          // lance paillettes
-          launchSparkles();
+          input.value = ""; // vide l'input
+          launchSparkles(); // déclenche paillettes
         } catch (e) {
           console.error("Erreur commentaire :", e);
         }
@@ -183,7 +183,9 @@ function chargerFeed() {
   });
 }
 
-// Sécurité simple : échapper HTML pour éviter injection dans commentaires affichés
+// ===============================
+// Échapper le HTML pour éviter l'injection
+// ===============================
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -195,7 +197,7 @@ function escapeHtml(str) {
 }
 
 // ===============================
-// ✨ PAILLETTES FUTURISTES
+// ✨ Paillettes futuristes
 // ===============================
 function launchSparkles() {
   const sparkleCount = 40;
