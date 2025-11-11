@@ -8,30 +8,42 @@
 </head>
 <body>
 
-<div class="screen">
-  <h2>Camera</h2>
+<video id="cam" autoplay playsinline></video>
 
-  <video id="cameraPreview" autoplay playsinline></video>
-
-  <div class="camera-controls">
-    <button id="flipCamera">🔁</button>
-    <button id="capturePhoto">📸</button>
-    <button id="captureVideo">🎥</button>
-  </div>
-
-  <input type="file" id="chooseFile" accept="image/*,video/*" hidden>
-  <button id="chooseMedia">📂 Choisir</button>
-
-  <div id="preview"></div>
-  <button id="publishBtn">Publier</button>
-</div>
+<button id="flipCam">🔄</button>
+<button id="takePhoto">📸</button>
 
 <div class="bottom-nav">
-  <a href="home.html">🏠</a>
-  <a href="camera.html" class="active">📸</a>
-  <a href="profile.html">👤</a>
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html" class="active"><i class="fa-solid fa-camera"></i></a>
+  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
 </div>
 
 <script type="module" src="camera.js"></script>
+
+<style>
+#cam {
+  width:100%;
+  height:65vh;
+  object-fit:cover;
+  transform: scaleX(-1);
+}
+#takePhoto, #flipCam {
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  width:70px;height:70px;
+  border-radius:50%;
+  font-size:30px;
+  background:white;
+  border:none;
+}
+#flipCam {
+  bottom:180px;
+  background:#ddd;
+}
+</style>
+
 </body>
 </html>
