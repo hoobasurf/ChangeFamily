@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profil</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="screen profile-screen">
+<div class="screen">
+  <h2 style="text-align:center;">Profil</h2>
 
-  <div class="profile-card">
-    <img id="avatarImg" src="avatar-default.png" class="avatar-img">
-    <h2 id="pseudoDisplay">Sans pseudo</h2>
-  </div>
+  <center>
+    <img id="avatarImg" src="avatar-default.png" class="avatar-big">
+    <h3 id="pseudoDisplay" class="pseudo-big">Sans pseudo</h3>
 
-  <div class="profile-actions">
-    <button id="chooseAvatar">🖼 Galerie</button>
-    <button id="openCameraAvatar">📸 Selfie</button>
-  </div>
+    <button id="editProfile" class="mini-btn">Modifier</button>
+  </center>
 
-  <input type="file" id="avatarFile" accept="image/*" hidden>
+  <!-- ✅ PANEL MODIFIER (caché au début) -->
+  <div id="editPanel" class="edit-panel hidden">
 
-  <div class="camera-container">
-    <video id="selfieCam" autoplay hidden></video>
-    <button id="takeSelfie" hidden class="snap-btn">⚪</button>
-  </div>
+    <h4>Modifier le profil</h4>
 
-  <div class="pseudo-box">
+    <!-- changer pseudo -->
     <input id="pseudoInput" placeholder="Ton pseudo">
-    <button id="savePseudo">✔ Enregistrer</button>
+
+    <!-- choix avatar -->
+    <div class="edit-avatar-buttons">
+      <button id="chooseAvatar" class="glass-btn">Galerie</button>
+      <button id="openCameraAvatar" class="glass-btn">Selfie</button>
+    </div>
+
+    <!-- selfie preview -->
+    <video id="selfieCam" autoplay playsinline hidden></video>
+    <button id="takeSelfie" class="glass-btn" hidden>📸 Prendre selfie</button>
+
+    <input type="file" id="avatarFile" accept="image/*" hidden>
+
+    <button id="savePseudo" class="save-btn">Enregistrer</button>
+
   </div>
 
 </div>
@@ -38,7 +47,7 @@
 <div class="bottom-nav">
   <a href="home.html"><i class="fa-solid fa-house"></i></a>
   <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+  <a class="active"><i class="fa-solid fa-user"></i></a>
 </div>
 
 <script type="module" src="profile.js"></script>
