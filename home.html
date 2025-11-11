@@ -19,13 +19,28 @@
 
 </div>
 
-<!-- ✅ NAVIGATION UNIQUE -->
+<!-- ===================== -->
+<!-- ✅ NAVIGATION FUTURISTE -->
+<!-- ===================== -->
 <div class="bottom-nav">
-  <a href="home.html" class="active"><i class="fa-solid fa-house"></i></a>
-  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+  <a href="profile.html" class="nav-btn active" data-page="profil">
+    <i class="fa-solid fa-user"></i>
+    <span class="nav-label">Profil</span>
+  </a>
+  <a href="story.html" class="nav-btn" data-page="story">
+    <i class="fa-solid fa-house"></i>
+    <span class="nav-label">Story</span>
+  </a>
+  <a href="camera.html" class="nav-btn" data-page="photo">
+    <i class="fa-solid fa-camera"></i>
+    <span class="nav-label">Photo</span>
+  </a>
+  <a href="chat.html" class="nav-btn" data-page="chat">
+    <i class="fa-solid fa-comment"></i>
+    <span class="nav-label">Chat</span>
+  </a>
 </div>
-
+    
 <!-- Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
