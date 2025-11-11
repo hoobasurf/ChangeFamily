@@ -287,3 +287,103 @@ body::before {
   60% { opacity: 0.9; }
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
+
+/* ===================== */
+/* PAGE PROFIL           */
+/* ===================== */
+
+/* Container principal */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: calc(100vh - 80px); /* pour garder le dock visible */
+  overflow-y: auto;
+  padding-bottom: 80px; /* espace pour le dock */
+}
+
+/* Avatar / selfie centré avec néon */
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 25px;
+  border: 5px solid transparent;
+  box-shadow:
+    0 0 10px #ff00ff,
+    0 0 20px #ff66ff,
+    0 0 30px #a000ff,
+    0 0 40px #ff33ff;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 15px #ff00ff,
+    0 0 30px #ff66ff,
+    0 0 40px #a000ff,
+    0 0 50px #ff33ff;
+}
+
+/* Pseudo futuriste pailleté */
+.profile-pseudo {
+  margin-top: 15px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ff99ff;
+  text-shadow:
+    0 0 4px #ff7aff,
+    0 0 10px #b100ff,
+    0 0 18px rgba(124,0,255,0.7);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08), transparent 10%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 10%);
+  background-blend-mode: screen;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+/* Petit bouton modifier discret */
+.edit-profile-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 0 6px #ff00ff, 0 0 12px #a000ff;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.edit-profile-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #ff00ff, 0 0 20px #a000ff;
+}
+
+/* Dock de navigation identique aux autres pages */
+.bottom-nav {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 62px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+.bottom-nav i {
+  font-size: 30px;
+  opacity: 0.5;
+}
+.bottom-nav .active i {
+  opacity: 1;
+  transform: scale(1.2);
+}
