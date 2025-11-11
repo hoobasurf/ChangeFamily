@@ -127,14 +127,21 @@ function chargerFeed() {
         const postRef = doc(db, "posts", postId);
 
         try {
-          await updateDoc(postRef, {
-            comments: arrayUnion({
-              userId: currentUser.uid,
-              userPseudo: currentUser.isAnonymous ? "Invité" : currentUser.email || "Utilisateur",
-              text,
-              createdAt: Date.now()
-            })
-          });
+          // Récupère le pseudo du user (en anonyme, on en crée un simple)
+const pseudo =
+  currentUser.displayName ||
+  (currentUser.isAnonymous
+    ? "Anonyme_" + currentUser.uid.slice(0, 4)
+    : "Utilisateur");
+
+await updateDoc(postRef, {
+  comments: arrayUnion({
+    userId: currentUser.uid,
+    userPseudo: pseudo,
+    text,
+    createdAt: Date.now()
+  })
+});
           input.value = "";
         } catch (e) {
           console.error("Erreur commentaire :", e);
