@@ -1,105 +1,87 @@
-// camera.js
-import { auth, storage } from './firebase.js';
+import { auth, storage } from "./firebase.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const db = getFirestore();
-const video = document.getElementById('cameraPreview');
-const takeBtn = document.getElementById('captureBtn');
-const chooseBtn = document.getElementById('chooseBtn');
-const chooseFile = document.getElementById('chooseFile');
-const publishBtn = document.getElementById('publishBtn');
-const captionEl = document.getElementById('caption');
-const previewWrap = document.getElementById('previewWrap');
+const video = document.getElementById("cameraPreview");
+const capturePhoto = document.getElementById("capturePhoto");
+const captureVideo = document.getElementById("captureVideo");
+const flipBtn = document.getElementById("flipCamera");
+const chooseMedia = document.getElementById("chooseMedia");
+const chooseFile = document.getElementById("chooseFile");
+const preview = document.getElementById("preview");
+const publishBtn = document.getElementById("publishBtn");
 
-let lastFile = null;
-let lastBlob = null;
+let facingMode = "user";
+let mediaRecorder, recordedChunks = [];
+let fileToUpload = null;
 
-// 🎥 Lancer la caméra
-async function startCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
-    video.srcObject = stream;
-  } catch (e) {
-    console.warn('📛 Caméra non disponible', e);
-  }
+// ✅ Démarrer caméra
+async function startCam() {
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+  video.srcObject = stream;
 }
-startCamera();
+startCam();
 
-// 📸 Capture photo
-takeBtn.addEventListener('click', async () => {
-  const track = video.srcObject && video.srcObject.getVideoTracks()[0];
-  if (!track) {
-    alert('⚠️ Caméra non dispo — sélectionne une image.');
-    return;
-  }
+// ✅ Flip caméra
+flipBtn.addEventListener("click", () => {
+  facingMode = facingMode === "user" ? "environment" : "user";
+  startCam();
+});
 
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth || 1280;
-  canvas.height = video.videoHeight || 720;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+// ✅ Capture photo
+capturePhoto.addEventListener("click", () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
   canvas.toBlob(blob => {
-    lastBlob = blob;
-    lastFile = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
-    showPreview(URL.createObjectURL(lastFile));
-  }, 'image/jpeg', 0.9);
+    fileToUpload = new File([blob], `photo_${Date.now()}.jpg`, { type: "image/jpeg" });
+    preview.innerHTML = `<img src="${URL.createObjectURL(fileToUpload)}">`;
+  });
 });
 
-// 📁 Choisir une photo
-chooseBtn.addEventListener('click', () => chooseFile.click());
-chooseFile.addEventListener('change', (e) => {
-  const f = e.target.files[0];
-  if (!f) return;
-  lastFile = f;
-  lastBlob = null;
-  showPreview(URL.createObjectURL(f));
+// ✅ Capture vidéo
+captureVideo.addEventListener("click", () => {
+  const stream = video.srcObject;
+  mediaRecorder = new MediaRecorder(stream);
+  recordedChunks = [];
+
+  mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
+  mediaRecorder.onstop = () => {
+    const blob = new Blob(recordedChunks, { type: "video/mp4" });
+    fileToUpload = new File([blob], `video_${Date.now()}.mp4`);
+    preview.innerHTML = `<video controls src="${URL.createObjectURL(fileToUpload)}"></video>`;
+  };
+
+  mediaRecorder.start();
+  setTimeout(() => mediaRecorder.stop(), 3000);
 });
 
-// 🖼 Afficher aperçu
-function showPreview(url) {
-  previewWrap.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = url;
-  img.style.maxWidth = '100%';
-  img.style.borderRadius = '16px';
-  previewWrap.appendChild(img);
-}
+// ✅ Choisir média
+chooseMedia.addEventListener("click", () => chooseFile.click());
+chooseFile.addEventListener("change", e => {
+  fileToUpload = e.target.files[0];
+  preview.innerHTML = fileToUpload.type.startsWith("video")
+    ? `<video controls src="${URL.createObjectURL(fileToUpload)}"></video>`
+    : `<img src="${URL.createObjectURL(fileToUpload)}">`;
+});
 
-// 🚀 Publication (Upload + Enregistrer dans Firestore)
-publishBtn.addEventListener('click', async () => {
-  const user = auth.currentUser;
-  if (!user) return alert('❗Connecte-toi d’abord');
+// ✅ Publier
+publishBtn.addEventListener("click", async () => {
+  if (!auth.currentUser || !fileToUpload) return alert("Rien à publier");
 
-  const visibility = document.querySelector('input[name="visibility"]:checked')?.value || "public";
-  const caption = captionEl.value || '';
+  const path = `posts/${auth.currentUser.uid}/${Date.now()}_${fileToUpload.name}`;
+  const url = await uploadBytes(ref(storage, path), fileToUpload).then(() => getDownloadURL(ref(storage, path)));
 
-  if (!lastFile) return alert('⚠️ Ajoute une photo avant de publier');
+  await addDoc(collection(db, "posts"), {
+    uid: auth.currentUser.uid,
+    pseudo: auth.currentUser.displayName || "Anonyme",
+    url,
+    type: fileToUpload.type.includes("video") ? "video" : "image",
+    createdAt: serverTimestamp(),
+    visibility: "friends"
+  });
 
-  const storagePath = `posts/${user.uid}/${Date.now()}_${lastFile.name}`;
-  const sRef = ref(storage, storagePath);
-
-  try {
-    await uploadBytes(sRef, lastFile);
-    const url = await getDownloadURL(sRef);
-
-    const postData = {
-      uid: user.uid,
-      pseudo: user.displayName || user.email.split("@")[0] || "Anonyme",
-      photoURL: url,
-      caption: caption,
-      visibility: visibility,
-      timestamp: serverTimestamp()
-    };
-
-    await addDoc(collection(db, "posts"), postData);
-
-    alert('✅ Publication réussie !');
-    window.location.href = "home.html";
-
-  } catch (err) {
-    console.error("Erreur upload :", err);
-    alert("Erreur lors de la publication");
-  }
+  location.href = "home.html";
 });
