@@ -1,13 +1,7 @@
 import { auth, storage, db } from "./firebase.js";
-import {
-  ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
-import {
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import {
-  doc, setDoc, getDoc
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+import { updateProfile } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const avatarImg = document.getElementById("avatarImg");
 const fileInput = document.getElementById("avatarFile");
@@ -23,16 +17,14 @@ const editProfile = document.getElementById("editProfile");
 
 let selfieBlob = null;
 
-// ✅ afficher / cacher panneau
-editProfile.onclick = () => {
-  panel.classList.toggle("hidden");
-};
+// Afficher / cacher panneau
+editProfile.onclick = () => panel.classList.toggle("hidden");
 
-// ✅ chargement profil
+// Charger profil
 auth.onAuthStateChanged(async user => {
   if (!user) return;
 
-  pseudoDisplay.textContent = user.displayName || "Sans pseudo";
+  pseudoDisplay.textContent = user.displayName || "Anonyme";
 
   const docSnap = await getDoc(doc(db, "users", user.uid));
   if (docSnap.exists()) {
@@ -41,23 +33,26 @@ auth.onAuthStateChanged(async user => {
   }
 });
 
-// ✅ ouvrir galerie
+// Choisir image
 chooseAvatar.onclick = () => fileInput.click();
 fileInput.onchange = () => {
   if (fileInput.files[0]) uploadAvatar(fileInput.files[0]);
 };
 
-// ✅ ouvrir caméra selfie
+// Ouvrir caméra
 openCam.onclick = async () => {
   cam.hidden = false;
   takeSelfie.hidden = false;
+  cam.width = 320;
+  cam.height = 240;
+  cam.style.borderRadius = "12px";
+  cam.style.boxShadow = "0 0 20px #ff00ff, 0 0 40px #a000ff";
+  cam.style.margin = "10px 0";
 
-  cam.srcObject = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "user" }
-  });
+  cam.srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
 };
 
-// ✅ prendre selfie
+// Capturer selfie
 takeSelfie.onclick = () => {
   const canvas = document.createElement("canvas");
   canvas.width = cam.videoWidth;
@@ -67,10 +62,13 @@ takeSelfie.onclick = () => {
   canvas.toBlob(blob => {
     selfieBlob = new File([blob], "selfie.jpg", { type: "image/jpeg" });
     uploadAvatar(selfieBlob);
+    cam.srcObject.getTracks().forEach(track => track.stop());
+    cam.hidden = true;
+    takeSelfie.hidden = true;
   });
 };
 
-// ✅ upload avatar dans Firebase
+// Upload avatar
 async function uploadAvatar(file) {
   const user = auth.currentUser;
   const path = `avatar/${user.uid}.jpg`;
@@ -85,7 +83,7 @@ async function uploadAvatar(file) {
   avatarImg.src = url;
 }
 
-// ✅ enregistrer pseudo
+// Enregistrer pseudo
 savePseudo.onclick = async () => {
   const user = auth.currentUser;
   const pseudo = pseudoInput.value.trim();
