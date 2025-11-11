@@ -9,89 +9,79 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="bg-index"></div>
 
   <div class="container">
     <h1>Bienvenue</h1>
 
-    <input id="loginInput" placeholder="Email ou Pseudo" autocomplete="username">
-    <input id="passwordInput" type="password" placeholder="Mot de passe" autocomplete="current-password">
+    <input id="loginInput" placeholder="Email ou Pseudo">
+    <input id="passwordInput" type="password" placeholder="Mot de passe">
 
     <div class="btn-group">
-      <button id="loginBtn" class="glass-btn neon-btn">Connexion</button>
-      <button id="signupBtn" class="glass-btn neon-btn">Inscription</button>
+      <button id="loginBtn" class="glass-btn">Connexion</button>
+      <button id="signupBtn" class="glass-btn">Inscription</button>
     </div>
   </div>
 
   <div class="logo-container">
-    <img src="loovi.png" alt="LOOV logo" class="loov-logo">
+    <img src="loovi.png" class="loov-logo">
   </div>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+<script type="module">
+import { auth } from "./firebase.js";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+  from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-    const loginInput = document.getElementById('loginInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const loginBtn = document.getElementById('loginBtn');
-    const signupBtn = document.getElementById('signupBtn');
+// ✅ Empêcher redirection auto SAUF si déjà co ET sur index
+auth.onAuthStateChanged(user => {
+  if (user && (location.pathname.endsWith("index.html") || location.pathname === "/")) {
+    location.href = "home.html";
+  }
+});
 
-    function convertLoginToEmail(login) {
-      if (!login) return "";
-      if (login.includes("@")) return login;
-      return `${login.toLowerCase()}@user-pseudo.app`;
-    }
+const loginInput = document.getElementById("loginInput");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
 
-    signupBtn.onclick = async () => {
-      const identifier = loginInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!identifier || !password) return alert("Email/Pseudo et mot de passe requis");
+function convert(login) {
+  if (login.includes("@")) return login;
+  return login.toLowerCase() + "@user.app";
+}
 
-      const email = convertLoginToEmail(identifier);
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        // si pseudo (sans @), on met displayName => utile pour profil
-        if (!identifier.includes("@")) {
-          try { await auth.currentUser.updateProfile({ displayName: identifier }); } catch {}
-        }
-        window.location.href = "home.html";
-      } catch(e) {
-        alert(e.message);
-      }
-    };
+// ✅ Inscription
+signupBtn.onclick = async () => {
+  const email = convert(loginInput.value.trim());
+  const pass = passwordInput.value.trim();
+  if (!email || !pass) return alert("Remplis tous les champs");
 
-    loginBtn.onclick = async () => {
-      const identifier = loginInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!identifier || !password) return alert("Email/Pseudo et mot de passe requis");
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+    location.href = "home.html";
+  } catch (e) {
+    alert(e.message);
+  }
+};
 
-      const email = convertLoginToEmail(identifier);
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "home.html";
-      } catch(e) {
-        alert(e.message);
-      }
-    };
+// ✅ Connexion
+loginBtn.onclick = async () => {
+  const email = convert(loginInput.value.trim());
+  const pass = passwordInput.value.trim();
+  if (!email || !pass) return alert("Remplis tous les champs");
 
-    // optional: if already logged in, redirect to home
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        // if already on login page and user logged in, go home
-        if (location.pathname.endsWith("index.html") || location.pathname.endsWith("/")) {
-          location.href = "home.html";
-        }
-      }
-    });
-  </script>
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    location.href = "home.html";
+  } catch (e) {
+    alert("Connexion échouée : " + e.message);
+  }
+};
+</script>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log("Service Worker OK ✅"))
-        .catch(error => console.log("SW error", error));
-    }
-  </script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+</script>
+
 </body>
 </html>
