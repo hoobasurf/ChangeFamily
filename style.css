@@ -399,6 +399,44 @@ body {
   color: #444;
 }
 
+.post-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 15px;
+  padding: 10px;
+  background: #fff;
+}
+
+.post-media img,
+.post-media video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.like-btn.liked {
+  color: red;
+}
+
+.comment-input {
+  margin-top: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.comment-input button {
+  padding: 5px 10px;
+  border: none;
+  background: #ff00ff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 
