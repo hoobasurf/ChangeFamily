@@ -1,16 +1,17 @@
-/* ===================== */
-/* 🎨 FOND GLOBAL ET POLICE */
-/* ===================== */
+/* ================================== */
+/* 🎨 FOND GLOBAL ET POLICE FUTURISTE */
+/* ================================== */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Orbitron', sans-serif;
-  color: #fff;
-  background: radial-gradient(circle at 20% 20%, #1a0023, #000);
+  color: white;
+  height: 100vh;
   overflow-x: hidden;
+  background: radial-gradient(circle at 20% 20%, #1a0023, #000);
 }
 
-/* Import police futuriste */
+/* Import police futuriste Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
 /* Animation d’étoiles scintillantes */
@@ -31,17 +32,135 @@ body::before {
 }
 
 /* ===================== */
-/* POST CARD FUTURISTE */
+/* NAVIGATION BOTTOM-NAV  */
 /* ===================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 62px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+.bottom-nav i {
+  font-size: 30px;
+  opacity: 0.5;
+}
+.bottom-nav .active i {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* ===================== */
+/* EFFETS NEON / LOGO    */
+/* ===================== */
+@keyframes neonPulse {
+  0% { box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff; }
+  50% { box-shadow: 0 0 30px #ff00ff, 0 0 60px #9d00ff; }
+  100% { box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff; }
+}
+@keyframes logoGlow {
+  0% { filter: drop-shadow(0 0 15px #ff00ff); }
+  50% { filter: drop-shadow(0 0 35px #ff33ff); }
+  100% { filter: drop-shadow(0 0 15px #ff00ff); }
+}
+.glass-btn { animation: neonPulse 3s ease-in-out infinite; }
+.loov-logo { animation: logoGlow 4s ease-in-out infinite; }
+
+/* ===================== */
+/* PAGE INDEX / CONNEXION */
+/* ===================== */
+.container {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 100%;
+}
+.container input {
+  display: block;
+  width: 260px;
+  margin: 10px auto;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+.glass-btn {
+  width: 220px;
+  padding: 14px;
+  font-size: 1.2rem;
+  border: 2px solid #ff00ff;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px #ff00ff, 0 0 25px #9d00ff;
+}
+.glass-btn:hover {
+  background: rgba(255, 0, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff00ff, 0 0 50px #9d00ff;
+}
+.logo-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.loov-logo {
+  width: 150px;
+  filter: drop-shadow(0 0 25px #ff00ff);
+}
+
+/* ===================== */
+/* FEED / POSTS          */
+/* ===================== */
+#feed {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - 80px);
+  padding: 10px;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  scroll-behavior: smooth;
+}
+
 .post-card {
   background: rgba(20, 0, 40, 0.6);
   border: 1px solid #7a00ff;
   box-shadow: 0 0 20px rgba(170, 0, 255, 0.4);
   border-radius: 15px;
-  margin: 20px;
   padding: 15px;
-  backdrop-filter: blur(10px);
   transition: transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(10px);
 }
 .post-card:hover {
   transform: translateY(-5px);
@@ -87,7 +206,7 @@ body::before {
 }
 
 /* ===================== */
-/* COMMENTAIRES ET INPUT */
+/* COMMENTAIRES           */
 /* ===================== */
 .comments {
   margin-top: 10px;
@@ -99,11 +218,9 @@ body::before {
 .comments p {
   margin: 5px 0;
 }
-
-/* Pseudo futuriste néon pailleté */
 .pseudo {
   color: #c46eff;
-  font-weight: 700; /* gras */
+  font-weight: 700;
   text-shadow:
     0 0 4px #ff7aff,
     0 0 10px #b100ff,
@@ -116,7 +233,6 @@ body::before {
   border-radius: 3px;
 }
 
-/* Champ commentaire */
 .comment-input {
   display: flex;
   gap: 8px;
@@ -149,7 +265,7 @@ body::before {
 }
 
 /* ===================== */
-/* PAILLETTES NÉON */
+/* PAILLETTES NÉON        */
 /* ===================== */
 .sparkle {
   position: fixed;
@@ -166,25 +282,8 @@ body::before {
   z-index: 9999;
   pointer-events: none;
 }
-
 @keyframes sparkleFall {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 1;
-  }
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   60% { opacity: 0.9; }
-  100% {
-    transform: translateY(105vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-
-/* ===================== */
-/* FEED SCROLLABLE */
-#feed {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  height: calc(100vh - 80px); /* sous la nav */
-  scroll-behavior: smooth;
-  padding-bottom: 80px; /* espace nav */
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
