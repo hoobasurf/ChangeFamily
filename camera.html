@@ -1,18 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appareil Photo - ChangeFamily</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="camera.js"></script>
+</head>
 <body>
 
-<video id="cameraPreview" autoplay></video>
+  <!-- En-tête -->
+  <header class="header">
+    <h1>Appareil Photo</h1>
+  </header>
 
-<!-- UI CAMERA SNAP -->
-<div class="camera-ui">
-  <button id="switchCam">🔁</button>
-  <button id="takePhoto">●</button>
-</div>
+  <!-- Contenu principal défilable -->
+  <main class="scrollable camera-page">
+    <div class="camera-container">
+      <video id="camera-view" autoplay playsinline></video>
+      <canvas id="camera-output"></canvas>
+      <button id="capture-btn" class="capture-button">📸 Prendre une photo</button>
+    </div>
+  </main>
 
-<div class="bottom-nav">
-  <a href="home.html"><i class="fa-solid fa-house"></i></a>
-  <a class="active"><i class="fa-solid fa-camera"></i></a>
-  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
-</div>
+  <!-- Dock de navigation identique à la page d'accueil -->
+  <footer class="dock">
+    <a href="home.html" class="dock-item">🏠</a>
+    <a href="camera.html" class="dock-item active">📷</a>
+    <a href="chat.html" class="dock-item">💬</a>
+    <a href="profile.html" class="dock-item">👤</a>
+  </footer>
 
-<script type="module" src="camera.js"></script>
 </body>
+</html>
