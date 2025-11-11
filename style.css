@@ -1,20 +1,21 @@
 /* ================================== */
 /* 🎨 FOND GLOBAL ET POLICE FUTURISTE */
 /* ================================== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Orbitron', sans-serif;
   color: white;
-  height: 100vh;
+  min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
   background: radial-gradient(circle at 20% 20%, #1a0023, #000);
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
-
-/* Import police futuriste Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
 /* Animation étoiles scintillantes */
 body::before {
@@ -41,6 +42,7 @@ body::before {
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
+  max-width: 500px;
   height: 62px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(25px);
@@ -50,13 +52,24 @@ body::before {
   align-items: center;
   z-index: 999;
 }
-.bottom-nav i {
-  font-size: 30px;
-  opacity: 0.5;
+.bottom-nav i { font-size: 30px; opacity: 0.5; }
+.bottom-nav .active { opacity: 1; transform: scale(1.2); }
+
+/* ===================== */
+/* ACCUEIL - PETIT AVATAR */
+/* ===================== */
+.home-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #a000ff;
+  box-shadow: 0 0 15px #a000ff;
+  transition: transform 0.2s, box-shadow 0.3s;
 }
-.bottom-nav .active {
-  opacity: 1;
-  transform: scale(1.2);
+.home-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff66ff;
 }
 
 /* ===================== */
@@ -69,9 +82,10 @@ body::before {
   text-align: center;
   padding-top: 50px;
   min-height: calc(100vh - 80px);
-  overflow-y: auto;
-  padding-bottom: 80px; /* espace pour le dock */
   width: 100%;
+  max-width: 500px;
+  overflow-y: auto;
+  padding-bottom: 80px;
 }
 
 /* Conteneur avatar */
@@ -87,15 +101,16 @@ body::before {
 
 /* Avatar avec cercle néon clignotant */
 .profile-avatar {
-  width: 140px;
-  height: 140px;
+  width: 100%;
+  height: 100%;
+  max-width: 140px;
+  max-height: 140px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #a000ff;
   box-shadow: 0 0 20px #a000ff;
   animation: neonBlink 1.5s ease-in-out infinite;
   transition: transform 0.2s, box-shadow 0.3s;
-  z-index: 2;
 }
 .profile-avatar:hover {
   transform: scale(1.05);
@@ -109,15 +124,11 @@ body::before {
 /* Paillettes autour de l'avatar */
 .avatar-sparkle {
   position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
+  top: -5px; left: -5px; right: -5px; bottom: -5px;
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle, #ff66ff 0%, rgba(255,255,255,0) 70%);
   animation: sparklePulse 1.5s ease-in-out infinite alternate;
-  z-index: 1;
 }
 @keyframes sparklePulse {
   0% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff; opacity: 0.8; }
@@ -142,9 +153,9 @@ body::before {
   animation: pseudoGlow 2s ease-in-out infinite alternate;
 }
 @keyframes pseudoGlow {
-  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7); }
-  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff, 0 0 22px rgba(150,0,255,0.8); }
-  100% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7); }
+  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
+  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff, 0 0 22px rgba(150,0,255,0.8);}
+  100% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
 }
 
 /* Bouton Modifier */
@@ -160,21 +171,19 @@ body::before {
   cursor: pointer;
   box-shadow: 0 0 10px #ff00ff, 0 0 20px #a000ff;
   transition: transform 0.2s, box-shadow 0.3s;
-  z-index: 2;
 }
 .edit-profile-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px #ff66ff, 0 0 35px #cc00ff;
 }
 
-/* Panneau édition caché par défaut */
+/* Panneau édition */
 .edit-panel {
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   margin-top: 15px;
-  z-index: 2;
 }
 .edit-panel.hidden { display: none; }
 .edit-panel input {
@@ -184,7 +193,7 @@ body::before {
   border: none;
   text-align: center;
   background: rgba(40,0,70,0.7);
-  color: white;
+  color: #fff;
 }
 .edit-panel button {
   padding: 6px 12px;
@@ -194,6 +203,114 @@ body::before {
   font-weight: bold;
   background: linear-gradient(45deg, #ff00ff, #a000ff);
   color: white;
+}
+
+/* ===================== */
+/* FEED / POSTS          */
+/* ===================== */
+#feed {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - 220px);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.post-card {
+  background: rgba(20, 0, 40, 0.6);
+  border: 1px solid #7a00ff;
+  box-shadow: 0 0 20px rgba(170, 0, 255, 0.4);
+  border-radius: 15px;
+  padding: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(10px);
+}
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px #b300ff;
+}
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.post-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.post-media img,
+.post-media video {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #8f00ff;
+}
+.post-actions {
+  display: flex;
+  gap: 15px;
+  font-size: 20px;
+}
+.post-actions span {
+  cursor: pointer;
+  transition: transform 0.2s, text-shadow 0.3s;
+}
+.post-actions span:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 10px #ff00ff;
+}
+.like-btn.liked {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #cc00ff;
+}
+
+/* ===================== */
+/* COMMENTAIRES           */
+/* ===================== */
+.comments {
+  margin-top: 10px;
+  font-size: 0.95em;
+  line-height: 1.4em;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+.comments p { margin: 5px 0; }
+.pseudo {
+  color: #c46eff;
+  font-weight: 700;
+  text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff;
+}
+.comment-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.comment-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #b300ff;
+  border-radius: 8px;
+  background: rgba(40,0,70,0.7);
+  color: #fff;
+}
+.comment-input input::placeholder { color: #aaa; }
+.comment-input button {
+  background: linear-gradient(45deg, #ff00ff, #7a00ff);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #a000ff;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+.comment-input button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff00ff;
 }
 
 /* ===================== */
