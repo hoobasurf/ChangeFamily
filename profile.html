@@ -6,31 +6,29 @@
   <title>Profil - ChangeFamily</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="profile.js"></script>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- Contenu du profil -->
   <main class="profile-content">
 
-    <!-- Avatar avec cercle néon clignotant et paillettes -->
+    <!-- Container avatar + pseudo -->
     <div class="avatar-container">
-      <img src="Loovi.PNG" alt="Avatar" class="profile-avatar" id="avatarImg">
-      <div class="avatar-sparkle"></div>
+      <img src="Loovi.PNG" alt="Avatar" id="avatarImg" class="profile-avatar">
+      <div class="avatar-sparkle"></div> <!-- paillettes autour -->
     </div>
 
-    <!-- Pseudo futuriste pailleté -->
-    <div class="profile-pseudo" id="pseudoDisplay">Anonyme</div>
+    <h2 id="pseudoDisplay" class="profile-pseudo">Sans pseudo</h2>
 
     <!-- Bouton Modifier -->
-    <button class="edit-profile-btn" id="editProfile">Modifier</button>
+    <button id="editProfile" class="edit-profile-btn">Modifier</button>
 
-    <!-- Panneau édition caché par défaut -->
+    <!-- Panneau édition caché -->
     <div id="editPanel" class="edit-panel hidden">
-      <input type="file" id="avatarFile" accept="image/*" hidden>
+      <input type="file" id="avatarFile" accept="image/*" style="display:none;">
       <button id="chooseAvatar">Choisir une photo</button>
+      <video id="selfieCam" hidden autoplay playsinline width="200" style="border-radius:12px;"></video>
       <button id="openCameraAvatar">Prendre un selfie</button>
-      <video id="selfieCam" autoplay hidden></video>
       <button id="takeSelfie" hidden>Capturer</button>
       <input type="text" id="pseudoInput" placeholder="Nouveau pseudo">
       <button id="savePseudo">Enregistrer pseudo</button>
@@ -38,13 +36,13 @@
 
   </main>
 
-  <!-- Dock de navigation identique aux autres pages -->
-  <div class="bottom-nav">
-    <a href="home.html"><i class="fa-solid fa-house"></i></a>
-    <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-    <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
-    <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
-  </div>
+  <!-- Dock navigation -->
+  <footer class="bottom-nav">
+    <a href="home.html"><i class="fas fa-home"></i></a>
+    <a href="camera.html"><i class="fas fa-camera"></i></a>
+    <a href="chat.html"><i class="fas fa-comment"></i></a>
+    <a href="profile.html" class="active"><i class="fas fa-user"></i></a>
+  </footer>
 
 </body>
 </html>
