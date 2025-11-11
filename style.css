@@ -368,6 +368,37 @@ body {
 
 .capture-button:hover {
   background-color: #6f22b5;
+
+  
+/* --- PAGE PROFIL --- */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  padding-bottom: 80px; /* pour ne pas cacher le bas derrière le dock */
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #8a2be2;
+  margin-top: 20px;
+}
+
+.profile-info h2 {
+  margin-top: 10px;
+  color: #8a2be2;
+}
+
+.profile-info p {
+  color: #444;
+}
+
 }
 
 
