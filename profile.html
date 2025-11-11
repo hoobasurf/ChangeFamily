@@ -5,33 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil - ChangeFamily</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="profile.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" defer src="profile.js"></script>
 </head>
 <body>
 
-  <!-- En-tête du profil -->
-  <header class="header">
-    <h1>Mon Profil</h1>
-  </header>
-
-  <!-- Contenu de ton profil (inchangé) -->
+  <!-- Conteneur principal profil -->
   <main class="profile-content">
-    <!-- ton contenu actuel reste ici -->
+    <!-- Avatar / Selfie -->
+    <img src="avatar-default.png" alt="Avatar" class="profile-avatar" id="profileAvatar">
+
+    <!-- Pseudo futuriste pailleté -->
+    <div class="profile-pseudo" id="profilePseudo">Anonyme</div>
+
+    <!-- Bouton modifier discret -->
+    <button class="edit-profile-btn" id="editProfileBtn">Modifier</button>
+
+    <!-- Infos complémentaires -->
     <div class="profile-info">
-      <img src="Loovi.PNG" alt="Photo de profil" class="profile-avatar">
-      <h2>Nom d’utilisateur</h2>
-      <p>Email : utilisateur@example.com</p>
-      <p>Membre depuis : 2024</p>
+      <p>Email : <span id="userEmail">utilisateur@example.com</span></p>
+      <p>Membre depuis : <span id="memberSince">2024</span></p>
     </div>
   </main>
 
-  <!-- ✅ Dock ajouté -->
-  <footer class="dock">
-    <a href="home.html" class="dock-item">🏠</a>
-    <a href="camera.html" class="dock-item">📷</a>
-    <a href="chat.html" class="dock-item">💬</a>
-    <a href="profile.html" class="dock-item active">👤</a>
-  </footer>
+  <!-- Dock de navigation identique aux autres pages -->
+  <div class="bottom-nav">
+    <a href="home.html"><i class="fa-solid fa-house"></i></a>
+    <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+    <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
+    <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+  </div>
 
 </body>
 </html>
