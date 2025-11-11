@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db, auth, onAuthStateChanged } from "./firebase.js";
 import {
   collection,
   query,
@@ -11,129 +11,135 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const feed = document.getElementById("feed");
+let currentUser = null;
 
-// Simule un utilisateur (à remplacer par ton vrai identifiant)
-const userId = "demoUser";
-
-// ✅ Empêche le saut de scroll
-let lastScroll = 0;
-feed.addEventListener("scroll", () => {
-  lastScroll = feed.scrollTop;
+// 🧠 Récupère l'utilisateur connecté
+onAuthStateChanged(auth, user => {
+  if (user) {
+    currentUser = user;
+    console.log("Connecté en tant que :", user.uid);
+    chargerFeed();
+  } else {
+    console.log("Aucun utilisateur connecté");
+  }
 });
 
-// ✅ Requête des posts
-const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+// ===============================
+// 🔄 Fonction principale
+// ===============================
+function chargerFeed() {
+  const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
-// ✅ Écoute en temps réel
-onSnapshot(q, snapshot => {
-  feed.innerHTML = "";
+  let lastScroll = 0;
+  feed.addEventListener("scroll", () => (lastScroll = feed.scrollTop));
 
-  snapshot.forEach(docSnap => {
-    const post = docSnap.data();
-    const postId = docSnap.id;
+  onSnapshot(q, snapshot => {
+    feed.innerHTML = "";
 
-    const likeCount = post.likes?.length || 0;
-    const alreadyLiked = post.likes?.includes(userId);
-    const comments = post.comments || [];
+    snapshot.forEach(docSnap => {
+      const post = docSnap.data();
+      const postId = docSnap.id;
 
-    const card = document.createElement("div");
-    card.className = "post-card";
+      const likeCount = post.likes?.length || 0;
+      const alreadyLiked = post.likes?.includes(currentUser?.uid);
+      const comments = post.comments || [];
 
-    card.innerHTML = `
-      <div class="post-header">
-        <img src="${post.avatar || "avatar-default.png"}" class="avatar">
-        <b>${post.pseudo || "Anonyme"}</b>
-      </div>
+      const card = document.createElement("div");
+      card.className = "post-card";
 
-      <div class="post-media">
-        ${
-          post.type === "video"
-            ? `<video src="${post.url}" autoplay muted loop playsinline></video>`
-            : `<img src="${post.url}" alt="post">`
+      card.innerHTML = `
+        <div class="post-header">
+          <img src="${post.avatar || "avatar-default.png"}" class="avatar">
+          <b>${post.pseudo || "Anonyme"}</b>
+        </div>
+
+        <div class="post-media">
+          ${
+            post.type === "video"
+              ? `<video src="${post.url}" autoplay muted loop playsinline></video>`
+              : `<img src="${post.url}" alt="post">`
+          }
+        </div>
+
+        <div class="post-actions">
+          <span class="like-btn ${alreadyLiked ? "liked" : ""}" data-id="${postId}">
+            ❤️ ${likeCount}
+          </span>
+          <span class="comment-btn" data-id="${postId}">💬 ${comments.length}</span>
+        </div>
+
+        <div class="comments" id="comments-${postId}">
+          ${comments
+            .map(c => `<p><b>${c.userPseudo || "Anonyme"}</b> : ${c.text}</p>`)
+            .join("")}
+        </div>
+
+        <div class="comment-input" id="comment-input-${postId}" style="display:none;">
+          <input type="text" placeholder="Écrire un commentaire..." />
+          <button>Envoyer</button>
+        </div>
+      `;
+
+      feed.appendChild(card);
+    });
+
+    feed.scrollTop = lastScroll;
+
+    // ❤️ Like
+    document.querySelectorAll(".like-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!currentUser) return alert("Connecte-toi pour liker !");
+        const postId = btn.dataset.id;
+        const postRef = doc(db, "posts", postId);
+        const post = snapshot.docs.find(d => d.id === postId).data();
+        const alreadyLiked = post.likes?.includes(currentUser.uid);
+
+        try {
+          await updateDoc(postRef, {
+            likes: alreadyLiked
+              ? arrayRemove(currentUser.uid)
+              : arrayUnion(currentUser.uid)
+          });
+        } catch (e) {
+          console.error("Erreur like :", e);
         }
-      </div>
+      });
+    });
 
-      <div class="post-actions">
-        <span class="like-btn ${alreadyLiked ? "liked" : ""}" data-id="${postId}">
-          ❤️ ${likeCount}
-        </span>
-        <span class="comment-btn" data-id="${postId}">💬 ${comments.length}</span>
-      </div>
+    // 💬 Commentaire
+    document.querySelectorAll(".comment-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const postId = btn.dataset.id;
+        const inputDiv = document.getElementById(`comment-input-${postId}`);
+        inputDiv.style.display =
+          inputDiv.style.display === "none" ? "flex" : "none";
+      });
+    });
 
-      <div class="comments" id="comments-${postId}">
-        ${comments
-          .map(c => `<p><b>${c.user}</b> : ${c.text}</p>`)
-          .join("")}
-      </div>
+    document.querySelectorAll(".comment-input button").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!currentUser) return alert("Connecte-toi pour commenter !");
+        const postId = btn.parentElement.id.replace("comment-input-", "");
+        const input = btn.parentElement.querySelector("input");
+        const text = input.value.trim();
+        if (!text) return;
 
-      <div class="comment-input" id="comment-input-${postId}" style="display:none;">
-        <input type="text" placeholder="Écrire un commentaire..." />
-        <button>Envoyer</button>
-      </div>
-    `;
+        const postRef = doc(db, "posts", postId);
 
-    feed.appendChild(card);
-  });
-
-  // ✅ Restaure le scroll
-  feed.scrollTop = lastScroll;
-
-  // ============================
-  // ❤️ GESTION DES LIKES
-  // ============================
-  document.querySelectorAll(".like-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const postId = btn.dataset.id;
-      const postRef = doc(db, "posts", postId);
-
-      // Récupère le post depuis le snapshot actuel
-      const post = snapshot.docs.find(d => d.id === postId).data();
-      const alreadyLiked = post.likes?.includes(userId);
-
-      try {
-        if (alreadyLiked) {
-          await updateDoc(postRef, { likes: arrayRemove(userId) });
-        } else {
-          await updateDoc(postRef, { likes: arrayUnion(userId) });
+        try {
+          await updateDoc(postRef, {
+            comments: arrayUnion({
+              userId: currentUser.uid,
+              userPseudo: currentUser.isAnonymous ? "Invité" : currentUser.email || "Utilisateur",
+              text,
+              createdAt: Date.now()
+            })
+          });
+          input.value = "";
+        } catch (e) {
+          console.error("Erreur commentaire :", e);
         }
-      } catch (e) {
-        console.error("Erreur like :", e);
-      }
+      });
     });
   });
-
-  // ============================
-  // 💬 GESTION DES COMMENTAIRES
-  // ============================
-  document.querySelectorAll(".comment-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const postId = btn.dataset.id;
-      const inputDiv = document.getElementById(`comment-input-${postId}`);
-      inputDiv.style.display = inputDiv.style.display === "none" ? "flex" : "none";
-    });
-  });
-
-  document.querySelectorAll(".comment-input button").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const postId = btn.parentElement.id.replace("comment-input-", "");
-      const input = btn.parentElement.querySelector("input");
-      const text = input.value.trim();
-      if (!text) return;
-
-      const postRef = doc(db, "posts", postId);
-
-      try {
-        await updateDoc(postRef, {
-          comments: arrayUnion({
-            user: userId,
-            text,
-            createdAt: Date.now()
-          })
-        });
-        input.value = "";
-      } catch (e) {
-        console.error("Erreur commentaire :", e);
-      }
-    });
-  });
-});
+}
