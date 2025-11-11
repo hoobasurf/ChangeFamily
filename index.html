@@ -28,15 +28,10 @@
 
 <script type="module">
 import { auth } from "./firebase.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } 
   from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-// ✅ Empêcher redirection auto SAUF si déjà co ET sur index
-auth.onAuthStateChanged(user => {
-  if (user && (location.pathname.endsWith("index.html") || location.pathname === "/")) {
-    location.href = "home.html";
-  }
-});
+// ⛔ AUCUNE REDIRECTION AUTOMATIQUE ICI
 
 const loginInput = document.getElementById("loginInput");
 const passwordInput = document.getElementById("passwordInput");
@@ -48,7 +43,7 @@ function convert(login) {
   return login.toLowerCase() + "@user.app";
 }
 
-// ✅ Inscription
+// ✅ INSCRIPTION
 signupBtn.onclick = async () => {
   const email = convert(loginInput.value.trim());
   const pass = passwordInput.value.trim();
@@ -56,13 +51,14 @@ signupBtn.onclick = async () => {
 
   try {
     await createUserWithEmailAndPassword(auth, email, pass);
-    location.href = "home.html";
+    alert("Inscription OK ✅");
+    location.href = "home.html"; // ✅ redirection manuelle seulement ici
   } catch (e) {
     alert(e.message);
   }
 };
 
-// ✅ Connexion
+// ✅ CONNEXION
 loginBtn.onclick = async () => {
   const email = convert(loginInput.value.trim());
   const pass = passwordInput.value.trim();
@@ -70,18 +66,16 @@ loginBtn.onclick = async () => {
 
   try {
     await signInWithEmailAndPassword(auth, email, pass);
-    location.href = "home.html";
+    alert("Connexion OK ✅");
+    location.href = "home.html"; // ✅ redirection manuelle seulement ici
   } catch (e) {
     alert("Connexion échouée : " + e.message);
   }
 };
-</script>
 
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js");
-}
+// ✅ (optionnel) Force déconnexion au chargement si tu veux tester
+await signOut(auth);
+console.log("✅ Déconnecté au lancement (mode test)");
 </script>
-
 </body>
 </html>
