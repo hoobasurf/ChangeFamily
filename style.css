@@ -263,3 +263,64 @@ body {
 .selector-actions { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
 .preview-area { margin-top:14px; text-align:center; }
 .preview-area img { width:140px; height:140px; border-radius:50%; object-fit:cover; border:3px solid #ff00ff; box-shadow:0 0 18px #ff66ff; }
+
+/* === MODAL SÉLECTEUR D’AVATAR === */
+.avatar-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  backdrop-filter: blur(10px);
+}
+
+.avatar-modal.hidden {
+  display: none;
+}
+
+.avatar-modal-content {
+  background: rgba(30, 0, 40, 0.9);
+  border: 1px solid #ff00ff44;
+  border-radius: 20px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 25px #ff00ff55;
+  color: white;
+}
+
+.avatar-preview-container {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+}
+
+#avatarPreview {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ff00ff88;
+  box-shadow: 0 0 20px #ff00ffaa;
+  background: rgba(255,255,255,0.05);
+}
+
+.avatar-modal-content select,
+.avatar-modal-content input {
+  width: 90%;
+  padding: 8px;
+  margin: 5px 0 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  text-align: center;
+}
+
+.avatar-modal-content input::placeholder {
+  color: #ffb3ff;
+}
+
