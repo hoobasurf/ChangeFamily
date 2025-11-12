@@ -102,13 +102,22 @@ body {
 }
 
 /* ==== CHAT CONTAINER ==== */
-#chatBox {
-  height: calc(100vh - 140px);
+.chat-box {
+  position: absolute;
+  top: 0;
+  bottom: 70px; /* laisse l’espace pour la barre d’envoi */
+  width: 100%;
   overflow-y: auto;
   padding: 15px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.chat-box::after {
+  content: "";
+  height: 1px;
 }
 
 /* ==== MESSAGES ==== */
