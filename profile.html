@@ -41,6 +41,51 @@
   </div>
 </div>
 
+  <!-- AVATAR SELECTOR -->
+<div id="avatarSelectorModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Choisir / Générer un avatar</h3>
+
+    <div class="selector-grid">
+      <div>
+        <label>Style rapide</label>
+        <select id="diceStyle">
+          <option value="avataaars">Cartoon (avataaars)</option>
+          <option value="bottts">Roboty (bottts)</option>
+          <option value="male">Pixel (male)</option>
+          <option value="identicon">Identicon</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Seed (pseudo ou aléatoire)</label>
+        <input id="diceSeed" placeholder="tonPseudo123">
+      </div>
+
+      <div>
+        <label>Zone</label>
+        <select id="avatarCrop">
+          <option value="head">Tête & épaules</option>
+          <option value="bust">Buste</option>
+          <option value="full">Corps entier</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="selector-actions">
+      <button id="generateDice" class="glass-btn">Générer instantané</button>
+      <button id="openRPM" class="glass-btn">Créer avec Ready Player Me (3D)</button>
+      <button id="useSelected" class="glass-btn">Utiliser cet avatar</button>
+      <button id="closeSelector" class="glass-btn">Fermer</button>
+    </div>
+
+    <div class="preview-area">
+      <p>Prévisualisation</p>
+      <img id="avatarPreview" src="avatar-default.png" alt="Préview" />
+    </div>
+  </div>
+</div>
+
 <!-- DOCK -->
 <div class="bottom-nav">
   <a href="home.html"><i class="fa-solid fa-house"></i></a>
