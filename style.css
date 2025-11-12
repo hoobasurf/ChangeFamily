@@ -247,8 +247,8 @@ body::after {
 
 .bottom-nav .nav-btn i {
   background: transparent;
-  -webkit-text-stroke: 1px #c800ff; /* Contour violet 3D */
-  color: transparent; /* Intérieur vide */
+  -webkit-text-stroke: 1px #c800ff;
+  color: transparent;
   filter: drop-shadow(0 0 6px rgba(255, 0, 255, 0.3));
   transition: all 0.25s ease;
 }
@@ -260,9 +260,8 @@ body::after {
   height: 52px;
   border-radius: 50%;
   background: rgba(200, 0, 255, 0.08);
-  box-shadow:
-    0 0 6px rgba(255, 0, 255, 0.3),
-    inset 0 0 10px rgba(255, 0, 255, 0.1);
+  box-shadow: 0 0 6px rgba(255, 0, 255, 0.3),
+              inset 0 0 10px rgba(255, 0, 255, 0.1);
   transform: scale(0);
   transition: all 0.3s ease;
   z-index: -1;
@@ -271,18 +270,16 @@ body::after {
 .bottom-nav .nav-btn.active i {
   -webkit-text-stroke: 1px #ff66ff;
   color: #ffb3ff;
-  text-shadow:
-    0 0 10px #ff33ff,
-    0 0 20px #ff00ff,
-    0 0 35px rgba(255, 0, 255, 0.8);
+  text-shadow: 0 0 10px #ff33ff,
+               0 0 20px #ff00ff,
+               0 0 35px rgba(255, 0, 255, 0.8);
   transform: scale(1.1);
 }
 
 .bottom-nav .nav-btn.active::before {
   transform: scale(1);
-  box-shadow:
-    0 0 15px rgba(255, 0, 255, 0.6),
-    inset 0 0 20px rgba(255, 0, 255, 0.3);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6),
+               inset 0 0 20px rgba(255, 0, 255, 0.3);
   background: rgba(200, 0, 255, 0.12);
 }
 
@@ -290,29 +287,19 @@ body::after {
   transform: scale(0.9);
 }
 
-@media (max-width: 480px) {
-  .bottom-nav {
-    bottom: 14px;
-    padding: 12px 14px;
-  }
-  .bottom-nav .nav-btn i {
-    font-size: 22px;
-  }
-
-  /* ===================== */
+/* ===================== */
 /* 💬 PAGE CHAT FUTURISTE */
 /* ===================== */
-
 .chat-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: center;
-  height: calc(100vh - 90px);
+  align-items: flex-start;
+  height: calc(100vh - 120px);
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  padding-bottom: 90px;
+  padding: 20px 0 100px 0;
   background: radial-gradient(circle at 20% 20%, #1a0023, #000);
   color: white;
   overflow-y: auto;
@@ -326,7 +313,7 @@ body::after {
   box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
   border-radius: 12px;
   padding: 10px 14px;
-  margin: 6px;
+  margin: 6px 12px;
   max-width: 70%;
   word-wrap: break-word;
   line-height: 1.4em;
@@ -344,7 +331,7 @@ body::after {
 /* Zone de saisie */
 .chat-input-area {
   position: fixed;
-  bottom: 80px;
+  bottom: 90px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -390,3 +377,7 @@ body::after {
   box-shadow: 0 0 25px #ff66ff, 0 0 35px #cc00ff;
 }
 
+/* ✅ Empêche le zoom sur mobile */
+input, button {
+  font-size: 16px !important;
+}
