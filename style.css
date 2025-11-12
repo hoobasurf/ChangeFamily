@@ -236,3 +236,30 @@ body {
   z-index: 0;
   pointer-events: none;
 }
+
+/* Modal avatar selector */
+.modal.hidden { display: none; }
+.modal {
+  position: fixed;
+  inset: 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: rgba(0,0,0,0.6);
+  z-index: 10010;
+}
+.modal-box {
+  width: 92%;
+  max-width: 720px;
+  background: #0f0b16;
+  border: 1px solid rgba(255,0,255,0.12);
+  padding: 18px;
+  border-radius: 14px;
+  color: #fff;
+  text-align: left;
+}
+.selector-grid { display:flex; gap:12px; flex-wrap:wrap; margin:8px 0; }
+.selector-grid > div { flex: 1 1 200px; }
+.selector-actions { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+.preview-area { margin-top:14px; text-align:center; }
+.preview-area img { width:140px; height:140px; border-radius:50%; object-fit:cover; border:3px solid #ff00ff; box-shadow:0 0 18px #ff66ff; }
