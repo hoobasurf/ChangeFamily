@@ -333,52 +333,95 @@ body::before {
   60% { opacity: 0.9; }
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
+/* ===================== */
+/* ⚡ DOCK FUTURISTE NÉON */
+/* ===================== */
 
-/* ===================== */
-/* BOTTOM NAV FUTURISTE  */
-/* ===================== */
 .bottom-nav {
   position: fixed;
-  bottom: 22px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  height: 62px;
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(20px);
-  border-radius: 30px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 9999;
+  width: 88%;
+  max-width: 420px;
+  background: rgba(10, 10, 20, 0.65);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  box-shadow: 0 0 25px rgba(200, 0, 255, 0.3);
+  z-index: 999;
 }
 
 .bottom-nav .nav-btn {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 2px solid #9f00ff;
-  background: transparent;
-  box-shadow: 0 0 8px #9f00ff33, 0 0 15px #9f00ff22;
-  transition: all 0.3s ease;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+  position: relative;
+  transition: all 0.25s ease-in-out;
 }
 
 .bottom-nav .nav-btn i {
-  color: transparent; /* intérieur transparent */
-  font-size: 24px;
-  -webkit-text-stroke: 1px #9f00ff; /* contour violet néon */
+  background: transparent;
+  -webkit-text-stroke: 1px #c800ff; /* Contour violet 3D */
+  color: transparent; /* Intérieur vide */
+  filter: drop-shadow(0 0 6px rgba(255, 0, 255, 0.3));
+  transition: all 0.25s ease;
 }
 
-.bottom-nav .nav-btn.active {
-  border-color: #ff66ff;
-  box-shadow: 0 0 12px #ff66ff88, 0 0 25px #b100ff44;
+.bottom-nav .nav-btn::before {
+  content: "";
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(200, 0, 255, 0.08);
+  box-shadow:
+    0 0 6px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(255, 0, 255, 0.1);
+  transform: scale(0);
+  transition: all 0.3s ease;
+  z-index: -1;
 }
 
 .bottom-nav .nav-btn.active i {
-  -webkit-text-stroke-color: #ff66ff;
+  -webkit-text-stroke: 1px #ff66ff;
+  color: #ffb3ff;
+  text-shadow:
+    0 0 10px #ff33ff,
+    0 0 20px #ff00ff,
+    0 0 35px rgba(255, 0, 255, 0.8);
+  transform: scale(1.1);
+}
+
+.bottom-nav .nav-btn.active::before {
+  transform: scale(1);
+  box-shadow:
+    0 0 15px rgba(255, 0, 255, 0.6),
+    inset 0 0 20px rgba(255, 0, 255, 0.3);
+  background: rgba(200, 0, 255, 0.12);
+}
+
+.bottom-nav .nav-btn:active i {
+  transform: scale(0.9);
+}
+
+/* 🌀 Adaptation mobile */
+@media (max-width: 480px) {
+  .bottom-nav {
+    bottom: 14px;
+    padding: 12px 14px;
+  }
+  .bottom-nav .nav-btn i {
+    font-size: 22px;
+  }
 }
 
 /* ===================== */
