@@ -263,3 +263,46 @@ model-viewer {
   font-size: 14px;
   box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
 }
+
+/* --- Menu modifier caché par défaut --- */
+.edit-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+/* --- Cercle des boutons --- */
+.menu-circle {
+  background: rgba(40, 0, 60, 0.9);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+/* --- Boutons du menu --- */
+.menu-btn {
+  background: linear-gradient(90deg, #b000ff, #ff00a8);
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.menu-btn:hover {
+  transform: scale(1.05);
+}
+
+/* --- Affichage quand on clique sur "Modifier" --- */
+.edit-menu.show {
+  display: flex;
+}
