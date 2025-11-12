@@ -28,15 +28,21 @@
   <h3 id="pseudoDisplay">Sans pseudo</h3>
 
   <div class="profile-btns">
-    <button id="editProfile" class="glass-btn">Modifier le profil</button>
+    <button id="editProfile" class="glass-btn">Modifier</button>
     <button id="createAvatar" class="glass-btn">Créer avatar</button>
   </div>
 
+  <!-- Section édition -->
   <div id="editSection" class="edit-section">
     <input id="pseudoInput" placeholder="Ton pseudo">
     <button id="chooseAvatar" class="glass-btn">Importer avatar (.glb)</button>
     <button id="saveProfile" class="glass-btn">Enregistrer</button>
   </div>
+</div>
+
+<!-- ✅ Fenêtre Ready Player Me -->
+<div id="rpmModal" class="avatar-modal">
+  <iframe id="rpmFrame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me" class="rpm-frame"></iframe>
 </div>
 
 <!-- ✅ NAVIGATION -->
