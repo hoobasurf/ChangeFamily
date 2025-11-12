@@ -6,6 +6,7 @@
   <title>Appareil Photo - ChangeFamily</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="camera.js"></script>
+  <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -23,34 +24,35 @@
     </div>
   </main>
 
-<!-- ===================== -->
-<!-- ✅ NAVIGATION FUTURISTE -->
-<!-- ===================== -->
-<div class="bottom-nav">
-  <a href="profile.html" class="nav-btn" data-page="profile">
-    <i class="fa-solid fa-user"></i>
-  </a>
-  <a href="story.html" class="nav-btn" data-page="story">
-    <i class="fa-solid fa-house"></i>
-  </a>
-  <a href="camera.html" class="nav-btn" data-page="photo">
-    <i class="fa-solid fa-camera"></i>
-  </a>
-  <a href="chat.html" class="nav-btn" data-page="chat">
-    <i class="fa-solid fa-comment"></i>
-  </a>
-</div>
+  <!-- ===================== -->
+  <!-- ✅ NAVIGATION FUTURISTE -->
+  <!-- ===================== -->
+  <div class="bottom-nav">
+    <a href="profile.html" class="nav-btn" data-page="profile">
+      <i class="fa-solid fa-user"></i>
+    </a>
+    <a href="story.html" class="nav-btn" data-page="story">
+      <i class="fa-solid fa-house"></i>
+    </a>
+    <a href="camera.html" class="nav-btn" data-page="photo">
+      <i class="fa-solid fa-camera"></i>
+    </a>
+    <a href="chat.html" class="nav-btn" data-page="chat">
+      <i class="fa-solid fa-comment"></i>
+    </a>
+  </div>
 
   <script>
-  const currentPage = window.location.pathname.split("/").pop().split(".")[0];
-  document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-    if(btn.dataset.page === currentPage) {
-      btn.classList.add("active");
-    } else {
-      btn.classList.remove("active");
-    }
-  });
-</script>
-  
+    // Sélection automatique de l’icône active selon la page
+    const currentPage = window.location.pathname.split("/").pop().split(".")[0];
+    document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
+      if (btn.dataset.page === currentPage) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  </script>
+
 </body>
 </html>
