@@ -120,3 +120,32 @@ urlInput.addEventListener("keypress", (e) => {
 rpmModal.addEventListener("click", (e) => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
+
+// --- Sélection des éléments ---
+const editBtn = document.getElementById("editProfile");
+const editMenu = document.getElementById("editMenu");
+
+// --- Ouvrir / fermer le menu ---
+editBtn.addEventListener("click", () => {
+  editMenu.classList.toggle("show");
+});
+
+// --- Fermer le menu si on clique à l'extérieur ---
+document.addEventListener("click", (e) => {
+  if (!editMenu.contains(e.target) && e.target !== editBtn) {
+    editMenu.classList.remove("show");
+  }
+});
+
+// --- Actions des boutons du menu ---
+document.getElementById("photoLib").addEventListener("click", () => {
+  alert("📷 Ouvrir la photothèque (à coder)");
+});
+
+document.getElementById("takePhoto").addEventListener("click", () => {
+  alert("🤳 Prendre une photo (à coder)");
+});
+
+document.getElementById("createAvatar").addEventListener("click", () => {
+  alert("✨ Créer avatar (à coder)");
+});
