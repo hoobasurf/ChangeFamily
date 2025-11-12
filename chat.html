@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ff00ff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat</title>
@@ -10,53 +8,35 @@
   <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="bg-home"></div>
-
-  <div id="chatBox"></div>
-  <input id="message" placeholder="Écrire...">
-  <button id="sendBtn">Envoyer</button>
-
-<div class="chat-container">
-  <div class="message bot">Salut 👋 comment vas-tu ?</div>
-  <div class="message user">Très bien et toi ?</div>
-</div>
-
-<div class="chat-input-area">
-  <input type="text" placeholder="Écrire..." id="chatInput">
-  <button id="sendBtn">Envoyer</button>
-</div>
   
-  <script src="chat.js" type="module"></script>
+  <!-- 💬 Conteneur du chat -->
+  <div class="chat-container">
+    <div class="message bot">Salut 👋 comment vas-tu ?</div>
+    <div class="message user">Très bien et toi ?</div>
+  </div>
 
-  <!-- ===================== -->
-  <!-- ✅ NAVIGATION FUTURISTE -->
-  <!-- ===================== -->
+  <!-- ✍️ Zone d'écriture -->
+  <div class="chat-input-area">
+    <input type="text" placeholder="Écrire..." id="chatInput">
+    <button id="sendBtn">Envoyer</button>
+  </div>
+
+  <!-- ⚡ Dock futuriste néon -->
   <div class="bottom-nav">
-    <a href="profile.html" class="nav-btn" data-page="profile">
-      <i class="fa-solid fa-user"></i>
-    </a>
-    <a href="story.html" class="nav-btn" data-page="story">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="photo">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
+    <a href="profile.html" class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i></a>
+    <a href="home.html" class="nav-btn" data-page="story"><i class="fa-solid fa-house"></i></a>
+    <a href="camera.html" class="nav-btn" data-page="photo"><i class="fa-solid fa-camera"></i></a>
+    <a href="chat.html" class="nav-btn" data-page="chat"><i class="fa-solid fa-comment"></i></a>
   </div>
 
   <script>
-    // Sélectionne automatiquement l’icône active selon la page
+    // Active automatiquement l’icône du dock
     const currentPage = window.location.pathname.split("/").pop().split(".")[0];
     document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-      if (btn.dataset.page === currentPage) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
+      btn.classList.toggle("active", btn.dataset.page === currentPage);
     });
   </script>
 
+  <script src="chat.js" type="module"></script>
 </body>
 </html>
