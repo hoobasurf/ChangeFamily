@@ -1,42 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ff00ff">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chat</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-  
-  <!-- 💬 Conteneur du chat -->
-  <div class="chat-container">
+  <!-- 🌌 Fond violet néon -->
+  <div class="bg-home"></div>
+
+  <!-- 💬 Conteneur principal des messages -->
+  <div class="chat-container" id="chatBox">
     <div class="message bot">Salut 👋 comment vas-tu ?</div>
     <div class="message user">Très bien et toi ?</div>
   </div>
 
-  <!-- ✍️ Zone d'écriture -->
+  <!-- 📝 Zone de saisie du message -->
   <div class="chat-input-area">
     <input type="text" placeholder="Écrire..." id="chatInput">
     <button id="sendBtn">Envoyer</button>
   </div>
 
-  <!-- ⚡ Dock futuriste néon -->
+  <!-- ⚡ Dock futuriste -->
   <div class="bottom-nav">
-    <a href="profile.html" class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i></a>
-    <a href="home.html" class="nav-btn" data-page="story"><i class="fa-solid fa-house"></i></a>
-    <a href="camera.html" class="nav-btn" data-page="photo"><i class="fa-solid fa-camera"></i></a>
-    <a href="chat.html" class="nav-btn" data-page="chat"><i class="fa-solid fa-comment"></i></a>
+    <a href="profile.html" class="nav-btn" data-page="profile">
+      <i class="fa-solid fa-user"></i>
+    </a>
+    <a href="story.html" class="nav-btn" data-page="story">
+      <i class="fa-solid fa-house"></i>
+    </a>
+    <a href="camera.html" class="nav-btn" data-page="photo">
+      <i class="fa-solid fa-camera"></i>
+    </a>
+    <a href="chat.html" class="nav-btn" data-page="chat">
+      <i class="fa-solid fa-comment"></i>
+    </a>
   </div>
 
+  <!-- 🔥 Script d’activation du bouton actif -->
   <script>
-    // Active automatiquement l’icône du dock
     const currentPage = window.location.pathname.split("/").pop().split(".")[0];
     document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.page === currentPage);
+      if (btn.dataset.page === currentPage) {
+        btn.classList.add("active");
+      }
+    });
+
+    // Envoi de message simple (simulation)
+    const sendBtn = document.getElementById('sendBtn');
+    const chatBox = document.getElementById('chatBox');
+    const input = document.getElementById('chatInput');
+
+    sendBtn.addEventListener('click', () => {
+      if (input.value.trim() === "") return;
+      const msg = document.createElement('div');
+      msg.classList.add('message', 'user');
+      msg.textContent = input.value;
+      chatBox.appendChild(msg);
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
     });
   </script>
-
-  <script src="chat.js" type="module"></script>
 </body>
 </html>
