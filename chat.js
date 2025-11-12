@@ -13,10 +13,21 @@ function sendMessage() {
 
   chatInput.value = "";
 
-  chatBox.scrollTop = chatBox.scrollHeight; // ✅ scroll qui reste en bas
+  // ✅ Scroll auto en bas stable
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 100);
 }
 
 sendBtn.onclick = sendMessage;
+
 chatInput.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
+});
+
+// ✅ Si tu veux forcer aussi au chargement de la page :
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 100);
 });
