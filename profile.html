@@ -1,72 +1,71 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
+  ></script>
 </head>
 <body>
+  <div class="screen profile-screen">
+    <h2>Mon profil</h2>
 
-<div class="screen profile-screen">
-  <h2>Mon profil</h2>
+    <div class="avatar-container-large">
+      <div class="avatar-glow"></div>
+      <model-viewer
+        id="avatar3D"
+        camera-controls
+        auto-rotate
+        auto-rotate-delay="0"
+        rotation-per-second="40deg"
+        ar
+        shadow-intensity="1"
+        exposure="1"
+      ></model-viewer>
+    </div>
 
-  <div class="avatar-container">
-    <model-viewer
-      id="avatar3D"
-      class="avatar-big"
-      camera-controls
-      auto-rotate
-      ar
-      shadow-intensity="1"
-      exposure="1"
-    ></model-viewer>
+    <h3 id="pseudoDisplay">Sans pseudo</h3>
+
+    <div class="profile-btns">
+      <button id="editProfile" class="glass-btn">Modifier</button>
+    </div>
   </div>
 
-  <h3 id="pseudoDisplay">Sans pseudo</h3>
-
-  <div class="profile-btns">
-    <button id="editProfile" class="glass-btn">Modifier</button>
-    <button id="createAvatar" class="glass-btn">Créer avatar</button>
+  <!-- ✅ MODAL MENU MODIFIER -->
+  <div id="editMenu" class="edit-menu">
+    <div class="menu-circle">
+      <button id="photoLib" class="menu-btn">📷 Photothèque</button>
+      <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
+      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
+    </div>
   </div>
 
-  <!-- Section édition -->
-  <div id="editSection" class="edit-section">
-    <input id="pseudoInput" placeholder="Ton pseudo">
-    <button id="chooseAvatar" class="glass-btn">Importer avatar (.glb)</button>
-    <button id="saveProfile" class="glass-btn">Enregistrer</button>
+  <!-- ✅ Ready Player Me -->
+  <div id="rpmModal" class="avatar-modal">
+    <iframe
+      id="rpmFrame"
+      allow="camera *; microphone *; clipboard-write"
+      title="Ready Player Me"
+      class="rpm-frame"
+    ></iframe>
   </div>
-</div>
 
-<!-- ✅ Fenêtre Ready Player Me -->
-<div id="rpmModal" class="avatar-modal">
-  <iframe id="rpmFrame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me" class="rpm-frame"></iframe>
-</div>
-
-<!-- ✅ NAVIGATION -->
-<div class="bottom-nav">
-  <a href="home.html"><i class="fa-solid fa-house"></i></a>
-  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
-  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
-</div>
-
-<!-- ✅ MODAL AVATAR PLEIN ÉCRAN -->
-<div id="avatarModal" class="avatar-modal">
-  <div class="avatar-modal-content">
-    <model-viewer
-      id="avatarFull"
-      camera-controls
-      auto-rotate
-      ar
-      shadow-intensity="1"
-      exposure="1"
-    ></model-viewer>
+  <!-- ✅ NAVIGATION -->
+  <div class="bottom-nav">
+    <a href="home.html"><i class="fa-solid fa-house"></i></a>
+    <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+    <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
+    <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
   </div>
-</div>
 
-<script type="module" src="profile.js"></script>
+  <script type="module" src="profile.js"></script>
 </body>
 </html>
