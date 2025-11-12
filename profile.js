@@ -168,3 +168,17 @@ window.addEventListener("message", (event) => {
     } catch (e) {}
   }
 });
+
+// === Réinitialiser le profil ===
+const resetProfile = document.getElementById("resetProfile");
+
+resetProfile.addEventListener("click", () => {
+  if (confirm("⚠️ Voulez-vous vraiment tout réinitialiser ?\n(Pseudo et avatar seront effacés)")) {
+    localStorage.removeItem("userPseudo");
+    localStorage.removeItem("userAvatar");
+    pseudoDisplay.textContent = "Sans pseudo";
+    avatarImg.src = "avatar-default.png";
+    pseudoInput.value = "";
+    alert("✅ Profil remis à zéro !");
+  }
+});
