@@ -136,3 +136,35 @@ function drawParticles() {
   requestAnimationFrame(drawParticles);
 }
 drawParticles();
+
+// === READY PLAYER ME DIRECT ===
+const rpmContainer = document.getElementById("rpmContainer");
+const rpmFrame = document.getElementById("rpmFrame");
+
+openRPM.addEventListener("click", () => {
+  rpmContainer.classList.remove("hidden");
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+});
+
+// Réception du message envoyé par Ready Player Me à la fin
+window.addEventListener("message", (event) => {
+  const json = event.data;
+  if (typeof json === "string") {
+    try {
+      const data = JSON.parse(json);
+      if (data.source === "readyplayerme" && data.eventName === "v1.avatar.exported") {
+        const avatarUrl = data.data.url;
+        console.log("✅ Avatar Ready Player Me généré :", avatarUrl);
+
+        // on met à jour ton avatar dans le profil
+        avatarImg.src = avatarUrl + "?quality=medium";
+        localStorage.setItem("userAvatar", avatarUrl + "?quality=medium");
+
+        // ferme le mode RPM et revient au profil
+        rpmContainer.classList.add("hidden");
+        rpmFrame.src = "";
+        alert("✅ Avatar Ready Player Me importé !");
+      }
+    } catch (e) {}
+  }
+});
