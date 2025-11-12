@@ -235,3 +235,37 @@
   window.closeAvatarSelector = closeAvatarSelector;
 
 })();
+
+// === Bouton "Choisir dans la photothèque" ===
+const chooseGallery = document.getElementById("chooseGallery");
+const galleryFile = document.getElementById("galleryFile");
+
+chooseGallery.addEventListener("click", () => galleryFile.click());
+
+galleryFile.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = evt => {
+    avatarImg.src = evt.target.result;
+    localStorage.setItem("userAvatar", evt.target.result);
+  };
+  reader.readAsDataURL(file);
+});
+
+// === Bouton "Choisir un avatar" ===
+const avatarOptions = [
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Neo",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Luna",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Vega",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Rex",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Zara",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Kai"
+];
+
+chooseAvatar.addEventListener("click", () => {
+  const randomAvatar = avatarOptions[Math.floor(Math.random() * avatarOptions.length)];
+  avatarImg.src = randomAvatar;
+  localStorage.setItem("userAvatar", randomAvatar);
+  alert("🎨 Nouvel avatar sélectionné !");
+});
