@@ -51,6 +51,20 @@
       input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
     });
+
+    // ===================== //
+    // 🌟 Paillettes animées //
+    // ===================== //
+    function createSparkle() {
+      const sparkle = document.createElement('div');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = (Math.random() * 100) + '%';
+      sparkle.style.top = '-10px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 2500);
+    }
+
+    setInterval(createSparkle, 200); // crée une paillette toutes les 0.2s
   </script>
 </body>
 </html>
