@@ -151,7 +151,7 @@ body {
 }
 
 .chat-input-bar input {
-  flex: 1;
+  flex: 0.75;      /* ✅ Avant c’était 1 → réduit la taille du champ */
   padding: 13px;
   border-radius: 25px;
   border: none;
