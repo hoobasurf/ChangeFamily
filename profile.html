@@ -6,6 +6,9 @@
 <title>Profil</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  .hidden { display: none; }
+</style>
 </head>
 <body>
 
@@ -31,12 +34,12 @@
     <input id="pseudoInput" placeholder="Ton pseudo">
     <button id="savePseudo" class="glass-btn">💾 Enregistrer Pseudo</button>
 
-    <!-- ✅ Remplacement du bouton Fichier par Avatar -->
+    <!-- ✅ Boutons pour changer avatar -->
     <button id="chooseAvatar" class="glass-btn">🎨 Choisir un avatar</button>
     <button id="chooseGallery" class="glass-btn">🖼️ Choisir dans la photothèque</button>
     <button id="openCameraAvatar" class="glass-btn">📸 Prendre une photo</button>
 
-    <!-- Fichier pour la galerie -->
+    <!-- Fichier caché pour galerie -->
     <input type="file" id="galleryFile" accept="image/*" hidden>
 
     <br><br>
@@ -72,6 +75,16 @@
   </div>
 </div>
 
+<!-- === IFRAME READY PLAYER ME INTÉGRÉ === -->
+<div id="rpmContainer" class="hidden">
+  <iframe
+    id="rpmFrame"
+    allow="camera *; microphone *; clipboard-write"
+    src=""
+    style="width:100%; height:100%; border:none; position:fixed; top:0; left:0; z-index:99999;">
+  </iframe>
+</div>
+
 <!-- DOCK -->
 <div class="bottom-nav">
   <a href="home.html"><i class="fa-solid fa-house"></i></a>
@@ -80,12 +93,13 @@
   <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
 </div>
 
-<!-- Scripts -->
+<!-- Script d'ouverture/fermeture modal -->
 <script>
 function openEdit(){ document.getElementById('editModal').style.display = "flex"; }
 function closeEdit(){ document.getElementById('editModal').style.display = "none"; }
 </script>
 
+<!-- Script principal -->
 <script type="module" src="profile.js"></script>
 
 </body>
