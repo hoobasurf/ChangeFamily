@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Appareil Photo - ChangeFamily</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="camera.js"></script>
-  <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caméra</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* Camera full screen sans cacher le dock */
+  #cameraView {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 60px); /* laisse la place du dock */
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* Bouton rond capture */
+  #captureBtn {
+    position: fixed;
+    left: 50%;
+    bottom: 90px; /* juste au dessus du dock */
+    transform: translateX(-50%);
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: white;
+    border: 6px solid rgba(0,0,0,0.4);
+    cursor: pointer;
+    z-index: 2;
+  }
+</style>
 </head>
 <body>
 
-  <!-- En-tête -->
-  <header class="header">
-    <h1>Appareil Photo</h1>
-  </header>
+<!-- Caméra en fond -->
+<video id="cameraView" autoplay playsinline></video>
 
-  <!-- Contenu principal défilable -->
-  <main class="scrollable camera-page">
-    <div class="camera-container">
-      <video id="camera-view" autoplay playsinline></video>
-      <canvas id="camera-output"></canvas>
-      <button id="capture-btn" class="capture-button">📸 Prendre une photo</button>
-    </div>
-  </main>
+<!-- Bouton prendre photo -->
+<div id="captureBtn"></div>
 
-  <!-- ===================== -->
-  <!-- ✅ NAVIGATION FUTURISTE -->
-  <!-- ===================== -->
-  <div class="bottom-nav">
-    <a href="profile.html" class="nav-btn" data-page="profile">
-      <i class="fa-solid fa-user"></i>
-    </a>
-    <a href="story.html" class="nav-btn" data-page="story">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="photo">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
-  </div>
+<!-- ✅ DOCK VISIBLE -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html" class="active"><i class="fa-solid fa-camera"></i></a>
+  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+</div>
 
-  <script>
-    // Sélection automatique de l’icône active selon la page
-    const currentPage = window.location.pathname.split("/").pop().split(".")[0];
-    document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-      if (btn.dataset.page === currentPage) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    });
-  </script>
+<script>
+const cam = document.getElementById("cameraView");
+
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => cam.srcObject = stream)
+  .catch(err => console.log("Cam error:", err));
+</script>
 
 </body>
 </html>
