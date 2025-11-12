@@ -1,123 +1,102 @@
-/* ---------- GLOBAL APP ---------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
 body {
-  background: #111;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: black;
   color: white;
-  height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
+/* Écran principal */
 .screen {
-  height: calc(100vh - 80px);
+  height: 92vh;
   overflow-y: auto;
-  padding: 10px 15px;
+  padding-bottom: 70px;
 }
 
-/* ---------- DOCK (BOTTOM NAV) ---------- */
+/* === DOCK NAVIGATION === */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 80px;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(15px);
+  height: 60px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
   display: flex;
   justify-content: space-around;
   align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  z-index: 9999;
 }
 
 .bottom-nav a {
-  text-decoration: none;
-}
-
-.bottom-nav i {
-  font-size: 34px;
-  opacity: 0.6;
-}
-
-.bottom-nav .active i {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-/* ---------- BUTTONS ---------- */
-.glass-btn {
-  padding: 10px 18px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.15);
-  border: none;
   color: white;
-  margin: 5px;
-  backdrop-filter: blur(8px);
+  font-size: 26px;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: 0.2s;
 }
 
-/* ---------- CAMERA PAGE ---------- */
-.camera-wrapper {
-  position: relative;
-  width: 100%;
-  height: calc(100vh - 80px);
-  overflow: hidden;
+.bottom-nav a.active {
+  opacity: 1;
+  transform: scale(1.2);
 }
 
-#cameraPreview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* FEED */
+#feed {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: auto;
+  overflow-y: auto;
 }
 
-#captureBtn {
-  position: absolute;
-  bottom: 105px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 85px;
-  height: 85px;
-  border-radius: 50%;
-  border: 6px solid white;
-  background: rgba(255,255,255,0.1);
-}
-
-#switchCamera,
-#openGallery {
-  position: absolute;
-  bottom: 205px;
-  font-size: 28px;
-}
-
-#switchCamera {
-  right: 20px;
-}
-
-#openGallery {
-  left: 20px;
-}
-
-/* ---------- PROFILE ---------- */
-.profile-main {
-  text-align: center;
-  margin-top: 25px;
-}
-
+/* PROFIL */
 .avatar-big {
   width: 140px;
   height: 140px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid white;
-}
-
-#modifyBtn {
-  margin-top: 15px;
-}
-
-.hidden-section {
   margin-top: 20px;
+}
+
+.glass-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.glass-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* MODAL MODIFIER PROFIL */
+#editModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
   display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#editBox {
+  width: 85%;
+  background: #111;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #444;
+  text-align: center;
 }
