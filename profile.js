@@ -8,6 +8,13 @@ const createAvatar = document.getElementById("createAvatar");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
+// ✅ Barre URL avatar
+const urlInput = document.createElement("input");
+urlInput.placeholder = "Entre l’URL de ton avatar 3D";
+urlInput.className = "url-input";
+urlInput.style.display = "none";
+document.body.appendChild(urlInput);
+
 // ✅ Charger pseudo + avatar sauvegardés
 window.addEventListener("DOMContentLoaded", () => {
   const pseudo = localStorage.getItem("pseudo");
@@ -30,9 +37,12 @@ photoLib.addEventListener("click", () => {
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      avatar3D.src = url;
-      localStorage.setItem("avatarURL", url);
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatar3D.src = reader.result;
+        localStorage.setItem("avatarURL", reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
   input.click();
@@ -47,9 +57,12 @@ takePhoto.addEventListener("click", () => {
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      avatar3D.src = url;
-      localStorage.setItem("avatarURL", url);
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatar3D.src = reader.result;
+        localStorage.setItem("avatarURL", reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
   input.click();
@@ -82,6 +95,24 @@ window.addEventListener("message", (event) => {
       }),
       "*"
     );
+  }
+});
+
+// ✅ Barre URL (coller un lien d’avatar)
+avatar3D.addEventListener("dblclick", () => {
+  urlInput.style.display = "block";
+  urlInput.focus();
+});
+
+urlInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const url = urlInput.value.trim();
+    if (url) {
+      avatar3D.src = url;
+      localStorage.setItem("avatarURL", url);
+      urlInput.style.display = "none";
+      urlInput.value = "";
+    }
   }
 });
 
