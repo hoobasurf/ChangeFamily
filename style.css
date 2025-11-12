@@ -184,3 +184,55 @@ body {
   font-size: 18px;
   box-shadow: 0 0 10px #ff00ff99;
 }
+
+/* === AVATAR FUTURISTE === */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 40px;
+}
+
+.avatar-big {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid #ff00ff;
+  box-shadow: 0 0 30px #ff00ff, 0 0 60px #a000ff;
+  animation: glowPulse 2s ease-in-out infinite alternate;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+}
+
+.avatar-glow {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,255,0.3), rgba(160,0,255,0.1), transparent 70%);
+  filter: blur(12px);
+  animation: glowRotate 6s linear infinite;
+  z-index: 1;
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 25px #ff00ff, 0 0 45px #a000ff; }
+  100% { box-shadow: 0 0 40px #ff66ff, 0 0 70px #cc00ff; }
+}
+@keyframes glowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* === CANVAS PARTICULES === */
+#particleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  z-index: 0;
+  pointer-events: none;
+}
