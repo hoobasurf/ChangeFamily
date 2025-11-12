@@ -422,6 +422,58 @@ body::before {
   .bottom-nav .nav-btn i {
     font-size: 22px;
   }
+
+  /* ===================== */
+/* 📝 CHAT INPUT FUTURISTE */
+/* ===================== */
+.chat-input-area {
+  position: fixed;
+  bottom: 100px; /* juste au-dessus du dock */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  gap: 12px;
+  z-index: 999;
+}
+
+/* Champ de texte plus grand avec contour néon violet */
+.chat-input-area input {
+  flex: 1;
+  padding: 14px 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: 2px solid #b300ff;
+  background: rgba(30, 0, 50, 0.7);
+  color: #fff;
+  outline: none;
+  box-shadow: 0 0 10px #b300ff, 0 0 20px #ff66ff;
+  transition: all 0.3s ease;
+}
+
+.chat-input-area input:focus {
+  border-color: #ff66ff;
+  box-shadow: 0 0 15px #ff66ff, 0 0 25px #b300ff;
+}
+
+/* Bouton envoyer violet/rose néon */
+.chat-input-area button {
+  padding: 14px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #ff00ff, #b300ff);
+  color: #fff;
+  box-shadow: 0 0 10px #ff66ff, 0 0 20px #b300ff;
+  transition: all 0.3s ease;
+}
+
+.chat-input-area button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #ff66ff, 0 0 35px #b300ff;
 }
 
 /* ===================== */
