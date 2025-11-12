@@ -3,7 +3,6 @@
 /* ================================== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-/* 🌌 FOND FUTURISTE NÉON VIOLET ANIMÉ */
 body {
   margin: 0;
   padding: 0;
@@ -16,45 +15,45 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
-/* Halo mouvant doux */
+/* Animation étoiles scintillantes */
 body::before {
   content: "";
   position: fixed;
-  top: 0; left: 0;
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle at 30% 40%, rgba(170, 0, 255, 0.25), transparent 70%),
-              radial-gradient(circle at 70% 80%, rgba(255, 0, 200, 0.15), transparent 70%);
-  filter: blur(60px);
-  animation: glowMove 18s ease-in-out infinite alternate;
-  z-index: -2;
-}
-
-/* Étoiles animées subtiles */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-  opacity: 0.25;
-  animation: starsFloat 80s linear infinite;
+  width: 200%;
+  height: 200%;
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+  opacity: 0.3;
+  animation: moveStars 60s linear infinite;
   z-index: -1;
 }
-
-@keyframes glowMove {
-  0% { transform: translate(-5%, -5%) scale(1); opacity: 0.8; }
-  100% { transform: translate(5%, 5%) scale(1.05); opacity: 1; }
-}
-
-@keyframes starsFloat {
+@keyframes moveStars {
   from { background-position: 0 0; }
-  to { background-position: 1000px 1000px; }
+  to { background-position: -1000px 1000px; }
 }
+
+/* ===================== */
+/* NAVIGATION BOTTOM-NAV  */
+/* ===================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  height: 62px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+.bottom-nav i { font-size: 30px; opacity: 0.5; }
+.bottom-nav .active { opacity: 1; transform: scale(1.2); }
 
 /* ===================== */
 /* ACCUEIL - PETIT AVATAR */
@@ -89,7 +88,7 @@ body::after {
   padding-bottom: 80px;
 }
 
-/* Avatar futuriste */
+/* Conteneur avatar */
 .avatar-container {
   position: relative;
   width: 140px;
@@ -100,6 +99,7 @@ body::after {
   align-items: center;
 }
 
+/* Avatar avec cercle néon clignotant */
 .profile-avatar {
   width: 100%;
   height: 100%;
@@ -121,7 +121,22 @@ body::after {
   50% { box-shadow: 0 0 40px #ff66ff; border-color: #ff66ff; }
 }
 
-/* Pseudo */
+/* Paillettes autour de l'avatar */
+.avatar-sparkle {
+  position: absolute;
+  top: -5px; left: -5px; right: -5px; bottom: -5px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #ff66ff 0%, rgba(255,255,255,0) 70%);
+  animation: sparklePulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes sparklePulse {
+  0% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff; opacity: 0.8; }
+  50% { box-shadow: 0 0 15px #ff33ff, 0 0 25px #ff99ff; opacity: 1; }
+  100% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff; opacity: 0.8; }
+}
+
+/* Pseudo futuriste pailleté animé */
 .profile-pseudo {
   font-weight: 700;
   font-size: 22px;
@@ -129,11 +144,18 @@ body::after {
   text-align: center;
   margin: 10px 0 15px;
   text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08), transparent 10%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 10%);
+  background-blend-mode: screen;
+  padding: 0 6px;
+  border-radius: 4px;
   animation: pseudoGlow 2s ease-in-out infinite alternate;
 }
 @keyframes pseudoGlow {
-  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff; }
-  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff; }
+  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
+  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff, 0 0 22px rgba(150,0,255,0.8);}
+  100% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
 }
 
 /* Bouton Modifier */
@@ -210,10 +232,111 @@ body::after {
   transform: translateY(-5px);
   box-shadow: 0 0 25px #b300ff;
 }
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.post-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.post-media img,
+.post-media video {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #8f00ff;
+}
+.post-actions {
+  display: flex;
+  gap: 15px;
+  font-size: 20px;
+}
+.post-actions span {
+  cursor: pointer;
+  transition: transform 0.2s, text-shadow 0.3s;
+}
+.post-actions span:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 10px #ff00ff;
+}
+.like-btn.liked {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #cc00ff;
+}
 
+/* ===================== */
+/* COMMENTAIRES           */
+/* ===================== */
+.comments {
+  margin-top: 10px;
+  font-size: 0.95em;
+  line-height: 1.4em;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+.comments p { margin: 5px 0; }
+.pseudo {
+  color: #c46eff;
+  font-weight: 700;
+  text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff;
+}
+.comment-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.comment-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #b300ff;
+  border-radius: 8px;
+  background: rgba(40,0,70,0.7);
+  color: #fff;
+}
+.comment-input input::placeholder { color: #aaa; }
+.comment-input button {
+  background: linear-gradient(45deg, #ff00ff, #7a00ff);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #a000ff;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+.comment-input button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff00ff;
+}
+
+/* ===================== */
+/* PAILLETTES NÉON        */
+/* ===================== */
+.sparkle {
+  position: fixed;
+  top: -12px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #ff6aff 0%, #7a00ff 60%, transparent 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff6aff, 0 0 15px #b100ff, 0 0 25px #7a00ff;
+  animation: sparkleFall linear forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+@keyframes sparkleFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  60% { opacity: 0.9; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
 /* ===================== */
 /* ⚡ DOCK FUTURISTE NÉON */
 /* ===================== */
+
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -247,8 +370,8 @@ body::after {
 
 .bottom-nav .nav-btn i {
   background: transparent;
-  -webkit-text-stroke: 1px #c800ff;
-  color: transparent;
+  -webkit-text-stroke: 1px #c800ff; /* Contour violet 3D */
+  color: transparent; /* Intérieur vide */
   filter: drop-shadow(0 0 6px rgba(255, 0, 255, 0.3));
   transition: all 0.25s ease;
 }
@@ -260,8 +383,9 @@ body::after {
   height: 52px;
   border-radius: 50%;
   background: rgba(200, 0, 255, 0.08);
-  box-shadow: 0 0 6px rgba(255, 0, 255, 0.3),
-              inset 0 0 10px rgba(255, 0, 255, 0.1);
+  box-shadow:
+    0 0 6px rgba(255, 0, 255, 0.3),
+    inset 0 0 10px rgba(255, 0, 255, 0.1);
   transform: scale(0);
   transition: all 0.3s ease;
   z-index: -1;
@@ -270,16 +394,18 @@ body::after {
 .bottom-nav .nav-btn.active i {
   -webkit-text-stroke: 1px #ff66ff;
   color: #ffb3ff;
-  text-shadow: 0 0 10px #ff33ff,
-               0 0 20px #ff00ff,
-               0 0 35px rgba(255, 0, 255, 0.8);
+  text-shadow:
+    0 0 10px #ff33ff,
+    0 0 20px #ff00ff,
+    0 0 35px rgba(255, 0, 255, 0.8);
   transform: scale(1.1);
 }
 
 .bottom-nav .nav-btn.active::before {
   transform: scale(1);
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6),
-               inset 0 0 20px rgba(255, 0, 255, 0.3);
+  box-shadow:
+    0 0 15px rgba(255, 0, 255, 0.6),
+    inset 0 0 20px rgba(255, 0, 255, 0.3);
   background: rgba(200, 0, 255, 0.12);
 }
 
@@ -287,236 +413,17 @@ body::after {
   transform: scale(0.9);
 }
 
+/* 🌀 Adaptation mobile */
+@media (max-width: 480px) {
+  .bottom-nav {
+    bottom: 14px;
+    padding: 12px 14px;
+  }
+  .bottom-nav .nav-btn i {
+    font-size: 22px;
+  }
+}
+
 /* ===================== */
-/* 💬 PAGE CHAT FUTURISTE */
+/* FIN DU CSS            */
 /* ===================== */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  height: calc(100vh - 120px);
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px 0 100px 0;
-  background: radial-gradient(circle at 20% 20%, #1a0023, #000);
-  color: white;
-  overflow-y: auto;
-  position: relative;
-}
-
-/* Messages */
-.message {
-  background: rgba(30, 0, 60, 0.7);
-  border: 1px solid #a000ff;
-  box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 6px 12px;
-  max-width: 70%;
-  word-wrap: break-word;
-  line-height: 1.4em;
-  font-size: 0.95em;
-}
-.message.user {
-  align-self: flex-end;
-  background: linear-gradient(45deg, #ff00ff, #a000ff);
-  box-shadow: 0 0 18px #ff00ff;
-}
-.message.bot {
-  align-self: flex-start;
-}
-
-/* Zone de saisie */
-.chat-input-area {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 90%;
-  max-width: 460px;
-  gap: 8px;
-  z-index: 1000;
-}
-
-.chat-input-area input {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: 25px;
-  border: 1px solid #a000ff;
-  background: rgba(40, 0, 70, 0.6);
-  color: #fff;
-  outline: none;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 14px;
-  box-shadow: 0 0 10px rgba(160, 0, 255, 0.4);
-  transition: box-shadow 0.3s;
-}
-.chat-input-area input:focus {
-  box-shadow: 0 0 20px #ff00ff;
-}
-
-/* Bouton envoyer */
-.chat-input-area button {
-  padding: 10px 16px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(45deg, #ff00ff, #a000ff);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px #ff00ff, 0 0 25px #a000ff;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.chat-input-area button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px #ff66ff, 0 0 35px #cc00ff;
-}
-
-/* ✅ Empêche le zoom sur mobile */
-input, button {
-  font-size: 16px !important;
-}
-
-/* ========================================= */
-/* 🌌 PAGE CHAT - FOND SOMBRE & NÉON FUTURISTE */
-/* ========================================= */
-
-body {
-  background: radial-gradient(circle at 20% 20%, #120014, #000);
-  color: white;
-  font-family: 'Orbitron', sans-serif;
-  overflow-x: hidden;
-}
-
-/* 💬 Conteneur du chat */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: calc(100vh - 150px);
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px 0 100px 0;
-  overflow-y: auto;
-}
-
-/* 🌈 Bulles de messages */
-.message {
-  border-radius: 18px;
-  padding: 10px 16px;
-  margin: 6px 14px;
-  max-width: 75%;
-  line-height: 1.4em;
-  word-wrap: break-word;
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.25);
-}
-
-.message.user {
-  align-self: flex-end;
-  background: linear-gradient(45deg, #ff00ff, #a000ff);
-  box-shadow: 0 0 20px #ff00ff;
-}
-
-.message.bot {
-  align-self: flex-start;
-  background: rgba(50, 0, 80, 0.6);
-  border: 1px solid rgba(160, 0, 255, 0.5);
-  box-shadow: 0 0 12px rgba(160, 0, 255, 0.3);
-}
-
-/* ✏️ Zone d’écriture */
-.chat-input-area {
-  position: fixed;
-  bottom: 85px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 460px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  z-index: 1000;
-}
-
-.chat-input-area input {
-  flex: 1;
-  padding: 10px 16px;
-  border-radius: 25px;
-  border: 1px solid #a000ff;
-  background: rgba(40, 0, 70, 0.6);
-  color: white;
-  outline: none;
-  font-size: 16px; /* évite zoom mobile */
-  box-shadow: 0 0 10px rgba(160, 0, 255, 0.4);
-  transition: box-shadow 0.3s;
-}
-
-.chat-input-area input:focus {
-  box-shadow: 0 0 20px #ff00ff;
-}
-
-.chat-input-area button {
-  padding: 10px 18px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(45deg, #ff00ff, #a000ff);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 15px #ff00ff, 0 0 25px #a000ff;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-
-.chat-input-area button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px #ff66ff, 0 0 35px #cc00ff;
-}
-
-/* 🚀 Dock translucide violet */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 460px;
-  background: rgba(40, 0, 70, 0.4);
-  backdrop-filter: blur(12px);
-  border-radius: 30px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 10px 0;
-  box-shadow: 0 0 25px rgba(160, 0, 255, 0.2);
-  z-index: 999;
-}
-
-/* Icônes du dock */
-.bottom-nav .nav-btn {
-  color: rgba(200, 150, 255, 0.6);
-  font-size: 22px;
-  transition: 0.3s;
-  text-shadow: 0 0 8px rgba(160, 0, 255, 0.2);
-}
-
-.bottom-nav .nav-btn:hover {
-  color: #ff00ff;
-  text-shadow: 0 0 12px #ff00ff;
-}
-
-.bottom-nav .nav-btn.active {
-  color: #ff00ff;
-  text-shadow: 0 0 20px #ff00ff, 0 0 35px #a000ff;
-}
-
-/* ✅ Pas de zoom mobile */
-input, button {
-  font-size: 16px !important;
-}
