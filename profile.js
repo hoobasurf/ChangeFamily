@@ -8,8 +8,10 @@ const saveBtn = document.getElementById("saveProfile");
 const chooseAvatar = document.getElementById("chooseAvatar");
 const createAvatar = document.getElementById("createAvatar");
 const avatarModal = document.getElementById("avatarModal");
+const rpmModal = document.getElementById("rpmModal");
+const rpmFrame = document.getElementById("rpmFrame");
 
-// ✅ Charger pseudo + avatar au démarrage
+// ✅ Charger pseudo + avatar sauvegardés
 window.addEventListener("DOMContentLoaded", () => {
   const pseudo = localStorage.getItem("pseudo");
   if (pseudo) pseudoDisplay.textContent = pseudo;
@@ -28,7 +30,7 @@ editBtn.addEventListener("click", () => {
 
 // ✅ Import manuel d’un avatar
 chooseAvatar.addEventListener("click", () => {
-  const url = prompt("Entre l’URL de ton avatar Ready Player Me (.glb)");
+  const url = prompt("Entre l’URL de ton avatar (.glb)");
   if (url) {
     avatar3D.src = url;
     avatarFull.src = url;
@@ -45,17 +47,40 @@ saveBtn.addEventListener("click", () => {
   editSection.style.display = "none";
 });
 
-// ✅ Ouvrir Ready Player Me pour créer un avatar
+// ✅ Ouvre Ready Player Me intégré
 createAvatar.addEventListener("click", () => {
-  window.open("https://readyplayer.me/avatar", "_blank");
+  rpmModal.style.display = "flex";
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
 });
 
-// ✅ Clic sur l’avatar pour l’agrandir
+// ✅ Écoute les messages du frame Ready Player Me
+window.addEventListener("message", (event) => {
+  if (!event.data || !event.data.source || event.data.source !== "readyplayerme") return;
+
+  if (event.data.eventName === "v1.avatar.exported") {
+    const avatarURL = event.data.data.url;
+    avatar3D.src = avatarURL;
+    avatarFull.src = avatarURL;
+    localStorage.setItem("avatarURL", avatarURL);
+    rpmModal.style.display = "none";
+  }
+
+  if (event.data.eventName === "v1.frame.ready") {
+    rpmFrame.contentWindow.postMessage(
+      JSON.stringify({
+        target: "readyplayerme",
+        type: "subscribe",
+        eventName: "v1.avatar.exported"
+      }),
+      "*"
+    );
+  }
+});
+
+// ✅ Avatar plein écran
 avatar3D.addEventListener("click", () => {
   avatarModal.style.display = "flex";
 });
-
-// ✅ Fermer le plein écran
 avatarModal.addEventListener("click", () => {
   avatarModal.style.display = "none";
 });
