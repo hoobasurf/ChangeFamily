@@ -1,70 +1,59 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Futuriste</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Futuriste</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <!-- 💬 Zone de chat -->
-  <div class="chat-container" id="chatBox">
-    <div class="message bot">Salut 👋</div>
-    <div class="message user">Salut, comment ça va ?</div>
-  </div>
+<!-- 💬 Chat -->
+<div class="chat-container" id="chatBox">
+  <div class="message bot">Salut 👋</div>
+  <div class="message user">Salut, comment ça va ?</div>
+</div>
 
-  <!-- 📝 Zone d’écriture futuriste -->
-  <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="Écrire un message...">
-    <button id="sendBtn">Envoyer</button>
-  </div>
+<!-- 📝 Champ d’écriture futuriste -->
+<div class="chat-input-area">
+  <input type="text" id="chatInput" placeholder="Écrire un message...">
+  <button id="sendBtn">Envoyer</button>
+</div>
 
-  <!-- ⚡ Dock translucide futuriste -->
-  <div class="bottom-nav">
-    <a href="home.html" class="nav-btn" data-page="home">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="camera">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn active" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
-    <a href="profile.html" class="nav-btn" data-page="profile">
-      <i class="fa-solid fa-user"></i>
-    </a>
-  </div>
+<!-- ⚡ Dock futuriste -->
+<div class="bottom-nav">
+  <a href="home.html" class="nav-btn"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html" class="nav-btn"><i class="fa-solid fa-camera"></i></a>
+  <a href="chat.html" class="nav-btn active"><i class="fa-solid fa-comment"></i></a>
+  <a href="profile.html" class="nav-btn"><i class="fa-solid fa-user"></i></a>
+</div>
 
-  <script>
-    const sendBtn = document.getElementById('sendBtn');
-    const input = document.getElementById('chatInput');
-    const chatBox = document.getElementById('chatBox');
+<script>
+const sendBtn = document.getElementById('sendBtn');
+const input = document.getElementById('chatInput');
+const chatBox = document.getElementById('chatBox');
 
-    sendBtn.addEventListener('click', () => {
-      if (input.value.trim() === '') return;
-      const msg = document.createElement('div');
-      msg.classList.add('message', 'user');
-      msg.textContent = input.value;
-      chatBox.appendChild(msg);
-      input.value = '';
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
+sendBtn.addEventListener('click', () => {
+  if (input.value.trim() === '') return;
+  const msg = document.createElement('div');
+  msg.classList.add('message', 'user');
+  msg.textContent = input.value;
+  chatBox.appendChild(msg);
+  input.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+});
 
-    // ===================== //
-    // 🌟 Paillettes animées //
-    // ===================== //
-    function createSparkle() {
-      const sparkle = document.createElement('div');
-      sparkle.classList.add('sparkle');
-      sparkle.style.left = (Math.random() * 100) + '%';
-      sparkle.style.top = '-10px';
-      document.body.appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 2500);
-    }
-
-    setInterval(createSparkle, 200); // crée une paillette toutes les 0.2s
-  </script>
+// 🌟 Paillettes animées
+function createSparkle() {
+  const sparkle = document.createElement('div');
+  sparkle.classList.add('sparkle');
+  sparkle.style.left = (Math.random() * 100) + '%';
+  sparkle.style.top = '-10px';
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 2500);
+}
+setInterval(createSparkle, 200);
+</script>
 </body>
 </html>
