@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ff00ff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chat</title>
@@ -11,58 +9,49 @@
 </head>
 
 <body>
-  <!-- 🌌 Fond violet néon -->
+  <!-- 🌌 Fond violet étoilé -->
   <div class="bg-home"></div>
 
-  <!-- 💬 Conteneur principal des messages -->
+  <!-- 💬 Zone de chat -->
   <div class="chat-container" id="chatBox">
-    <div class="message bot">Salut 👋 comment vas-tu ?</div>
-    <div class="message user">Très bien et toi ?</div>
+    <div class="message bot">Salut 👋</div>
+    <div class="message user">Salut, comment ça va ?</div>
   </div>
 
-  <!-- 📝 Zone de saisie du message -->
+  <!-- 📝 Zone d’écriture -->
   <div class="chat-input-area">
-    <input type="text" placeholder="Écrire..." id="chatInput">
+    <input type="text" id="chatInput" placeholder="Écrire un message...">
     <button id="sendBtn">Envoyer</button>
   </div>
 
-  <!-- ⚡ Dock futuriste -->
+  <!-- ⚡ Dock translucide futuriste -->
   <div class="bottom-nav">
+    <a href="home.html" class="nav-btn" data-page="home">
+      <i class="fa-solid fa-house"></i>
+    </a>
+    <a href="camera.html" class="nav-btn" data-page="camera">
+      <i class="fa-solid fa-camera"></i>
+    </a>
+    <a href="chat.html" class="nav-btn active" data-page="chat">
+      <i class="fa-solid fa-comment"></i>
+    </a>
     <a href="profile.html" class="nav-btn" data-page="profile">
       <i class="fa-solid fa-user"></i>
     </a>
-    <a href="story.html" class="nav-btn" data-page="story">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="photo">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
   </div>
 
-  <!-- 🔥 Script d’activation du bouton actif -->
   <script>
-    const currentPage = window.location.pathname.split("/").pop().split(".")[0];
-    document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-      if (btn.dataset.page === currentPage) {
-        btn.classList.add("active");
-      }
-    });
-
-    // Envoi de message simple (simulation)
     const sendBtn = document.getElementById('sendBtn');
-    const chatBox = document.getElementById('chatBox');
     const input = document.getElementById('chatInput');
+    const chatBox = document.getElementById('chatBox');
 
     sendBtn.addEventListener('click', () => {
-      if (input.value.trim() === "") return;
+      if (input.value.trim() === '') return;
       const msg = document.createElement('div');
       msg.classList.add('message', 'user');
       msg.textContent = input.value;
       chatBox.appendChild(msg);
-      input.value = "";
+      input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
     });
   </script>
