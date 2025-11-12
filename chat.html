@@ -1,45 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Chat Futuriste</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chat</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-
 <body>
-  <!-- 🌌 Fond étoilé -->
-  <div class="bg-home"></div>
 
-  <!-- 💬 Zone de chat -->
-  <div class="chat-container" id="chatBox">
-    <div class="message bot">👋 Salut ! Bienvenue dans le chat futuriste.</div>
-  </div>
+<div class="screen">
+  <div id="chatBox"></div>
+</div>
 
-  <!-- 📝 Zone d’écriture -->
-  <div class="chat-input-area">
-    <input type="text" id="chatInput" placeholder="Écris ton message...">
-    <button id="sendBtn">Envoyer</button>
-  </div>
+<!-- ✅ Zone écrire message -->
+<div class="chat-input-bar">
+  <input id="chatInput" type="text" placeholder="Écrire un message..." />
+  <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+</div>
 
-  <!-- ⚡ Dock translucide -->
-  <div class="bottom-nav">
-    <a href="home.html" class="nav-btn" data-page="home">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="camera">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn active" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
-    <a href="profile.html" class="nav-btn" data-page="profile">
-      <i class="fa-solid fa-user"></i>
-    </a>
-  </div>
+<!-- ✅ DOCK -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+  <a href="chat.html" class="active"><i class="fa-solid fa-comment-dots"></i></a>
+  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+</div>
 
-  <!-- 🚀 Script -->
-  <script src="chat.js"></script>
+<script src="chat.js"></script>
+
 </body>
 </html>
