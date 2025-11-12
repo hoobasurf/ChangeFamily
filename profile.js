@@ -1,184 +1,147 @@
-// === Variables principales ===
-const avatarImg = document.getElementById("avatarImg");
+// ===== PROFIL.JS COMPLET =====
+
+// Elements principaux
+const avatarImg = document.getElementById("avatarImg"); // fallback si pas 3D
+const avatar3D = document.getElementById("avatar3D");  // viewer 3D
 const pseudoDisplay = document.getElementById("pseudoDisplay");
 const pseudoInput = document.getElementById("pseudoInput");
-
 const savePseudo = document.getElementById("savePseudo");
 const chooseAvatar = document.getElementById("chooseAvatar");
 const chooseGallery = document.getElementById("chooseGallery");
 const openCameraAvatar = document.getElementById("openCameraAvatar");
 const galleryFile = document.getElementById("galleryFile");
+const resetProfile = document.getElementById("resetProfile");
 
-// === Modaux ===
-const avatarSelectorModal = document.getElementById("avatarSelectorModal");
-const closeSelector = document.getElementById("closeSelector");
-const useSelected = document.getElementById("useSelected");
-const generateDice = document.getElementById("generateDice");
-const openRPM = document.getElementById("openRPM");
+// Ready Player Me
+const rpmContainer = document.getElementById("rpmContainer");
+const rpmFrame = document.getElementById("rpmFrame");
+const openRPMbtn = document.getElementById("openRPM");
 
-// === Prévisualisation avatar ===
-const avatarPreview = document.getElementById("avatarPreview");
-const diceStyle = document.getElementById("diceStyle");
-const diceSeed = document.getElementById("diceSeed");
+// Toast message custom
+function toast(msg) {
+  const t = document.createElement("div");
+  t.innerText = msg;
+  t.style.position = "fixed";
+  t.style.bottom = "120px";
+  t.style.left = "50%";
+  t.style.transform = "translateX(-50%)";
+  t.style.background = "linear-gradient(90deg, #ff00ff, #6a00ff)";
+  t.style.color = "#fff";
+  t.style.padding = "12px 22px";
+  t.style.borderRadius = "30px";
+  t.style.boxShadow = "0 0 12px #ff00ffaa";
+  t.style.fontSize = "14px";
+  t.style.zIndex = "99999";
+  t.style.animation = "fadein 0.3s, fadeout 0.3s 2.2s";
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
 
-// === Chargement des données sauvegardées ===
+// Charge pseudo + avatar au démarrage
 window.addEventListener("load", () => {
   const savedPseudo = localStorage.getItem("userPseudo");
   const savedAvatar = localStorage.getItem("userAvatar");
-  if (savedPseudo) pseudoDisplay.textContent = savedPseudo;
-  if (savedAvatar) avatarImg.src = savedAvatar;
-});
 
-// === Enregistrer pseudo ===
-savePseudo.addEventListener("click", () => {
-  const pseudo = pseudoInput.value.trim();
-  if (pseudo) {
-    pseudoDisplay.textContent = pseudo;
-    localStorage.setItem("userPseudo", pseudo);
-    alert("✅ Pseudo enregistré !");
+  if (savedPseudo) pseudoDisplay.textContent = savedPseudo;
+
+  if (savedAvatar) {
+    if (savedAvatar.includes(".glb") || savedAvatar.includes(".vrm")) {
+      avatar3D.src = savedAvatar;
+    } else {
+      avatarImg.src = savedAvatar;
+    }
   }
 });
 
-// === Ouvrir sélecteur d’avatar ===
-chooseAvatar.addEventListener("click", () => {
-  avatarSelectorModal.classList.remove("hidden");
+// Enregistrer pseudo
+savePseudo.addEventListener("click", () => {
+  const pseudo = pseudoInput.value.trim();
+  if (!pseudo) return;
+  pseudoDisplay.textContent = pseudo;
+  localStorage.setItem("userPseudo", pseudo);
+  toast("✅ Pseudo enregistré");
 });
 
-// === Fermer sélecteur ===
-closeSelector.addEventListener("click", () => {
-  avatarSelectorModal.classList.add("hidden");
+// Ouvre Ready Player Me
+openRPMbtn.addEventListener("click", () => {
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi&lang=fr";
+  rpmContainer.classList.add("active");
 });
 
-// === Générer avatar DiceBear ===
-generateDice.addEventListener("click", () => {
-  const style = diceStyle.value;
-  const seed = diceSeed.value.trim() || "random" + Math.floor(Math.random() * 9999);
-  const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}`;
-  avatarPreview.src = url;
+// Retour avatar Ready Player Me
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+  let data;
+  try {
+    data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+  } catch {
+    return;
+  }
+
+  if (data.source === "readyplayerme" && data.eventName === "v1.avatar.exported") {
+    let avatarURL = data.data.url;
+    console.log("Avatar reçu :", avatarURL);
+
+    // Forcer format 3D GLB (Ready Player Me l’autorise en ajoutant ?format=glb)
+    const avatar3Durl = avatarURL.includes("?") ? avatarURL + "&format=glb" : avatarURL + "?format=glb";
+
+    // Charge 3D
+    avatar3D.src = avatar3Durl;
+
+    // Backup 2D (fallback)
+    avatarImg.src = avatarURL + "?quality=medium";
+
+    // Save
+    localStorage.setItem("userAvatar", avatar3Durl);
+
+    // Ferme modal
+    rpmContainer.classList.remove("active");
+    setTimeout(() => (rpmFrame.src = ""), 500);
+
+    toast("✨ Avatar 3D importé !");
+  }
 });
 
-// === Utiliser avatar sélectionné ===
-useSelected.addEventListener("click", () => {
-  avatarImg.src = avatarPreview.src;
-  localStorage.setItem("userAvatar", avatarPreview.src);
-  avatarSelectorModal.classList.add("hidden");
-  alert("✅ Avatar enregistré !");
-});
-
-// === Ouvrir Ready Player Me ===
-openRPM.addEventListener("click", () => {
-  window.open("https://readyplayer.me/fr/avatar", "_blank");
-});
-
-// === Galerie / Selfie ===
+// Galerie
 chooseGallery.addEventListener("click", () => galleryFile.click());
-
-galleryFile.addEventListener("change", e => {
+galleryFile.addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = evt => {
+  reader.onload = (evt) => {
     avatarImg.src = evt.target.result;
     localStorage.setItem("userAvatar", evt.target.result);
+    toast("🖼️ Photo ajoutée !");
   };
   reader.readAsDataURL(file);
 });
 
-// === Selfie ===
+// Selfie
 openCameraAvatar.addEventListener("click", () => {
   galleryFile.setAttribute("capture", "user");
   galleryFile.click();
 });
 
-// === Effet particules néon ===
-const canvas = document.getElementById("particleCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = document.querySelector(".screen").offsetHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-function createParticles() {
-  particles = [];
-  for (let i = 0; i < 25; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height * 0.6,
-      r: Math.random() * 3 + 1,
-      dx: (Math.random() - 0.5) * 0.3,
-      dy: (Math.random() - 0.5) * 0.3,
-      color: `hsl(${Math.random() * 60 + 280}, 100%, 70%)`
-    });
-  }
-}
-createParticles();
-
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.shadowColor = p.color;
-    ctx.shadowBlur = 15;
-    ctx.fill();
-
-    p.x += p.dx;
-    p.y += p.dy;
-
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-  });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
-
-// === READY PLAYER ME DIRECT ===
-const rpmContainer = document.getElementById("rpmContainer");
-const rpmFrame = document.getElementById("rpmFrame");
-
-openRPM.addEventListener("click", () => {
-  rpmContainer.classList.remove("hidden");
-  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
-});
-
-// Réception du message envoyé par Ready Player Me à la fin
-window.addEventListener("message", (event) => {
-  const json = event.data;
-  if (typeof json === "string") {
-    try {
-      const data = JSON.parse(json);
-      if (data.source === "readyplayerme" && data.eventName === "v1.avatar.exported") {
-        const avatarUrl = data.data.url;
-        console.log("✅ Avatar Ready Player Me généré :", avatarUrl);
-
-        // on met à jour ton avatar dans le profil
-        avatarImg.src = avatarUrl + "?quality=medium";
-        localStorage.setItem("userAvatar", avatarUrl + "?quality=medium");
-
-        // ferme le mode RPM et revient au profil
-        rpmContainer.classList.add("hidden");
-        rpmFrame.src = "";
-        alert("✅ Avatar Ready Player Me importé !");
-      }
-    } catch (e) {}
-  }
-});
-
-// === Réinitialiser le profil ===
-const resetProfile = document.getElementById("resetProfile");
-
+// Réinitialiser profil
 resetProfile.addEventListener("click", () => {
-  if (confirm("⚠️ Voulez-vous vraiment tout réinitialiser ?\n(Pseudo et avatar seront effacés)")) {
-    localStorage.removeItem("userPseudo");
-    localStorage.removeItem("userAvatar");
-    pseudoDisplay.textContent = "Sans pseudo";
-    avatarImg.src = "avatar-default.png";
-    pseudoInput.value = "";
-    alert("✅ Profil remis à zéro !");
-  }
+  if (!confirm("⚠️ Tout réinitialiser ?")) return;
+
+  localStorage.removeItem("userPseudo");
+  localStorage.removeItem("userAvatar");
+
+  pseudoDisplay.textContent = "Sans pseudo";
+
+  avatarImg.src = "avatar-default.png";
+  avatar3D.src = "";
+
+  pseudoInput.value = "";
+  toast("♻️ Profil réinitialisé");
+});
+
+// Effet néon sur hover avatar 3D
+avatar3D.addEventListener("mouseover", () => {
+  avatar3D.style.boxShadow = "0 0 25px #ff00ff, 0 0 50px #a000ff";
+});
+avatar3D.addEventListener("mouseleave", () => {
+  avatar3D.style.boxShadow = "0 0 15px #ff00ff88";
 });
