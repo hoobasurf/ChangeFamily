@@ -29,77 +29,21 @@
     <h3>Modifier le profil</h3>
 
     <input id="pseudoInput" placeholder="Ton pseudo">
-    <button id="savePseudo" class="glass-btn">Enregistrer Pseudo</button>
+    <button id="savePseudo" class="glass-btn">💾 Enregistrer Pseudo</button>
 
-    <button id="chooseAvatar" class="glass-btn">Choisir Galerie</button>
-    <button id="openCameraAvatar" class="glass-btn">Ouvrir Selfie</button>
+    <!-- ✅ Remplacement du bouton Fichier par Avatar -->
+    <button id="chooseAvatar" class="glass-btn">🎨 Choisir un avatar</button>
+    <button id="chooseGallery" class="glass-btn">🖼️ Choisir dans la photothèque</button>
+    <button id="openCameraAvatar" class="glass-btn">📸 Prendre une photo</button>
 
-    <input type="file" id="avatarFile" accept="image/*" hidden>
+    <!-- Fichier pour la galerie -->
+    <input type="file" id="galleryFile" accept="image/*" hidden>
 
     <br><br>
     <button class="glass-btn" onclick="closeEdit()">Fermer</button>
   </div>
 </div>
 
-  <!-- AVATAR SELECTOR -->
-<div id="avatarSelectorModal" class="modal hidden">
-  <div class="modal-box">
-    <h3>Choisir / Générer un avatar</h3>
-
-    <div class="selector-grid">
-      <div>
-        <label>Style rapide</label>
-        <select id="diceStyle">
-          <option value="avataaars">Cartoon (avataaars)</option>
-          <option value="bottts">Roboty (bottts)</option>
-          <option value="male">Pixel (male)</option>
-          <option value="identicon">Identicon</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Seed (pseudo ou aléatoire)</label>
-        <input id="diceSeed" placeholder="tonPseudo123">
-      </div>
-
-      <div>
-        <label>Zone</label>
-        <select id="avatarCrop">
-          <option value="head">Tête & épaules</option>
-          <option value="bust">Buste</option>
-          <option value="full">Corps entier</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="selector-actions">
-      <button id="generateDice" class="glass-btn">Générer instantané</button>
-      <button id="openRPM" class="glass-btn">Créer avec Ready Player Me (3D)</button>
-      <button id="useSelected" class="glass-btn">Utiliser cet avatar</button>
-      <button id="closeSelector" class="glass-btn">Fermer</button>
-    </div>
-
-    <div class="preview-area">
-      <p>Prévisualisation</p>
-      <img id="avatarPreview" src="avatar-default.png" alt="Préview" />
-    </div>
-  </div>
-</div>
-
-<!-- DOCK -->
-<div class="bottom-nav">
-  <a href="home.html"><i class="fa-solid fa-house"></i></a>
-  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-  <a href="chat.html"><i class="fa-solid fa-comment-dots"></i></a>
-  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
-</div>
-
-<script>
-function openEdit(){ document.getElementById('editModal').style.display = "flex" }
-function closeEdit(){ document.getElementById('editModal').style.display = "none" }
-</script>
-
-<script type="module" src="profile.js"></script>
 <!-- === MODAL SÉLECTEUR D'AVATAR === -->
 <div id="avatarSelectorModal" class="avatar-modal hidden">
   <div class="avatar-modal-content">
@@ -127,6 +71,22 @@ function closeEdit(){ document.getElementById('editModal').style.display = "none
     <button id="closeSelector" class="glass-btn">❌ Fermer</button>
   </div>
 </div>
+
+<!-- DOCK -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+  <a href="chat.html"><i class="fa-solid fa-comment-dots"></i></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+</div>
+
+<!-- Scripts -->
+<script>
+function openEdit(){ document.getElementById('editModal').style.display = "flex"; }
+function closeEdit(){ document.getElementById('editModal').style.display = "none"; }
+</script>
+
+<script type="module" src="profile.js"></script>
 
 </body>
 </html>
