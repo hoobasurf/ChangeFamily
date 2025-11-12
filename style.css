@@ -381,3 +381,142 @@ body::after {
 input, button {
   font-size: 16px !important;
 }
+
+/* ========================================= */
+/* 🌌 PAGE CHAT - FOND SOMBRE & NÉON FUTURISTE */
+/* ========================================= */
+
+body {
+  background: radial-gradient(circle at 20% 20%, #120014, #000);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  overflow-x: hidden;
+}
+
+/* 💬 Conteneur du chat */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: calc(100vh - 150px);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px 0 100px 0;
+  overflow-y: auto;
+}
+
+/* 🌈 Bulles de messages */
+.message {
+  border-radius: 18px;
+  padding: 10px 16px;
+  margin: 6px 14px;
+  max-width: 75%;
+  line-height: 1.4em;
+  word-wrap: break-word;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.25);
+}
+
+.message.user {
+  align-self: flex-end;
+  background: linear-gradient(45deg, #ff00ff, #a000ff);
+  box-shadow: 0 0 20px #ff00ff;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background: rgba(50, 0, 80, 0.6);
+  border: 1px solid rgba(160, 0, 255, 0.5);
+  box-shadow: 0 0 12px rgba(160, 0, 255, 0.3);
+}
+
+/* ✏️ Zone d’écriture */
+.chat-input-area {
+  position: fixed;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 460px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 25px;
+  border: 1px solid #a000ff;
+  background: rgba(40, 0, 70, 0.6);
+  color: white;
+  outline: none;
+  font-size: 16px; /* évite zoom mobile */
+  box-shadow: 0 0 10px rgba(160, 0, 255, 0.4);
+  transition: box-shadow 0.3s;
+}
+
+.chat-input-area input:focus {
+  box-shadow: 0 0 20px #ff00ff;
+}
+
+.chat-input-area button {
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(45deg, #ff00ff, #a000ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px #ff00ff, 0 0 25px #a000ff;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.chat-input-area button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff66ff, 0 0 35px #cc00ff;
+}
+
+/* 🚀 Dock translucide violet */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 460px;
+  background: rgba(40, 0, 70, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  box-shadow: 0 0 25px rgba(160, 0, 255, 0.2);
+  z-index: 999;
+}
+
+/* Icônes du dock */
+.bottom-nav .nav-btn {
+  color: rgba(200, 150, 255, 0.6);
+  font-size: 22px;
+  transition: 0.3s;
+  text-shadow: 0 0 8px rgba(160, 0, 255, 0.2);
+}
+
+.bottom-nav .nav-btn:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 12px #ff00ff;
+}
+
+.bottom-nav .nav-btn.active {
+  color: #ff00ff;
+  text-shadow: 0 0 20px #ff00ff, 0 0 35px #a000ff;
+}
+
+/* ✅ Pas de zoom mobile */
+input, button {
+  font-size: 16px !important;
+}
