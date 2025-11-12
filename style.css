@@ -1,3 +1,6 @@
+/* ================================== */
+/* 🌌 FOND GLOBAL ET POLICE FUTURISTE */
+/* ================================== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
 body {
@@ -6,14 +9,11 @@ body {
   font-family: 'Orbitron', sans-serif;
   color: white;
   min-height: 100vh;
-  width: 100%;
   overflow-x: hidden;
   background: radial-gradient(circle at 20% 20%, #1a0023, #000);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
+/* 🌠 Étoiles scintillantes */
 body::before {
   content: "";
   position: fixed;
@@ -24,40 +24,51 @@ body::before {
   animation: moveStars 60s linear infinite;
   z-index: -1;
 }
-@keyframes moveStars { from {background-position:0 0;} to {background-position:-1000px 1000px;} }
+@keyframes moveStars {
+  from { background-position: 0 0; }
+  to { background-position: -1000px 1000px; }
+}
 
-/* Chat messages */
+/* ===================== */
+/* 💬 CHAT CONTAINER */
+/* ===================== */
 .chat-container {
-  width: 90%;
-  max-width: 500px;
-  margin: 20px auto 150px auto;
+  padding: 90px 20px 180px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  max-width: 600px;
+  margin: 0 auto;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
 }
 .message {
-  padding: 12px 18px;
-  border-radius: 14px;
-  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 75%;
   word-wrap: break-word;
-  font-size: 16px;
-}
-.message.user {
-  background: linear-gradient(120deg,#ff33ff,#b300ff);
-  align-self: flex-end;
-  color: #fff;
-  box-shadow:0 0 10px #ff66ff,0 0 20px #b300ff;
+  line-height: 1.4;
+  animation: fadeIn 0.3s ease;
 }
 .message.bot {
-  background: rgba(50,0,80,0.6);
+  background: rgba(100, 0, 150, 0.4);
+  border: 1px solid #ff00ff;
   align-self: flex-start;
-  color: #fff;
-  box-shadow:0 0 8px #b300ff;
+  box-shadow: 0 0 15px #a000ff;
+}
+.message.user {
+  background: rgba(255, 0, 255, 0.3);
+  border: 1px solid #ff66ff;
+  align-self: flex-end;
+  box-shadow: 0 0 15px #ff66ff;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Chat input */
+/* ===================== */
+/* 📝 INPUT FUTURISTE */
+/* ===================== */
 .chat-input-area {
   position: fixed;
   bottom: 90px;
@@ -68,116 +79,103 @@ body::before {
   display: flex;
   gap: 14px;
   padding: 14px;
-  background: rgba(40,0,80,0.85);
+  background: rgba(40, 0, 80, 0.85);
   border-radius: 20px;
   border: 2px solid #ff33ff;
-  box-shadow:0 0 25px #ff33ff,0 0 45px #b300ff;
+  box-shadow: 0 0 25px #ff33ff, 0 0 45px #b300ff;
   z-index: 9999;
-  overflow: visible;
-  position: relative;
 }
+
 .chat-input-area input {
   flex: 1;
   padding: 18px 22px;
-  font-size: 20px;
+  font-size: 18px;
   border-radius: 14px;
   border: 2px solid #b300ff;
-  background: rgba(50,0,100,0.7);
+  background: rgba(50, 0, 100, 0.7);
   color: #fff;
   outline: none;
-  box-shadow:0 0 15px #b300ff,0 0 30px #ff66ff;
+  box-shadow: 0 0 15px #b300ff, 0 0 30px #ff66ff;
   transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
 }
+
 .chat-input-area input:focus {
-  border-color:#ff66ff;
-  box-shadow:0 0 25px #ff66ff,0 0 35px #b300ff;
+  border-color: #ff66ff;
+  box-shadow: 0 0 25px #ff66ff, 0 0 35px #b300ff;
 }
+
 .chat-input-area button {
   padding: 18px 28px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   border-radius: 14px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(45deg,#ff00ff,#ff66ff,#b300ff);
-  color:#fff;
-  box-shadow:0 0 15px #ff66ff,0 0 35px #b300ff;
+  background: linear-gradient(45deg, #ff00ff, #ff66ff, #b300ff);
+  color: #fff;
+  box-shadow: 0 0 15px #ff66ff, 0 0 35px #b300ff;
   transition: all 0.3s ease;
-  position: relative;
-  z-index:1;
-}
-.chat-input-area button:hover {
-  transform: scale(1.1);
-  box-shadow:0 0 35px #ff99ff,0 0 55px #cc00ff;
 }
 
-/* Dock */
+.chat-input-area button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 35px #ff99ff, 0 0 55px #cc00ff;
+}
+
+/* ✨ Paillettes néon */
+.sparkle {
+  position: fixed;
+  top: -12px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #ff6aff 0%, #7a00ff 60%, transparent 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff6aff, 0 0 15px #b100ff, 0 0 25px #7a00ff;
+  animation: sparkleFall linear forwards;
+  z-index: 9999;
+  pointer-events: none;
+}
+@keyframes sparkleFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  60% { opacity: 0.9; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===================== */
+/* ⚡ DOCK FUTURISTE */
+/* ===================== */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  width:88%;
-  max-width:420px;
-  background:rgba(10,10,20,0.65);
-  backdrop-filter:blur(10px);
-  border-radius:50px;
-  padding:14px 18px;
-  border:1px solid rgba(255,0,255,0.3);
-  box-shadow:0 0 25px rgba(200,0,255,0.3);
-  z-index:999;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 88%;
+  max-width: 420px;
+  background: rgba(10, 10, 20, 0.65);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  box-shadow: 0 0 25px rgba(200, 0, 255, 0.3);
+  z-index: 999;
 }
+
 .bottom-nav .nav-btn {
-  flex:1;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-decoration:none;
-  color:rgba(255,255,255,0.6);
-  font-size:24px;
-  position:relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
   transition: all 0.25s ease-in-out;
 }
-.bottom-nav .nav-btn i {
-  background:transparent;
-  -webkit-text-stroke:1px #c800ff;
-  color:transparent;
-  filter:drop-shadow(0 0 6px rgba(255,0,255,0.3));
-  transition:all 0.25s ease;
-}
+
 .bottom-nav .nav-btn.active i {
-  -webkit-text-stroke:1px #ff66ff;
-  color:#ffb3ff;
-  text-shadow:0 0 10px #ff33ff,0 0 20px #ff00ff,0 0 35px rgba(255,0,255,0.8);
-  transform:scale(1.1);
-}
-
-/* Paillettes */
-.sparkle {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle,#ff6aff 0%,#7a00ff 60%,transparent 100%);
-  border-radius:50%;
-  box-shadow:0 0 8px #ff6aff,0 0 15px #b100ff,0 0 25px #7a00ff;
-  animation:sparkleFall linear forwards;
-  z-index:9999;
-  pointer-events:none;
-}
-@keyframes sparkleFall {
-  0% { transform: translateY(0) rotate(0deg); opacity:1; }
-  60% { opacity:0.9; }
-  100% { transform: translateY(105vh) rotate(720deg); opacity:0; }
-}
-
-/* Mobile */
-@media(max-width:480px){
-  .bottom-nav { bottom:14px; padding:12px 14px; }
-  .bottom-nav .nav-btn i { font-size:22px; }
-  .chat-input-area input,.chat-input-area button { font-size:16px; padding:12px; }
+  color: #ffb3ff;
+  text-shadow: 0 0 10px #ff33ff, 0 0 20px #ff00ff, 0 0 35px rgba(255, 0, 255, 0.8);
+  transform: scale(1.1);
 }
