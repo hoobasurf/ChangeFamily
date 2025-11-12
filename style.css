@@ -298,4 +298,95 @@ body::after {
   .bottom-nav .nav-btn i {
     font-size: 22px;
   }
+
+  /* ===================== */
+/* 💬 PAGE CHAT FUTURISTE */
+/* ===================== */
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: calc(100vh - 90px);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 90px;
+  background: radial-gradient(circle at 20% 20%, #1a0023, #000);
+  color: white;
+  overflow-y: auto;
+  position: relative;
 }
+
+/* Messages */
+.message {
+  background: rgba(30, 0, 60, 0.7);
+  border: 1px solid #a000ff;
+  box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 6px;
+  max-width: 70%;
+  word-wrap: break-word;
+  line-height: 1.4em;
+  font-size: 0.95em;
+}
+.message.user {
+  align-self: flex-end;
+  background: linear-gradient(45deg, #ff00ff, #a000ff);
+  box-shadow: 0 0 18px #ff00ff;
+}
+.message.bot {
+  align-self: flex-start;
+}
+
+/* Zone de saisie */
+.chat-input-area {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  max-width: 460px;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 25px;
+  border: 1px solid #a000ff;
+  background: rgba(40, 0, 70, 0.6);
+  color: #fff;
+  outline: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(160, 0, 255, 0.4);
+  transition: box-shadow 0.3s;
+}
+.chat-input-area input:focus {
+  box-shadow: 0 0 20px #ff00ff;
+}
+
+/* Bouton envoyer */
+.chat-input-area button {
+  padding: 10px 16px;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(45deg, #ff00ff, #a000ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px #ff00ff, 0 0 25px #a000ff;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.chat-input-area button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff66ff, 0 0 35px #cc00ff;
+}
+
