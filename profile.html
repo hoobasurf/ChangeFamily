@@ -100,5 +100,33 @@ function closeEdit(){ document.getElementById('editModal').style.display = "none
 </script>
 
 <script type="module" src="profile.js"></script>
+<!-- === MODAL SÉLECTEUR D'AVATAR === -->
+<div id="avatarSelectorModal" class="avatar-modal hidden">
+  <div class="avatar-modal-content">
+    <h2>Choisis ton avatar</h2>
+
+    <div class="avatar-preview-container">
+      <img id="avatarPreview" src="avatar-default.png" alt="Prévisualisation">
+    </div>
+
+    <label>🎨 Style :</label>
+    <select id="diceStyle">
+      <option value="avataaars">Avataaars (cartoon humain)</option>
+      <option value="bottts">Bottts (robots mignons)</option>
+      <option value="pixel-art">Pixel Art</option>
+      <option value="croodles">Croodles (dessin fun)</option>
+      <option value="identicon">Identicon (motif abstrait)</option>
+    </select>
+
+    <label>🧬 Générateur (seed) :</label>
+    <input id="diceSeed" placeholder="Ton pseudo ou un mot au hasard">
+
+    <button id="generateDice" class="glass-btn">🎲 Générer Avatar</button>
+    <button id="openRPM" class="glass-btn">🌐 Ready Player Me</button>
+    <button id="useSelected" class="glass-btn">✅ Utiliser cet avatar</button>
+    <button id="closeSelector" class="glass-btn">❌ Fermer</button>
+  </div>
+</div>
+
 </body>
 </html>
