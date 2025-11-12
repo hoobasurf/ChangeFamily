@@ -1,13 +1,10 @@
 const avatar3D = document.getElementById("avatar3D");
-const avatarFull = document.getElementById("avatarFull");
 const pseudoDisplay = document.getElementById("pseudoDisplay");
 const editBtn = document.getElementById("editProfile");
-const editSection = document.getElementById("editSection");
-const pseudoInput = document.getElementById("pseudoInput");
-const saveBtn = document.getElementById("saveProfile");
-const chooseAvatar = document.getElementById("chooseAvatar");
+const editMenu = document.getElementById("editMenu");
+const photoLib = document.getElementById("photoLib");
+const takePhoto = document.getElementById("takePhoto");
 const createAvatar = document.getElementById("createAvatar");
-const avatarModal = document.getElementById("avatarModal");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
@@ -17,40 +14,52 @@ window.addEventListener("DOMContentLoaded", () => {
   if (pseudo) pseudoDisplay.textContent = pseudo;
 
   const avatarURL = localStorage.getItem("avatarURL");
-  if (avatarURL) {
-    avatar3D.src = avatarURL;
-    avatarFull.src = avatarURL;
-  }
+  if (avatarURL) avatar3D.src = avatarURL;
 });
 
-// ✅ Ouvrir / fermer édition
+// ✅ Bouton Modifier -> ouvre le menu
 editBtn.addEventListener("click", () => {
-  editSection.style.display = editSection.style.display === "flex" ? "none" : "flex";
+  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
 
-// ✅ Import manuel d’un avatar
-chooseAvatar.addEventListener("click", () => {
-  const url = prompt("Entre l’URL de ton avatar (.glb)");
-  if (url) {
-    avatar3D.src = url;
-    avatarFull.src = url;
-    localStorage.setItem("avatarURL", url);
-  }
+// ✅ Photothèque
+photoLib.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      avatar3D.src = url;
+      localStorage.setItem("avatarURL", url);
+    }
+  };
+  input.click();
 });
 
-// ✅ Sauvegarde pseudo
-saveBtn.addEventListener("click", () => {
-  const pseudo = pseudoInput.value.trim();
-  if (!pseudo) return;
-  localStorage.setItem("pseudo", pseudo);
-  pseudoDisplay.textContent = pseudo;
-  editSection.style.display = "none";
+// ✅ Prendre une photo
+takePhoto.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "camera";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      avatar3D.src = url;
+      localStorage.setItem("avatarURL", url);
+    }
+  };
+  input.click();
 });
 
-// ✅ Ouvre Ready Player Me intégré
+// ✅ Créer avatar (Ready Player Me)
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+  editMenu.style.display = "none";
 });
 
 // ✅ Écoute les messages du frame Ready Player Me
@@ -60,7 +69,6 @@ window.addEventListener("message", (event) => {
   if (event.data.eventName === "v1.avatar.exported") {
     const avatarURL = event.data.data.url;
     avatar3D.src = avatarURL;
-    avatarFull.src = avatarURL;
     localStorage.setItem("avatarURL", avatarURL);
     rpmModal.style.display = "none";
   }
@@ -77,10 +85,7 @@ window.addEventListener("message", (event) => {
   }
 });
 
-// ✅ Avatar plein écran
-avatar3D.addEventListener("click", () => {
-  avatarModal.style.display = "flex";
-});
-avatarModal.addEventListener("click", () => {
-  avatarModal.style.display = "none";
+// Fermer Ready Player Me au clic extérieur
+rpmModal.addEventListener("click", (e) => {
+  if (e.target === rpmModal) rpmModal.style.display = "none";
 });
