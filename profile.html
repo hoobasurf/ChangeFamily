@@ -9,10 +9,17 @@
 </head>
 <body>
 
-<div class="screen" style="text-align:center;">
-  <img id="avatarImg" src="avatar-default.png" class="avatar-big">
-  <h2 id="pseudoDisplay">Sans pseudo</h2>
+<div class="screen" style="text-align:center; position:relative; overflow:hidden;">
+  <!-- 🌌 Particules -->
+  <canvas id="particleCanvas"></canvas>
 
+  <!-- 👤 Avatar avec halo -->
+  <div class="avatar-wrapper">
+    <div class="avatar-glow"></div>
+    <img id="avatarImg" src="avatar-default.png" class="avatar-big">
+  </div>
+
+  <h2 id="pseudoDisplay">Sans pseudo</h2>
   <button class="glass-btn" onclick="openEdit()">Modifier</button>
 </div>
 
@@ -39,9 +46,9 @@
   <a href="home.html"><i class="fa-solid fa-house"></i></a>
   <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
   <a href="chat.html"><i class="fa-solid fa-comment-dots"></i></a>
-  <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
 </div>
-  
+
 <script>
 function openEdit(){ document.getElementById('editModal').style.display = "flex" }
 function closeEdit(){ document.getElementById('editModal').style.display = "none" }
