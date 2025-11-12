@@ -1,71 +1,239 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profil</title>
-  <link rel="stylesheet" href="style.css" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
-  <script
-    type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
-  ></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(circle at 30% 30%, #1a002b, #000);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .hidden { display: none; }
+
+  /* Transition Ready Player Me */
+  #rpmContainer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(90,0,150,0.9), rgba(0,0,0,0.9));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+    z-index: 99999;
+  }
+
+  #rpmContainer.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #rpmFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Modal d’édition */
+  #editModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  #editBox {
+    background: rgba(50,0,80,0.9);
+    border-radius: 15px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 25px #a020f0;
+  }
+
+  .glass-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .glass-btn:hover {
+    background: rgba(180,90,255,0.3);
+    transform: scale(1.05);
+  }
+
+  .avatar-wrapper {
+    margin-top: 40px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .avatar-big {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #a020f0;
+    box-shadow: 0 0 30px #a020f0;
+  }
+
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(30, 0, 60, 0.8);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .bottom-nav a {
+    color: #bbb;
+    text-decoration: none;
+    font-size: 1.3em;
+  }
+
+  .bottom-nav a.active {
+    color: #a020f0;
+  }
+</style>
 </head>
 <body>
-  <div class="screen profile-screen">
-    <h2>Mon profil</h2>
 
-    <div class="avatar-container-large">
-      <div class="avatar-glow"></div>
-      <model-viewer
-        id="avatar3D"
-        camera-controls
-        auto-rotate
-        auto-rotate-delay="0"
-        rotation-per-second="40deg"
-        ar
-        shadow-intensity="1"
-        exposure="1"
-      ></model-viewer>
+<div class="screen" style="text-align:center; position:relative; overflow:hidden;">
+  <!-- 🌌 Particules -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- 👤 Avatar -->
+  <div class="avatar-wrapper">
+    <div class="avatar-glow"></div>
+    <img id="avatarImg" src="avatar-default.png" class="avatar-big">
+  </div>
+
+  <h2 id="pseudoDisplay">Sans pseudo</h2>
+  <button class="glass-btn" onclick="openEdit()">Modifier</button>
+</div>
+
+<!-- MODAL MODIFIER -->
+<div id="editModal">
+  <div id="editBox">
+    <h3>Modifier le profil</h3>
+
+    <input id="pseudoInput" placeholder="Ton pseudo">
+    <button id="savePseudo" class="glass-btn">💾 Enregistrer Pseudo</button>
+
+    <button id="chooseAvatar" class="glass-btn">🎨 Choisir un avatar</button>
+    <button id="chooseGallery" class="glass-btn">🖼️ Choisir dans la photothèque</button>
+    <button id="openCameraAvatar" class="glass-btn">📸 Prendre une photo</button>
+
+    <input type="file" id="galleryFile" accept="image/*" hidden>
+
+    <!-- ✅ nouveau bouton -->
+    <button id="resetProfile" class="glass-btn danger">♻️ Réinitialiser le profil</button>
+
+    <br><br>
+    <button class="glass-btn" onclick="closeEdit()">Fermer</button>
+  </div>
+</div>
+
+<!-- === MODAL AVATAR DICE === -->
+<div id="avatarSelectorModal" class="avatar-modal hidden">
+  <div class="avatar-modal-content">
+    <h2>Choisis ton avatar</h2>
+
+    <div class="avatar-preview-container">
+      <img id="avatarPreview" src="avatar-default.png" alt="Prévisualisation">
     </div>
 
-    <h3 id="pseudoDisplay">Sans pseudo</h3>
+    <label>🎨 Style :</label>
+    <select id="diceStyle">
+      <option value="avataaars">Avataaars (cartoon humain)</option>
+      <option value="bottts">Bottts (robots mignons)</option>
+      <option value="pixel-art">Pixel Art</option>
+      <option value="croodles">Croodles (dessin fun)</option>
+      <option value="identicon">Identicon (motif abstrait)</option>
+    </select>
 
-    <div class="profile-btns">
-      <button id="editProfile" class="glass-btn">Modifier</button>
-    </div>
+    <label>🧬 Générateur (seed) :</label>
+    <input id="diceSeed" placeholder="Ton pseudo ou un mot au hasard">
+
+    <button id="generateDice" class="glass-btn">🎲 Générer Avatar</button>
+    <button id="openRPM" class="glass-btn">🌐 Ready Player Me</button>
+    <button id="useSelected" class="glass-btn">✅ Utiliser cet avatar</button>
+    <button id="closeSelector" class="glass-btn">❌ Fermer</button>
   </div>
+</div>
 
-  <!-- ✅ MODAL MENU MODIFIER -->
-  <div id="editMenu" class="edit-menu">
-    <div class="menu-circle">
-      <button id="photoLib" class="menu-btn">📷 Photothèque</button>
-      <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
-      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
-    </div>
-  </div>
+<!-- 🌐 IFRAME READY PLAYER ME -->
+<div id="rpmContainer">
+  <iframe id="rpmFrame" allow="camera *; microphone *; clipboard-write"></iframe>
+</div>
 
-  <!-- ✅ Ready Player Me -->
-  <div id="rpmModal" class="avatar-modal">
-    <iframe
-      id="rpmFrame"
-      allow="camera *; microphone *; clipboard-write"
-      title="Ready Player Me"
-      class="rpm-frame"
-    ></iframe>
-  </div>
+<!-- DOCK -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+  <a href="chat.html"><i class="fa-solid fa-comment-dots"></i></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+</div>
 
-  <!-- ✅ NAVIGATION -->
-  <div class="bottom-nav">
-    <a href="home.html"><i class="fa-solid fa-house"></i></a>
-    <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-    <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
-    <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
-  </div>
+<!-- === Scripts === -->
+<script>
+function openEdit(){ document.getElementById('editModal').style.display = "flex"; }
+function closeEdit(){ document.getElementById('editModal').style.display = "none"; }
 
-  <script type="module" src="profile.js"></script>
+// === Ready Player Me ouverture fluide ===
+const rpmContainer = document.getElementById('rpmContainer');
+const rpmFrame = document.getElementById('rpmFrame');
+const openRPM = document.getElementById('openRPM');
+const avatarImg = document.getElementById('avatarImg');
+
+openRPM.addEventListener('click', () => {
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+  rpmContainer.classList.add('active');
+});
+
+// Message depuis Ready Player Me
+window.addEventListener("message", (event) => {
+  if (event.data?.source !== "readyplayerme") return;
+
+  if (event.data.eventName === "v1.avatar.exported") {
+    const avatarUrl = event.data.data.url;
+    localStorage.setItem("userAvatar", avatarUrl);
+    avatarImg.src = avatarUrl;
+
+    // Transition de sortie fluide
+    rpmContainer.classList.remove('active');
+    setTimeout(() => { rpmFrame.src = ""; }, 800);
+  }
+});
+</script>
+
+<script type="module" src="profile.js"></script>
+
 </body>
 </html>
