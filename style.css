@@ -3,6 +3,7 @@
 /* ================================== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
+/* 🌌 FOND FUTURISTE NÉON VIOLET ANIMÉ */
 body {
   margin: 0;
   padding: 0;
@@ -15,45 +16,45 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
-/* Animation étoiles scintillantes */
+/* Halo mouvant doux */
 body::before {
   content: "";
   position: fixed;
-  width: 200%;
-  height: 200%;
-  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-  opacity: 0.3;
-  animation: moveStars 60s linear infinite;
-  z-index: -1;
-}
-@keyframes moveStars {
-  from { background-position: 0 0; }
-  to { background-position: -1000px 1000px; }
+  top: 0; left: 0;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at 30% 40%, rgba(170, 0, 255, 0.25), transparent 70%),
+              radial-gradient(circle at 70% 80%, rgba(255, 0, 200, 0.15), transparent 70%);
+  filter: blur(60px);
+  animation: glowMove 18s ease-in-out infinite alternate;
+  z-index: -2;
 }
 
-/* ===================== */
-/* NAVIGATION BOTTOM-NAV  */
-/* ===================== */
-.bottom-nav {
+/* Étoiles animées subtiles */
+body::after {
+  content: "";
   position: fixed;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 500px;
-  height: 62px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(25px);
-  border-radius: 30px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 999;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+  opacity: 0.25;
+  animation: starsFloat 80s linear infinite;
+  z-index: -1;
 }
-.bottom-nav i { font-size: 30px; opacity: 0.5; }
-.bottom-nav .active { opacity: 1; transform: scale(1.2); }
+
+@keyframes glowMove {
+  0% { transform: translate(-5%, -5%) scale(1); opacity: 0.8; }
+  100% { transform: translate(5%, 5%) scale(1.05); opacity: 1; }
+}
+
+@keyframes starsFloat {
+  from { background-position: 0 0; }
+  to { background-position: 1000px 1000px; }
+}
 
 /* ===================== */
 /* ACCUEIL - PETIT AVATAR */
@@ -88,7 +89,7 @@ body::before {
   padding-bottom: 80px;
 }
 
-/* Conteneur avatar */
+/* Avatar futuriste */
 .avatar-container {
   position: relative;
   width: 140px;
@@ -99,7 +100,6 @@ body::before {
   align-items: center;
 }
 
-/* Avatar avec cercle néon clignotant */
 .profile-avatar {
   width: 100%;
   height: 100%;
@@ -121,22 +121,7 @@ body::before {
   50% { box-shadow: 0 0 40px #ff66ff; border-color: #ff66ff; }
 }
 
-/* Paillettes autour de l'avatar */
-.avatar-sparkle {
-  position: absolute;
-  top: -5px; left: -5px; right: -5px; bottom: -5px;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(circle, #ff66ff 0%, rgba(255,255,255,0) 70%);
-  animation: sparklePulse 1.5s ease-in-out infinite alternate;
-}
-@keyframes sparklePulse {
-  0% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff; opacity: 0.8; }
-  50% { box-shadow: 0 0 15px #ff33ff, 0 0 25px #ff99ff; opacity: 1; }
-  100% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff; opacity: 0.8; }
-}
-
-/* Pseudo futuriste pailleté animé */
+/* Pseudo */
 .profile-pseudo {
   font-weight: 700;
   font-size: 22px;
@@ -144,18 +129,11 @@ body::before {
   text-align: center;
   margin: 10px 0 15px;
   text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08), transparent 10%),
-    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 10%);
-  background-blend-mode: screen;
-  padding: 0 6px;
-  border-radius: 4px;
   animation: pseudoGlow 2s ease-in-out infinite alternate;
 }
 @keyframes pseudoGlow {
-  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
-  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff, 0 0 22px rgba(150,0,255,0.8);}
-  100% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff, 0 0 18px rgba(124,0,255,0.7);}
+  0% { text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff; }
+  50% { text-shadow: 0 0 6px #ff99ff, 0 0 14px #cc00ff; }
 }
 
 /* Bouton Modifier */
@@ -232,111 +210,10 @@ body::before {
   transform: translateY(-5px);
   box-shadow: 0 0 25px #b300ff;
 }
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.post-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.post-media img,
-.post-media video {
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid #8f00ff;
-}
-.post-actions {
-  display: flex;
-  gap: 15px;
-  font-size: 20px;
-}
-.post-actions span {
-  cursor: pointer;
-  transition: transform 0.2s, text-shadow 0.3s;
-}
-.post-actions span:hover {
-  transform: scale(1.2);
-  text-shadow: 0 0 10px #ff00ff;
-}
-.like-btn.liked {
-  color: #ff00ff;
-  text-shadow: 0 0 10px #ff00ff, 0 0 20px #cc00ff;
-}
 
-/* ===================== */
-/* COMMENTAIRES           */
-/* ===================== */
-.comments {
-  margin-top: 10px;
-  font-size: 0.95em;
-  line-height: 1.4em;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 8px;
-}
-.comments p { margin: 5px 0; }
-.pseudo {
-  color: #c46eff;
-  font-weight: 700;
-  text-shadow: 0 0 4px #ff7aff, 0 0 10px #b100ff;
-}
-.comment-input {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-.comment-input input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #b300ff;
-  border-radius: 8px;
-  background: rgba(40,0,70,0.7);
-  color: #fff;
-}
-.comment-input input::placeholder { color: #aaa; }
-.comment-input button {
-  background: linear-gradient(45deg, #ff00ff, #7a00ff);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  padding: 8px 12px;
-  cursor: pointer;
-  box-shadow: 0 0 10px #a000ff;
-  transition: box-shadow 0.3s, transform 0.2s;
-}
-.comment-input button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px #ff00ff;
-}
-
-/* ===================== */
-/* PAILLETTES NÉON        */
-/* ===================== */
-.sparkle {
-  position: fixed;
-  top: -12px;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle, #ff6aff 0%, #7a00ff 60%, transparent 100%);
-  border-radius: 50%;
-  box-shadow: 0 0 8px #ff6aff, 0 0 15px #b100ff, 0 0 25px #7a00ff;
-  animation: sparkleFall linear forwards;
-  z-index: 9999;
-  pointer-events: none;
-}
-@keyframes sparkleFall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  60% { opacity: 0.9; }
-  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-}
 /* ===================== */
 /* ⚡ DOCK FUTURISTE NÉON */
 /* ===================== */
-
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -413,7 +290,6 @@ body::before {
   transform: scale(0.9);
 }
 
-/* 🌀 Adaptation mobile */
 @media (max-width: 480px) {
   .bottom-nav {
     bottom: 14px;
@@ -423,7 +299,3 @@ body::before {
     font-size: 22px;
   }
 }
-
-/* ===================== */
-/* FIN DU CSS            */
-/* ===================== */
