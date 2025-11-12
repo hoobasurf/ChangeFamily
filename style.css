@@ -1,3 +1,252 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at center, #0a0013, #120019, #0a0013);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+h2, h3 {
+  color: #fff;
+  text-align: center;
+}
+
+.screen {
+  padding: 20px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.avatar-big {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+  transition: 0.3s;
+}
+.avatar-big:hover {
+  box-shadow: 0 0 35px rgba(255, 0, 255, 1);
+}
+
+.profile-btns {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.edit-section {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+input {
+  border: 1px solid #ff00ff;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-radius: 10px;
+  padding: 8px 12px;
+  text-align: center;
+  width: 200px;
+}
+
+.glass-btn {
+  background: rgba(255, 0, 255, 0.2);
+  color: #fff;
+  border: 1px solid #ff00ff;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 15px;
+  backdrop-filter: blur(10px);
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+}
+.glass-btn:hover {
+  background: rgba(255, 0, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+/* ✅ NAVIGATION DOCK */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background: rgba(20, 0, 30, 0.8);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #ff00ff;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+}
+.bottom-nav a {
+  color: #ccc;
+  font-size: 22px;
+  transition: 0.3s;
+}
+.bottom-nav a.active {
+  color: #ff00ff;
+  text-shadow: 0 0 8px #ff00ff;
+}
+.bottom-nav a:hover {
+  color: #ff66ff;
+}
+
+/* ✅ MODAL AVATAR PLEIN ÉCRAN */
+.avatar-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10,0,20,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.avatar-modal-content {
+  width: 80%;
+  height: 80%;
+}
+.avatar-modal-content model-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+/* ✅ Fenêtre Ready Player Me intégrée */
+.rpm-frame {
+  width: 90%;
+  height: 90%;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(255,0,255,0.6);
+}
+
+#rpmModal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,20,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+}
+.avatar-container-large {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+model-viewer {
+  width: 80vw;
+  height: 80vw;
+  max-width: 400px;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+/* 💜 Halo néon animé autour de l’avatar */
+.avatar-glow {
+  position: absolute;
+  width: 82vw;
+  height: 82vw;
+  max-width: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,255,0.4), transparent 70%);
+  box-shadow: 0 0 30px 15px rgba(200,0,255,0.4),
+              0 0 60px 25px rgba(255,0,255,0.2);
+  animation: pulseGlow 2s infinite alternate;
+  z-index: 1;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+/* 💫 Menu modifier (photothèque / photo / avatar) */
+.edit-menu {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 20, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+}
+
+.menu-circle {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,255,0.2), rgba(50,0,50,0.8));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 30px 15px rgba(255,0,255,0.5);
+  animation: glowCircle 3s infinite alternate;
+}
+
+@keyframes glowCircle {
+  from { box-shadow: 0 0 30px rgba(255,0,255,0.5); }
+  to { box-shadow: 0 0 60px rgba(255,100,255,0.8); }
+}
+
+.menu-btn {
+  background: none;
+  border: 2px solid #ff00ff;
+  color: #fff;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.menu-btn:hover {
+  background: #ff00ff33;
+  transform: scale(1.05);
+}
+
+/* ✅ Ready Player Me */
+.rpm-frame {
+  width: 90%;
+  height: 90%;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(255,0,255,0.6);
+}
+#rpmModal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,20,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+}
+
 .url-input {
   position: fixed;
   bottom: 80px;
