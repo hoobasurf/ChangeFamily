@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
-
+  <title>Profil</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Viewer 3D Google -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 </head>
-
 <body>
 
 <div class="screen profile-screen">
+  <h2>Mon profil</h2>
 
-  <!-- AVATAR SECTION -->
-  <div class="avatar-box">
+  <div class="avatar-container">
     <model-viewer
       id="avatar3D"
       class="avatar-big"
@@ -26,44 +22,24 @@
       ar
       shadow-intensity="1"
       exposure="1"
-      style="width:150px;height:150px;border-radius:50%;border:3px solid #ff00ff;box-shadow:0 0 15px #ff00ff88;"
     ></model-viewer>
-
-    <!-- Fallback image si 3D non chargé -->
-    <img id="avatarImg" class="avatar-fallback" src="avatar-default.png" alt="avatar" hidden>
-
-    <div id="pseudoDisplay" class="pseudo">Sans pseudo</div>
-
-    <button id="openEdit" class="btn-edit">Modifier</button>
   </div>
 
-  <!-- PANEL MODIFICATION (caché par défaut) -->
-  <div id="editPanel" class="edit-panel hidden">
+  <h3 id="pseudoDisplay">Sans pseudo</h3>
 
-    <input type="text" id="pseudoInput" placeholder="Nouveau pseudo">
-    <button id="savePseudo">✅ Enregistrer pseudo</button>
-
-    <hr>
-
-    <button id="openRPM" class="btn-rpm">Créer avatar 3D</button>
-    <button id="chooseGallery">📁 Galerie</button>
-    <button id="openCameraAvatar">📸 Selfie</button>
-    <input type="file" id="galleryFile" accept="image/*" hidden>
-
-    <hr>
-
-    <button id="resetProfile" class="btn-reset">♻️ Reset profil</button>
-
+  <div class="profile-btns">
+    <button id="editProfile" class="glass-btn">Modifier le profil</button>
+    <button id="createAvatar" class="glass-btn">Créer avatar</button>
   </div>
 
+  <div id="editSection" class="edit-section">
+    <input id="pseudoInput" placeholder="Ton pseudo">
+    <button id="chooseAvatar" class="glass-btn">Importer avatar (.glb)</button>
+    <button id="saveProfile" class="glass-btn">Enregistrer</button>
+  </div>
 </div>
 
-<!-- READY PLAYER ME MODAL -->
-<div id="rpmContainer" class="rpm-container">
-  <iframe id="rpmFrame"></iframe>
-</div>
-
-<!-- DOCK NAVIGATION -->
+<!-- ✅ NAVIGATION -->
 <div class="bottom-nav">
   <a href="home.html"><i class="fa-solid fa-house"></i></a>
   <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
@@ -71,17 +47,20 @@
   <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
 </div>
 
+<!-- ✅ MODAL AVATAR PLEIN ÉCRAN -->
+<div id="avatarModal" class="avatar-modal">
+  <div class="avatar-modal-content">
+    <model-viewer
+      id="avatarFull"
+      camera-controls
+      auto-rotate
+      ar
+      shadow-intensity="1"
+      exposure="1"
+    ></model-viewer>
+  </div>
+</div>
+
 <script type="module" src="profile.js"></script>
-
-<script>
-// OUVERTURE / FERMETURE PANEL MODIFIER
-const editBtn = document.getElementById("openEdit");
-const editPanel = document.getElementById("editPanel");
-
-editBtn.addEventListener("click", () => {
-  editPanel.classList.toggle("hidden");
-});
-</script>
-
 </body>
 </html>
