@@ -1,186 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profil / Accueil</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/a2e0e6ad6b.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- ===================== -->
-  <!-- SECTION PROFIL AVATAR -->
-  <!-- ===================== -->
-  <div class="profile-content">
-    <div class="avatar-container">
-      <img src="avatar-default.png" alt="Avatar" class="profile-avatar">
-    </div>
+<div class="screen" style="text-align:center;">
+  <img id="avatarImg" src="avatar-default.png" class="avatar-big">
+  <h2 id="pseudoDisplay">Sans pseudo</h2>
 
-    <div class="profile-pseudo" id="pseudo">MonPseudo</div>
+  <button class="glass-btn" onclick="openEdit()">Modifier</button>
+</div>
 
-    <button class="edit-profile-btn" id="editBtn">Modifier</button>
+<!-- MODAL MODIFIER -->
+<div id="editModal">
+  <div id="editBox">
+    <h3>Modifier le profil</h3>
 
-    <div class="edit-panel hidden" id="editPanel">
-      <input type="text" id="pseudoInput" placeholder="Nouveau pseudo">
-      <input type="file" id="avatarInput" accept="image/*">
-      <button id="saveBtn">Enregistrer</button>
-    </div>
+    <input id="pseudoInput" placeholder="Ton pseudo">
+    <button id="savePseudo" class="glass-btn">Enregistrer Pseudo</button>
+
+    <button id="chooseAvatar" class="glass-btn">Choisir Galerie</button>
+    <button id="openCameraAvatar" class="glass-btn">Ouvrir Selfie</button>
+
+    <input type="file" id="avatarFile" accept="image/*" hidden>
+
+    <br><br>
+    <button class="glass-btn" onclick="closeEdit()">Fermer</button>
   </div>
+</div>
 
-  <!-- ===================== -->
-  <!-- FEED POSTS -->
-  <!-- ===================== -->
-  <div id="feed"></div>
+<!-- DOCK -->
+<div class="bottom-nav">
+  <a href="home.html"><i class="fa-solid fa-house"></i></a>
+  <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
+  <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+</div>
 
-  <!-- ===================== -->
-  <!-- ✅ NAVIGATION FUTURISTE -->
-  <!-- ===================== -->
-  <div class="bottom-nav">
-    <a href="profile.html" class="nav-btn" data-page="profile">
-      <i class="fa-solid fa-user"></i>
-    </a>
-    <a href="story.html" class="nav-btn" data-page="story">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <a href="camera.html" class="nav-btn" data-page="photo">
-      <i class="fa-solid fa-camera"></i>
-    </a>
-    <a href="chat.html" class="nav-btn" data-page="chat">
-      <i class="fa-solid fa-comment"></i>
-    </a>
-  </div>
+<script>
+function openEdit(){ document.getElementById('editModal').style.display = "flex" }
+function closeEdit(){ document.getElementById('editModal').style.display = "none" }
+</script>
 
-  <!-- ===================== -->
-  <!-- SCRIPT PROFIL -->
-  <!-- ===================== -->
-  <script type="module">
-    // ======= Gestion édition profil =======
-    const editBtn = document.getElementById('editBtn');
-    const editPanel = document.getElementById('editPanel');
-    const pseudoDiv = document.getElementById('pseudo');
-    const pseudoInput = document.getElementById('pseudoInput');
-    const avatarInput = document.getElementById('avatarInput');
-    const profileAvatar = document.querySelector('.profile-avatar');
-    const saveBtn = document.getElementById('saveBtn');
-
-    editBtn.addEventListener('click', () => {
-      editPanel.classList.toggle('hidden');
-    });
-
-    saveBtn.addEventListener('click', () => {
-      if (pseudoInput.value.trim() !== "") {
-        pseudoDiv.textContent = pseudoInput.value.trim();
-      }
-      if (avatarInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          profileAvatar.src = e.target.result;
-        };
-        reader.readAsDataURL(avatarInput.files[0]);
-      }
-      editPanel.classList.add('hidden');
-    });
-
-    // ======= Simulation feed posts =======
-    const feed = document.getElementById('feed');
-    const posts = [
-      { id: 1, pseudo: "Alice", avatar: "avatar1.png", url: "post1.png", type: "image", likes: 5, comments: 2 },
-      { id: 2, pseudo: "Bob", avatar: "avatar2.png", url: "post2.mp4", type: "video", likes: 8, comments: 3 }
-    ];
-
-    function renderFeed() {
-      feed.innerHTML = "";
-      posts.forEach(post => {
-        const card = document.createElement("div");
-        card.className = "post-card";
-        card.innerHTML = `
-          <div class="post-header">
-            <img src="${post.avatar}" class="avatar" />
-            <b class="poster-name">${post.pseudo}</b>
-          </div>
-          <div class="post-media">
-            ${
-              post.type === "video"
-                ? `<video src="${post.url}" autoplay muted loop playsinline></video>`
-                : `<img src="${post.url}" alt="post" />`
-            }
-          </div>
-          <div class="post-actions">
-            <span class="like-btn" data-id="${post.id}">❤️ <span class="like-count">${post.likes}</span></span>
-            <span class="comment-btn" data-id="${post.id}">💬 <span class="comment-count">${post.comments}</span></span>
-          </div>
-          <div class="comments" id="comments-${post.id}"></div>
-          <div class="comment-input" id="comment-input-${post.id}" style="display:none;">
-            <input type="text" placeholder="Écrire un commentaire..." />
-            <button>Envoyer</button>
-          </div>
-        `;
-        feed.appendChild(card);
-      });
-    }
-    renderFeed();
-
-    // ======= Interactions Like / Comment =======
-    document.addEventListener("click", e => {
-      if (e.target.closest(".like-btn")) {
-        const btn = e.target.closest(".like-btn");
-        const countEl = btn.querySelector(".like-count");
-        countEl.textContent = parseInt(countEl.textContent) + 1;
-        launchSparkles();
-      }
-
-      if (e.target.closest(".comment-btn")) {
-        const btn = e.target.closest(".comment-btn");
-        const postId = btn.dataset.id;
-        const inputDiv = document.getElementById(`comment-input-${postId}`);
-        inputDiv.style.display = inputDiv.style.display === "none" ? "flex" : "none";
-        if (inputDiv.style.display !== "none") {
-          const input = inputDiv.querySelector("input");
-          setTimeout(() => input.focus(), 50);
-        }
-      }
-
-      if (e.target.tagName === "BUTTON" && e.target.parentElement.classList.contains("comment-input")) {
-        const input = e.target.parentElement.querySelector("input");
-        if (!input.value) return;
-        const postId = e.target.parentElement.id.replace("comment-input-", "");
-        const commentDiv = document.getElementById(`comments-${postId}`);
-        const pseudo = "Moi";
-        const text = input.value;
-        commentDiv.innerHTML += `<p><b class="pseudo">${pseudo}</b> : ${text}</p>`;
-        input.value = "";
-        launchSparkles();
-      }
-    });
-
-    // ======= Paillettes =======
-    function launchSparkles() {
-      const sparkleCount = 30;
-      for (let i = 0; i < sparkleCount; i++) {
-        const sparkle = document.createElement("div");
-        sparkle.className = "sparkle";
-        sparkle.style.left = Math.random() * 100 + "vw";
-        sparkle.style.width = (4 + Math.random() * 6) + "px";
-        sparkle.style.height = sparkle.style.width;
-        sparkle.style.animationDuration = 1.5 + Math.random() * 2 + "s";
-        sparkle.style.opacity = 0.6 + Math.random() * 0.4;
-        sparkle.style.transform = `scale(${0.6 + Math.random() * 1.4})`;
-        document.body.appendChild(sparkle);
-        setTimeout(() => sparkle.remove(), 4000);
-      }
-    }
-
-    // ======= Activation de l’icône du dock =======
-    const currentPage = window.location.pathname.split("/").pop().split(".")[0];
-    document.querySelectorAll(".bottom-nav .nav-btn").forEach(btn => {
-      if (btn.dataset.page === currentPage) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    });
-  </script>
-
+<script type="module" src="profile.js"></script>
 </body>
 </html>
