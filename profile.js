@@ -1,10 +1,6 @@
-// ===============================
-// 🌟 VARIABLES GLOBALES
-// ===============================
 const miniCircle = document.getElementById("miniCircle");
 const miniCircleImg = document.getElementById("miniCircleImg");
 const avatar3D = document.getElementById("avatar3D");
-const pseudoDisplay = document.getElementById("pseudoDisplay");
 const editBtn = document.getElementById("editProfile");
 const editMenu = document.getElementById("editMenu");
 const photoLib = document.getElementById("photoLib");
@@ -13,15 +9,10 @@ const createAvatar = document.getElementById("createAvatar");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
-// ===============================
-// 🌟 CHARGEMENT AU DÉMARRAGE
-// ===============================
+// ✅ Charger les images sauvegardées
 window.addEventListener("DOMContentLoaded", () => {
   const savedPhoto = localStorage.getItem("miniCirclePhoto");
   if (savedPhoto) miniCircleImg.src = savedPhoto;
-
-  const pseudo = localStorage.getItem("pseudo");
-  if (pseudo) pseudoDisplay.textContent = pseudo;
 
   const avatarURL = localStorage.getItem("avatarURL");
   if (avatarURL) {
@@ -30,38 +21,27 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ===============================
-// 🌟 OUVRIR / FERMER LE MENU MODIFIER
-// ===============================
+// ✅ Ouvrir / fermer le menu
 editBtn.addEventListener("click", (e) => {
   e.stopPropagation();
-  editMenu.style.display =
-    editMenu.style.display === "flex" ? "none" : "flex";
+  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
 
-// ✅ Fermer le menu si on clique en dehors
+// ✅ Fermer le menu si clic en dehors
 window.addEventListener("click", (e) => {
-  if (
-    editMenu.style.display === "flex" &&
-    !editMenu.contains(e.target) &&
-    e.target !== editBtn
-  ) {
+  if (editMenu.style.display === "flex" && !editMenu.contains(e.target) && e.target !== editBtn) {
     editMenu.style.display = "none";
   }
 });
 
-// ===============================
-// 🌟 CHOISIR DEPUIS PHOTOTHÈQUE
-// ===============================
+// ✅ Choisir depuis photothèque
 photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
       const url = reader.result;
@@ -72,23 +52,18 @@ photoLib.addEventListener("click", () => {
     };
     reader.readAsDataURL(file);
   };
-
   input.click();
 });
 
-// ===============================
-// 🌟 PRENDRE UNE PHOTO (CAMÉRA)
-// ===============================
+// ✅ Prendre une photo
 takePhoto.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  input.capture = "environment"; // caméra arrière par défaut
-
+  input.capture = "camera";
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
       const url = reader.result;
@@ -99,24 +74,22 @@ takePhoto.addEventListener("click", () => {
     };
     reader.readAsDataURL(file);
   };
-
   input.click();
 });
 
-// ===============================
-// 🌟 CRÉER UN AVATAR (READY PLAYER ME)
-// ===============================
-if (createAvatar) {
-  createAvatar.addEventListener("click", () => {
-    rpmModal.style.display = "flex";
-    rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
-    editMenu.style.display = "none";
-  });
-}
+// ✅ Créer avatar (Ready Player Me)
+createAvatar.addEventListener("click", () => {
+  rpmModal.style.display = "flex";
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+  editMenu.style.display = "none";
+});
 
-// ===============================
-// 🌟 GESTION DU READY PLAYER ME
-// ===============================
+// ✅ Fermer modal RPM si clic dehors
+rpmModal.addEventListener("click", (e) => {
+  if (e.target === rpmModal) rpmModal.style.display = "none";
+});
+
+// ✅ Écouter le frame Ready Player Me
 window.addEventListener("message", (event) => {
   let data;
   try {
@@ -124,7 +97,6 @@ window.addEventListener("message", (event) => {
   } catch {
     data = event.data;
   }
-
   if (!data || data.source !== "readyplayerme") return;
 
   if (data.eventName === "v1.frame.ready") {
@@ -132,7 +104,7 @@ window.addEventListener("message", (event) => {
       JSON.stringify({
         target: "readyplayerme",
         type: "subscribe",
-        eventName: "v1.avatar.exported",
+        eventName: "v1.avatar.exported"
       }),
       "*"
     );
@@ -148,17 +120,9 @@ window.addEventListener("message", (event) => {
   }
 });
 
-// ✅ Fermer le modal RPM en cliquant à l’extérieur
-rpmModal.addEventListener("click", (e) => {
-  if (e.target === rpmModal) rpmModal.style.display = "none";
-});
-
-// ===============================
-// 🌟 DRAG DU MINI CERCLE
-// ===============================
+// ✅ Drag du mini cercle
 let isDragging = false;
-let offsetX = 0,
-  offsetY = 0;
+let offsetX = 0, offsetY = 0;
 
 miniCircle.addEventListener("mousedown", startDrag);
 miniCircle.addEventListener("touchstart", startDrag);
@@ -174,7 +138,6 @@ function startDrag(e) {
   offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
   miniCircle.style.cursor = "grabbing";
 }
-
 function drag(e) {
   if (!isDragging) return;
   e.preventDefault();
@@ -183,7 +146,6 @@ function drag(e) {
   miniCircle.style.left = `${x}px`;
   miniCircle.style.top = `${y}px`;
 }
-
 function endDrag() {
   isDragging = false;
   miniCircle.style.cursor = "grab";
