@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil</title>
-
   <link rel="stylesheet" href="style.css" />
   <link
     rel="stylesheet"
@@ -19,12 +18,11 @@
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
-    <!-- Bouton Modifier -->
-    <div class="profile-btns-top">
-      <button id="editProfile" class="glass-btn">Modifier</button>
+    <!-- ✅ Mini cercle draggable -->
+    <div id="miniCircle" class="mini-circle">
+      <img id="miniCircleImg" src="avatar-default.png" alt="profil" />
     </div>
 
-    <!-- Avatar principal -->
     <div class="avatar-container-large">
       <model-viewer
         id="avatar3D"
@@ -36,28 +34,21 @@
     </div>
 
     <h3 id="pseudoDisplay">Sans pseudo</h3>
+
+    <div class="profile-btns">
+      <button id="editProfile" class="glass-btn">Modifier</button>
+    </div>
   </div>
 
-  <!-- ✅ MENU MODIFIER -->
+  <!-- ✅ Menu Modifier -->
   <div id="editMenu" class="edit-menu">
     <div class="menu-circle">
       <button id="photoLib" class="menu-btn">📷 Photothèque</button>
       <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
-      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
     </div>
   </div>
 
-  <!-- ✅ Ready Player Me -->
-  <div id="rpmModal" class="avatar-modal">
-    <iframe
-      id="rpmFrame"
-      allow="camera *; microphone *; clipboard-write"
-      title="Ready Player Me"
-      class="rpm-frame"
-    ></iframe>
-  </div>
-
-  <!-- ✅ NAVIGATION BAS -->
+  <!-- ✅ Navigation -->
   <div class="bottom-nav">
     <a href="home.html"><i class="fa-solid fa-house"></i></a>
     <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
