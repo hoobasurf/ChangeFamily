@@ -62,18 +62,19 @@ createAvatar.addEventListener("click", () => {
   editMenu.style.display = "none";
 });
 
-// ✅ Écoute les messages du frame Ready Player Me
+// ✅ Écouter les messages du frame Ready Player Me
 window.addEventListener("message", (event) => {
-  if (!event.data || !event.data.source || event.data.source !== "readyplayerme") return;
-
-  if (event.data.eventName === "v1.avatar.exported") {
-    const avatarURL = event.data.data.url;
-    avatar3D.src = avatarURL;
-    localStorage.setItem("avatarURL", avatarURL);
-    rpmModal.style.display = "none";
+  let data;
+  try {
+    data = JSON.parse(event.data);
+  } catch {
+    data = event.data;
   }
 
-  if (event.data.eventName === "v1.frame.ready") {
+  if (!data || data.source !== "readyplayerme") return;
+
+  // Quand le frame est prêt
+  if (data.eventName === "v1.frame.ready") {
     rpmFrame.contentWindow.postMessage(
       JSON.stringify({
         target: "readyplayerme",
@@ -83,9 +84,17 @@ window.addEventListener("message", (event) => {
       "*"
     );
   }
+
+  // Quand l’avatar est exporté après "Suivant"
+  if (data.eventName === "v1.avatar.exported") {
+    const avatarURL = data.data.url;
+    avatar3D.src = avatarURL;
+    localStorage.setItem("avatarURL", avatarURL);
+    rpmModal.style.display = "none";
+  }
 });
 
-// Fermer Ready Player Me au clic extérieur
+// ✅ Fermer Ready Player Me au clic extérieur
 rpmModal.addEventListener("click", (e) => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
