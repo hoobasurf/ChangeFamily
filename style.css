@@ -1,14 +1,13 @@
 body {
   margin: 0;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto; /* ✅ autorise le scroll vertical */
   background: url("Ville1.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #fff;
   font-family: 'Poppins', sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
 }
 
