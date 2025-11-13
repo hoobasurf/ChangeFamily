@@ -1,308 +1,175 @@
+/* ====== Profil ====== */
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
-  background: radial-gradient(circle at center, #0a0013, #120019, #0a0013);
+  height: 100vh;
+  overflow: hidden;
+  background: url("Ville1.jpg") no-repeat center center fixed;
+  background-size: cover;
   color: #fff;
-  overflow-x: hidden;
-}
-
-h2, h3 {
-  color: #fff;
-  text-align: center;
-}
-
-.screen {
-  padding: 20px;
-  padding-bottom: 100px;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-.avatar-container {
+  font-family: 'Poppins', sans-serif;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 25px;
-}
-
-.avatar-big {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
-  transition: 0.3s;
-}
-.avatar-big:hover {
-  box-shadow: 0 0 35px rgba(255, 0, 255, 1);
-}
-
-.profile-btns {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.edit-section {
-  display: none;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
-  gap: 10px;
-  margin-top: 20px;
 }
 
-input {
-  border: 1px solid #ff00ff;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border-radius: 10px;
-  padding: 8px 12px;
+.profile-screen {
   text-align: center;
-  width: 200px;
-}
-
-.glass-btn {
-  background: rgba(255, 0, 255, 0.2);
-  color: #fff;
-  border: 1px solid #ff00ff;
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-size: 15px;
-  backdrop-filter: blur(10px);
-  transition: 0.3s;
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
-}
-.glass-btn:hover {
-  background: rgba(255, 0, 255, 0.4);
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
-}
-
-/* ✅ NAVIGATION DOCK */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 65px;
-  background: rgba(20, 0, 30, 0.8);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  backdrop-filter: blur(10px);
-  border-top: 1px solid #ff00ff;
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
-}
-.bottom-nav a {
-  color: #ccc;
-  font-size: 22px;
-  transition: 0.3s;
-}
-.bottom-nav a.active {
-  color: #ff00ff;
-  text-shadow: 0 0 8px #ff00ff;
-}
-.bottom-nav a:hover {
-  color: #ff66ff;
-}
-
-/* ✅ MODAL AVATAR PLEIN ÉCRAN */
-.avatar-modal {
-  position: fixed;
-  top: 0; left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(10,0,20,0.9);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.avatar-modal-content {
-  width: 80%;
-  height: 80%;
-}
-.avatar-modal-content model-viewer {
-  width: 100%;
-  height: 100%;
+  position: relative;
+  padding-bottom: 100px;
 }
 
-/* ✅ Fenêtre Ready Player Me intégrée */
-.rpm-frame {
-  width: 90%;
-  height: 90%;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(255,0,255,0.6);
-}
-
-#rpmModal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,20,0.9);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1500;
-}
+/* ====== Avatar principal ====== */
 .avatar-container-large {
   position: relative;
-  width: 100%;
-  height: 60vh;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto 40px auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+}
+
+.avatar-glow {
+  position: absolute;
+  bottom: 50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  box-shadow: 0 0 60px 25px rgba(255, 0, 255, 0.6);
+  animation: pulseGlow 2s infinite alternate;
+  z-index: 0;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 40px 15px rgba(255, 0, 255, 0.4); }
+  50% { box-shadow: 0 0 80px 35px rgba(255, 0, 255, 0.8); }
+  100% { box-shadow: 0 0 40px 15px rgba(255, 0, 255, 0.4); }
 }
 
 model-viewer {
-  width: 80vw;
-  height: 80vw;
-  max-width: 400px;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
   z-index: 2;
 }
 
-/* 💜 Halo néon animé autour de l’avatar */
-.avatar-glow {
+/* ====== Reflet au sol ====== */
+.avatar-reflection {
   position: absolute;
-  width: 82vw;
-  height: 82vw;
-  max-width: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.4), transparent 70%);
-  box-shadow: 0 0 30px 15px rgba(200,0,255,0.4),
-              0 0 60px 25px rgba(255,0,255,0.2);
-  animation: pulseGlow 2s infinite alternate;
+  bottom: -60px;
+  width: 180px;
+  height: 80px;
+  background: radial-gradient(ellipse at center, rgba(255, 0, 255, 0.4), transparent 70%);
+  filter: blur(25px);
+  opacity: 0.6;
+  animation: pulseReflection 3s infinite alternate;
   z-index: 1;
 }
 
-@keyframes pulseGlow {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.1); opacity: 1; }
+@keyframes pulseReflection {
+  0% { opacity: 0.4; transform: scaleX(0.9); }
+  50% { opacity: 0.8; transform: scaleX(1.1); }
+  100% { opacity: 0.4; transform: scaleX(0.9); }
 }
 
-/* 💫 Menu modifier (photothèque / photo / avatar) */
+/* ====== Bouton Modifier ====== */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff00ff;
+  border-radius: 12px;
+  padding: 10px 25px;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 0 10px #ff00ff;
+  transition: 0.3s;
+}
+
+.glass-btn:hover {
+  background: #ff00ff;
+  color: black;
+  box-shadow: 0 0 25px #ff00ff;
+}
+
+/* ====== Menu circulaire ====== */
 .edit-menu {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 20, 0.9);
   display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
   justify-content: center;
   align-items: center;
-  z-index: 1200;
+  z-index: 20;
 }
 
 .menu-circle {
-  width: 250px;
-  height: 250px;
+  background: radial-gradient(circle, rgba(120,0,120,0.9), rgba(40,0,40,0.95));
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.2), rgba(50,0,50,0.8));
+  padding: 50px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 30px 15px rgba(255,0,255,0.5);
-  animation: glowCircle 3s infinite alternate;
-}
-
-@keyframes glowCircle {
-  from { box-shadow: 0 0 30px rgba(255,0,255,0.5); }
-  to { box-shadow: 0 0 60px rgba(255,100,255,0.8); }
+  gap: 20px;
+  box-shadow: 0 0 40px #ff00ff;
 }
 
 .menu-btn {
-  background: none;
+  background: transparent;
   border: 2px solid #ff00ff;
   color: #fff;
-  padding: 10px 15px;
-  margin: 5px;
+  padding: 12px 25px;
   border-radius: 10px;
-  font-size: 14px;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
 }
+
 .menu-btn:hover {
-  background: #ff00ff33;
-  transform: scale(1.05);
+  background: #ff00ff;
+  color: black;
+  box-shadow: 0 0 20px #ff00ff;
 }
 
-/* ✅ Ready Player Me */
+/* ====== Ready Player Me modal ====== */
+.avatar-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
 .rpm-frame {
   width: 90%;
   height: 90%;
   border: none;
   border-radius: 15px;
-  box-shadow: 0 0 25px rgba(255,0,255,0.6);
-}
-#rpmModal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,20,0.9);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1500;
 }
 
-.url-input {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  background: rgba(255, 0, 255, 0.1);
-  border: 2px solid #ff00ff;
-  border-radius: 10px;
-  color: #fff;
-  padding: 10px;
-  text-align: center;
-  outline: none;
-  font-size: 14px;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
-}
-
-/* --- Menu modifier caché par défaut --- */
-.edit-menu {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-/* --- Cercle des boutons --- */
-.menu-circle {
-  background: rgba(40, 0, 60, 0.9);
-  border-radius: 20px;
-  padding: 20px;
+/* ====== Dock navigation ====== */
+.bottom-nav {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* --- Boutons du menu --- */
-.menu-btn {
-  background: linear-gradient(90deg, #b000ff, #ff00a8);
-  border: none;
-  color: white;
-  font-size: 16px;
-  padding: 10px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
+.bottom-nav a {
+  color: #999;
+  font-size: 22px;
+  transition: 0.3s;
 }
 
-.menu-btn:hover {
-  transform: scale(1.05);
-}
-
-/* --- Affichage quand on clique sur "Modifier" --- */
-.edit-menu.show {
-  display: flex;
+.bottom-nav a.active,
+.bottom-nav a:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff;
 }
