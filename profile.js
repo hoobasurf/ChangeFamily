@@ -9,72 +9,66 @@ const createAvatar = document.getElementById("createAvatar");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
-// ✅ Charger photo et avatar depuis localStorage
+// Charger photo + avatar
 window.addEventListener("DOMContentLoaded", () => {
   const savedPhoto = localStorage.getItem("miniCirclePhoto");
   if (savedPhoto) {
     miniCircleImg.src = savedPhoto;
     avatar3D.src = savedPhoto;
   }
-
   const avatarURL = localStorage.getItem("avatarURL");
   if (avatarURL) avatar3D.src = avatarURL;
 });
 
-// ✅ Ouvrir / fermer le menu Modifier
+// Ouvrir/fermer menu
 editBtn.addEventListener("click", e => {
   e.stopPropagation();
   editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
-
-// ✅ Fermer menu si clic en dehors
 window.addEventListener("click", e => {
   if (editMenu.style.display === "flex" && !editMenu.contains(e.target) && e.target !== editBtn) {
     editMenu.style.display = "none";
   }
 });
 
-// ✅ Fonction pour choisir ou prendre une photo
+// Choisir / prendre photo
 function choosePhoto(isCamera) {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  if (isCamera) input.capture = "camera";
-  input.onchange = e => {
+  if (isCamera) input.capture = "environment"; // caméra arrière
+  input.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       const dataURL = reader.result;
-      miniCircleImg.src = dataURL; // ✅ Affiche dans mini-cercle
-      avatar3D.src = dataURL;      // ✅ Affiche dans avatar 3D
+      miniCircleImg.src = dataURL; // mini-cercle
+      avatar3D.src = dataURL;      // avatar 3D
       localStorage.setItem("miniCirclePhoto", dataURL);
       localStorage.setItem("avatarURL", dataURL);
     };
     reader.readAsDataURL(file);
-  };
+  });
   input.click();
 }
 
-// ✅ Photothèque
 photoLib.addEventListener("click", () => choosePhoto(false));
-
-// ✅ Prendre photo
 takePhoto.addEventListener("click", () => choosePhoto(true));
 
-// ✅ Créer avatar 3D (Ready Player Me)
+// Créer avatar 3D
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
-// ✅ Fermer modal si clic en dehors
+// Fermer modal clic dehors
 rpmModal.addEventListener("click", e => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
 
-// ✅ Écouter messages Ready Player Me
+// Écouter Ready Player Me
 window.addEventListener("message", event => {
   let data;
   try { data = JSON.parse(event.data); } catch { data = event.data; }
@@ -98,7 +92,7 @@ window.addEventListener("message", event => {
   }
 });
 
-// ✅ Drag du mini-cercle
+// Drag mini-cercle
 let isDragging = false, offsetX = 0, offsetY = 0;
 miniCircle.addEventListener("mousedown", startDrag);
 miniCircle.addEventListener("touchstart", startDrag);
