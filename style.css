@@ -11,11 +11,13 @@ body {
   align-items: center;
 }
 
+/* Profil Screen */
 .profile-screen {
   text-align: center;
   width: 100%;
   position: relative;
   padding: 40px 0 150px;
+  background: transparent; /* fond transparent pour voir Ville1.jpg */
 }
 
 /* Mini cercle */
@@ -68,7 +70,7 @@ model-viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.5); /* semi-transparent pour voir le fond */
   justify-content: center;
   align-items: center;
   z-index: 999;
@@ -110,7 +112,7 @@ model-viewer {
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0,0,0,0.9);
   z-index: 3000;
   display: flex;
   justify-content: center;
