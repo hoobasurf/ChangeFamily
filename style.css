@@ -28,7 +28,7 @@ body {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.7));
+  background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.3));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,14 +70,14 @@ model-viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5); /* semi-transparent pour voir le fond */
+  background: transparent; /* plus de voile noir */
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
 
 .menu-circle {
-  background: rgba(20,20,30,0.9);
+  background: rgba(20,20,30,0.5); /* très léger pour contraste */
   padding: 25px;
   border-radius: 15px;
   display: flex;
@@ -112,7 +112,7 @@ model-viewer {
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.9);
+  background: transparent; /* fond transparent pour voir le profil derrière */
   z-index: 3000;
   display: flex;
   justify-content: center;
