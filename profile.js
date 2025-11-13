@@ -1,83 +1,151 @@
-// profile.js — remplace le contenu existant par ceci
+const avatar3D = document.getElementById("avatar3D");
+const pseudoDisplay = document.getElementById("pseudoDisplay");
+const editBtn = document.getElementById("editProfile");
+const editMenu = document.getElementById("editMenu");
+const photoLib = document.getElementById("photoLib");
+const takePhoto = document.getElementById("takePhoto");
+const createAvatar = document.getElementById("createAvatar");
+const rpmModal = document.getElementById("rpmModal");
+const rpmFrame = document.getElementById("rpmFrame");
 
-document.addEventListener("DOMContentLoaded", () => {
-  const editBtn = document.getElementById("editProfile");
-  const editMenu = document.getElementById("editMenu");
-  const photoLib = document.getElementById("photoLib");
-  const takePhoto = document.getElementById("takePhoto");
-  const createAvatar = document.getElementById("createAvatar");
+// ✅ Barre URL avatar
+const urlInput = document.createElement("input");
+urlInput.placeholder = "Entre l’URL de ton avatar 3D";
+urlInput.className = "url-input";
+urlInput.style.display = "none";
+document.body.appendChild(urlInput);
 
-  // sécurité : vérifier que les éléments existent
-  if (!editBtn || !editMenu) {
-    console.error("profile.js: Impossible de trouver #editProfile et/ou #editMenu");
-    return;
-  }
+// ✅ Charger pseudo + avatar sauvegardés
+window.addEventListener("DOMContentLoaded", () => {
+  const pseudo = localStorage.getItem("pseudo");
+  if (pseudo) pseudoDisplay.textContent = pseudo;
 
-  // initialise aria
-  editBtn.setAttribute("aria-haspopup", "true");
-  editBtn.setAttribute("aria-expanded", "false");
+  const avatarURL = localStorage.getItem("avatarURL");
+  if (avatarURL) avatar3D.src = avatarURL;
+});
 
-  // ouvre/ferme le menu — stoppe la propagation pour éviter que le document
-  // n'entende le même clic et referme le menu immédiatement
-  editBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const isShown = editMenu.classList.toggle("show");
-    editBtn.setAttribute("aria-expanded", String(isShown));
-  });
+// ✅ Bouton Modifier -> ouvre le menu
+editBtn.addEventListener("click", () => {
+  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
+});
 
-  // éviter que cliquer DANS le menu le ferme (par propagation)
-  editMenu.addEventListener("click", (e) => {
-    e.stopPropagation();
-  });
-
-  // clic ailleurs -> fermer
-  document.addEventListener("click", () => {
-    if (editMenu.classList.contains("show")) {
-      editMenu.classList.remove("show");
-      editBtn.setAttribute("aria-expanded", "false");
+// ✅ Photothèque
+photoLib.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatar3D.src = reader.result;
+        localStorage.setItem("avatarURL", reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  });
+  };
+  input.click();
+});
 
-  // touche ESC -> fermer
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && editMenu.classList.contains("show")) {
-      editMenu.classList.remove("show");
-      editBtn.setAttribute("aria-expanded", "false");
-      editBtn.focus();
+// ✅ Prendre une photo
+takePhoto.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "camera";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatar3D.src = reader.result;
+        localStorage.setItem("avatarURL", reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  });
+  };
+  input.click();
+});
 
-  // actions des boutons internes (remplace les alerts par ta logique)
-  if (photoLib) {
-    photoLib.addEventListener("click", (e) => {
-      e.stopPropagation();
-      editMenu.classList.remove("show");
-      editBtn.setAttribute("aria-expanded", "false");
-      // TODO: ouvrir la photothèque — remplacer par ta fonction
-      console.log("📷 Ouvrir la photothèque (à implémenter)");
-      alert("📷 Ouvrir la photothèque (à implémenter)");
-    });
+// ✅ Créer avatar (Ready Player Me)
+createAvatar.addEventListener("click", () => {
+  rpmModal.style.display = "flex";
+  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+  editMenu.style.display = "none";
+});
+
+// ✅ Écoute les messages du frame Ready Player Me
+window.addEventListener("message", (event) => {
+  if (!event.data || !event.data.source || event.data.source !== "readyplayerme") return;
+
+  if (event.data.eventName === "v1.avatar.exported") {
+    const avatarURL = event.data.data.url;
+    avatar3D.src = avatarURL;
+    localStorage.setItem("avatarURL", avatarURL);
+    rpmModal.style.display = "none";
   }
 
-  if (takePhoto) {
-    takePhoto.addEventListener("click", (e) => {
-      e.stopPropagation();
-      editMenu.classList.remove("show");
-      editBtn.setAttribute("aria-expanded", "false");
-      // TODO: lancer la caméra
-      console.log("🤳 Prendre une photo (à implémenter)");
-      alert("🤳 Prendre une photo (à implémenter)");
-    });
+  if (event.data.eventName === "v1.frame.ready") {
+    rpmFrame.contentWindow.postMessage(
+      JSON.stringify({
+        target: "readyplayerme",
+        type: "subscribe",
+        eventName: "v1.avatar.exported"
+      }),
+      "*"
+    );
   }
+});
 
-  if (createAvatar) {
-    createAvatar.addEventListener("click", (e) => {
-      e.stopPropagation();
-      editMenu.classList.remove("show");
-      editBtn.setAttribute("aria-expanded", "false");
-      // TODO: ouvrir modal Ready Player Me / iframe
-      console.log("✨ Créer avatar (à implémenter)");
-      alert("✨ Créer avatar (à implémenter)");
-    });
+// ✅ Barre URL (coller un lien d’avatar)
+avatar3D.addEventListener("dblclick", () => {
+  urlInput.style.display = "block";
+  urlInput.focus();
+});
+
+urlInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const url = urlInput.value.trim();
+    if (url) {
+      avatar3D.src = url;
+      localStorage.setItem("avatarURL", url);
+      urlInput.style.display = "none";
+      urlInput.value = "";
+    }
   }
+});
+
+// Fermer Ready Player Me au clic extérieur
+rpmModal.addEventListener("click", (e) => {
+  if (e.target === rpmModal) rpmModal.style.display = "none";
+});
+
+// --- Sélection des éléments ---
+const editBtn = document.getElementById("editProfile");
+const editMenu = document.getElementById("editMenu");
+
+// --- Ouvrir / fermer le menu ---
+editBtn.addEventListener("click", () => {
+  editMenu.classList.toggle("show");
+});
+
+// --- Fermer le menu si on clique à l'extérieur ---
+document.addEventListener("click", (e) => {
+  if (!editMenu.contains(e.target) && e.target !== editBtn) {
+    editMenu.classList.remove("show");
+  }
+});
+
+// --- Actions des boutons du menu ---
+document.getElementById("photoLib").addEventListener("click", () => {
+  alert("📷 Ouvrir la photothèque (à coder)");
+});
+
+document.getElementById("takePhoto").addEventListener("click", () => {
+  alert("🤳 Prendre une photo (à coder)");
+});
+
+document.getElementById("createAvatar").addEventListener("click", () => {
+  alert("✨ Créer avatar (à coder)");
 });
