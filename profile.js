@@ -12,63 +12,63 @@ const rpmFrame = document.getElementById("rpmFrame");
 // Charger photo + avatar
 window.addEventListener("DOMContentLoaded", () => {
   const savedPhoto = localStorage.getItem("miniCirclePhoto");
-  if (savedPhoto) {
-    miniCircleImg.src = savedPhoto;
-    avatar3D.src = savedPhoto;
-  }
+  if (savedPhoto) miniCircleImg.src = savedPhoto;
   const avatarURL = localStorage.getItem("avatarURL");
   if (avatarURL) avatar3D.src = avatarURL;
 });
 
 // Ouvrir/fermer menu
-editBtn.addEventListener("click", e => {
-  e.stopPropagation();
+editBtn.addEventListener("click", () => {
   editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
 window.addEventListener("click", e => {
-  if (editMenu.style.display === "flex" && !editMenu.contains(e.target) && e.target !== editBtn) {
-    editMenu.style.display = "none";
-  }
+  if (e.target === editMenu) editMenu.style.display = "none";
 });
 
-// Choisir / prendre photo
-function choosePhoto(isCamera) {
+// Photothèque
+photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  if (isCamera) input.capture = "environment";
-  input.addEventListener("change", e => {
+  input.onchange = e => {
     const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataURL = reader.result;
-      miniCircleImg.src = dataURL;
-      avatar3D.src = dataURL;
-      localStorage.setItem("miniCirclePhoto", dataURL);
-      localStorage.setItem("avatarURL", dataURL);
-    };
-    reader.readAsDataURL(file);
-  });
+    if (file) {
+      const url = URL.createObjectURL(file);
+      miniCircleImg.src = url;
+      localStorage.setItem("miniCirclePhoto", url);
+    }
+  };
   input.click();
-}
+});
 
-photoLib.addEventListener("click", () => choosePhoto(false));
-takePhoto.addEventListener("click", () => choosePhoto(true));
+// Prendre photo
+takePhoto.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "camera";
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      miniCircleImg.src = url;
+      localStorage.setItem("miniCirclePhoto", url);
+    }
+  };
+  input.click();
+});
 
-// Créer avatar 3D
+// Créer avatar Ready Player Me
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
-// Fermer modal clic dehors
 rpmModal.addEventListener("click", e => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
 
-// Écouter Ready Player Me
 window.addEventListener("message", event => {
   let data;
   try { data = JSON.parse(event.data); } catch { data = event.data; }
