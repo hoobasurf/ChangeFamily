@@ -14,16 +14,16 @@
     src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
   ></script>
 </head>
-<body>
+<body style="background:url('Ville1.jpg') center/cover no-repeat fixed;">
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
-    <!-- Mini cercle draggable -->
-    <div id="miniCircle" class="mini-circle">
-      <img id="miniCircleImg" src="avatar-default.png" alt="profil" />
+    <!-- ✅ BOUTON MODIFIER (en haut) -->
+    <div class="profile-btns">
+      <button id="editProfile" class="glass-btn">Modifier</button>
+      <button id="danceBtn" class="glass-btn">💃 Danser</button>
     </div>
 
-    <!-- Avatar 3D -->
     <div class="avatar-container-large">
       <model-viewer
         id="avatar3D"
@@ -31,35 +31,34 @@
         ar
         shadow-intensity="1"
         exposure="1"
+        style="width:180px;height:180px;"
       ></model-viewer>
+      <img id="avatarPreview" style="display:none;">
     </div>
 
     <h3 id="pseudoDisplay">Sans pseudo</h3>
-
-    <div class="profile-btns">
-      <button id="editProfile" class="glass-btn">Modifier</button>
-    </div>
   </div>
 
-  <!-- Menu Modifier -->
+  <!-- ✅ MODAL MENU MODIFIER -->
   <div id="editMenu" class="edit-menu">
     <div class="menu-circle">
       <button id="photoLib" class="menu-btn">📷 Photothèque</button>
       <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
-      <button id="createAvatar" class="menu-btn">🧍‍♂️ Créer un avatar 3D</button>
+      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
     </div>
   </div>
 
-  <!-- Modal Ready Player Me -->
-  <div id="rpmModal" class="rpm-modal">
+  <!-- ✅ Ready Player Me -->
+  <div id="rpmModal" class="avatar-modal">
     <iframe
       id="rpmFrame"
-      class="rpm-frame"
       allow="camera *; microphone *; clipboard-write"
+      title="Ready Player Me"
+      class="rpm-frame"
     ></iframe>
   </div>
 
-  <!-- Navigation -->
+  <!-- ✅ NAVIGATION -->
   <div class="bottom-nav">
     <a href="home.html"><i class="fa-solid fa-house"></i></a>
     <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
