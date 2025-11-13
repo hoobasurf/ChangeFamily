@@ -9,105 +9,94 @@ const createAvatar = document.getElementById("createAvatar");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
-// ✅ Charger les images sauvegardées
+// Charger images + avatar
 window.addEventListener("DOMContentLoaded", () => {
   const savedPhoto = localStorage.getItem("miniCirclePhoto");
-  if (savedPhoto) miniCircleImg.src = savedPhoto;
+  if (savedPhoto) {
+    miniCircleImg.src = savedPhoto;
+    avatar3D.src = savedPhoto;
+  }
 
   const avatarURL = localStorage.getItem("avatarURL");
-  if (avatarURL) {
-    avatar3D.src = avatarURL;
-    miniCircleImg.src = avatarURL;
-  }
+  if (avatarURL) avatar3D.src = avatarURL;
 });
 
-// ✅ Ouvrir / fermer le menu
-editBtn.addEventListener("click", (e) => {
+// Ouvrir/fermer menu
+editBtn.addEventListener("click", e => {
   e.stopPropagation();
   editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
-
-// ✅ Fermer le menu si clic en dehors
-window.addEventListener("click", (e) => {
+window.addEventListener("click", e => {
   if (editMenu.style.display === "flex" && !editMenu.contains(e.target) && e.target !== editBtn) {
     editMenu.style.display = "none";
   }
 });
 
-// ✅ Choisir depuis photothèque
+// Photothèque
 photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  input.onchange = (e) => {
+  input.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const url = reader.result;
-      miniCircleImg.src = url;
-      avatar3D.src = url;
-      localStorage.setItem("miniCirclePhoto", url);
-      localStorage.setItem("avatarURL", url);
+      miniCircleImg.src = reader.result;
+      avatar3D.src = reader.result;
+      localStorage.setItem("miniCirclePhoto", reader.result);
+      localStorage.setItem("avatarURL", reader.result);
     };
     reader.readAsDataURL(file);
   };
   input.click();
 });
 
-// ✅ Prendre une photo
+// Prendre une photo
 takePhoto.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
   input.capture = "camera";
-  input.onchange = (e) => {
+  input.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const url = reader.result;
-      miniCircleImg.src = url;
-      avatar3D.src = url;
-      localStorage.setItem("miniCirclePhoto", url);
-      localStorage.setItem("avatarURL", url);
+      miniCircleImg.src = reader.result;
+      avatar3D.src = reader.result;
+      localStorage.setItem("miniCirclePhoto", reader.result);
+      localStorage.setItem("avatarURL", reader.result);
     };
     reader.readAsDataURL(file);
   };
   input.click();
 });
 
-// ✅ Créer avatar (Ready Player Me)
+// Créer avatar 3D
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
-// ✅ Fermer modal RPM si clic dehors
-rpmModal.addEventListener("click", (e) => {
+// Fermer modal clic dehors
+rpmModal.addEventListener("click", e => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
 
-// ✅ Écouter le frame Ready Player Me
-window.addEventListener("message", (event) => {
+// Écouter messages Ready Player Me
+window.addEventListener("message", event => {
   let data;
-  try {
-    data = JSON.parse(event.data);
-  } catch {
-    data = event.data;
-  }
+  try { data = JSON.parse(event.data); } catch { data = event.data; }
   if (!data || data.source !== "readyplayerme") return;
 
   if (data.eventName === "v1.frame.ready") {
-    rpmFrame.contentWindow.postMessage(
-      JSON.stringify({
-        target: "readyplayerme",
-        type: "subscribe",
-        eventName: "v1.avatar.exported"
-      }),
-      "*"
-    );
+    rpmFrame.contentWindow.postMessage(JSON.stringify({
+      target: "readyplayerme",
+      type: "subscribe",
+      eventName: "v1.avatar.exported"
+    }), "*");
   }
 
   if (data.eventName === "v1.avatar.exported") {
@@ -120,10 +109,8 @@ window.addEventListener("message", (event) => {
   }
 });
 
-// ✅ Drag du mini cercle
-let isDragging = false;
-let offsetX = 0, offsetY = 0;
-
+// Drag mini-cercle
+let isDragging = false, offsetX = 0, offsetY = 0;
 miniCircle.addEventListener("mousedown", startDrag);
 miniCircle.addEventListener("touchstart", startDrag);
 miniCircle.addEventListener("mousemove", drag);
@@ -138,6 +125,7 @@ function startDrag(e) {
   offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
   miniCircle.style.cursor = "grabbing";
 }
+
 function drag(e) {
   if (!isDragging) return;
   e.preventDefault();
@@ -146,6 +134,7 @@ function drag(e) {
   miniCircle.style.left = `${x}px`;
   miniCircle.style.top = `${y}px`;
 }
+
 function endDrag() {
   isDragging = false;
   miniCircle.style.cursor = "grab";
