@@ -36,15 +36,15 @@ function choosePhoto(isCamera) {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  if (isCamera) input.capture = "environment"; // caméra arrière
+  if (isCamera) input.capture = "environment";
   input.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       const dataURL = reader.result;
-      miniCircleImg.src = dataURL; // mini-cercle
-      avatar3D.src = dataURL;      // avatar 3D
+      miniCircleImg.src = dataURL;
+      avatar3D.src = dataURL;
       localStorage.setItem("miniCirclePhoto", dataURL);
       localStorage.setItem("avatarURL", dataURL);
     };
