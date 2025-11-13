@@ -1,6 +1,6 @@
 // profile.js — gestion menu + Photothèque + Prendre photo + Ready Player Me
 document.addEventListener("DOMContentLoaded", () => {
-  const RPM_IFRAME_URL = "https://iframe.readyplayer.me/avatar?frameApi"; // <-- mets ton URL RPM complète ici
+  const RPM_IFRAME_URL = "https://iframe.readyplayer.me/avatar?frameApi"; // <-- METS TON URL ICI
 
   const editBtn = document.getElementById("editProfile");
   const editMenu = document.getElementById("editMenu");
@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // --- UTILITAIRES MENU ---
   function showEditMenu(show) {
     editMenu.classList.toggle("show", !!show);
     editBtn.setAttribute("aria-expanded", String(!!show));
@@ -28,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = accept;
-    if (capture) input.setAttribute("capture", capture);
     input.multiple = !!multiple;
+    if (capture) input.setAttribute("capture", capture);
     input.style.display = "none";
 
     input.addEventListener("change", (ev) => {
@@ -55,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- PHOTOTHÈQUE ---
   async function handlePhotoLibrary() {
     openInlineInputFile({
       accept: "image/*",
@@ -72,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- PRENDRE PHOTO ---
   async function handleTakePhoto() {
     openInlineInputFile({
       accept: "image/*",
@@ -90,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- READY PLAYER ME ---
   function openReadyPlayerMe() {
     if (!rpmModal || !rpmFrame) {
       alert("Erreur : modal Ready Player Me introuvable.");
@@ -98,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (!rpmFrame.src || rpmFrame.src === "") rpmFrame.src = RPM_IFRAME_URL;
     rpmModal.style.display = "flex";
-    try { rpmFrame.focus(); } catch (e) {}
+    try { rpmFrame.focus(); } catch (e) { }
   }
 
   function closeRpmModal() { if (rpmModal) rpmModal.style.display = "none"; }
@@ -133,9 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- APPLIQUER IMAGE PREVIEW ---
   function applyImageAsAvatarPreview(dataUrl) {
-    // Crée un img invisible pour stocker la preview
     let preview = document.getElementById("avatarPreview");
     if (!preview) {
       preview = document.createElement("img");
@@ -144,12 +138,9 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(preview);
     }
     preview.src = dataUrl;
-
-    // debug : ouvrir la photo dans un nouvel onglet pour vérifier
-    window.open(dataUrl, "_blank");
+    console.log("Preview image ready - longueur dataURL:", dataUrl.length);
   }
 
-  // --- MENU ---
   editBtn.setAttribute("aria-haspopup", "true");
   editBtn.setAttribute("aria-expanded", "false");
 
