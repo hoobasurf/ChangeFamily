@@ -1,4 +1,3 @@
-// profile.js — version minimalement modifiée pour intégrer RPM automatiquement
 const avatar3D = document.getElementById("avatar3D");
 const pseudoDisplay = document.getElementById("pseudoDisplay");
 const editBtn = document.getElementById("editProfile");
@@ -56,93 +55,85 @@ takePhoto.addEventListener("click", () => {
   input.click();
 });
 
-// ---------- READY PLAYER ME : intégration automatique (modifs minimes) ----------
-
-// utilise l'iframe officielle avec frameApi
-const RPM_IFRAME_URL = "https://iframe.readyplayer.me/avatar?frameApi";
-
-// flags pour éviter re-assignations / double subscribe
-let rpmSrcSet = false;
-let rpmSubscribed = false;
-
+// ✅ Créer avatar (Ready Player Me)
 createAvatar.addEventListener("click", () => {
-  if (!rpmModal || !rpmFrame) {
-    alert("Erreur : modal Ready Player Me introuvable.");
-    return;
-  }
-
-  // ne définir le src qu'une seule fois (évite reloads en boucle)
-  if (!rpmSrcSet) {
-    rpmFrame.src = RPM_IFRAME_URL;
-    rpmSrcSet = true;
-    console.log("[profile] RPM iframe src défini :", RPM_IFRAME_URL);
-  } else {
-    console.log("[profile] RPM iframe déjà initialisé.");
-  }
-
   rpmModal.style.display = "flex";
+  // NOTE: on utilise l'iframe officiel (frameApi) — c'est la source recommandée.
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
-// logs utiles (facultatif mais pratique pour debug)
-if (rpmFrame) {
-  rpmFrame.addEventListener("load", () => console.log("[profile] RPM iframe loaded"));
-  rpmFrame.addEventListener("error", () => console.error("[profile] RPM iframe error"));
-}
-
-// helper : applique et sauvegarde l'avatar URL
-function applyAvatarUrl(url) {
-  if (!url) return;
-  avatar3D.src = url;
-  try { localStorage.setItem("avatarURL", url); } catch (e) { /* ignore */ }
-  if (rpmModal) rpmModal.style.display = "none";
-  console.log("[profile] Avatar appliqué :", url);
-}
-
-// Écoute les messages postMessage depuis RPM — accepte plusieurs formats
+// ===================
+// ✅ Écoute les messages du frame Ready Player Me
+// ===================
+// REMARQUE : on n'applique plus la condition stricte `event.data.source === "readyplayerme"`
+// car Ready Player Me peut envoyer différents formats. On supporte les formats courants.
 window.addEventListener("message", (event) => {
-  // NOTE: ne filtre pas strictement sur event.data.source (ton code original le faisait et rejetait certains messages)
   const raw = event.data;
   if (!raw) return;
 
-  // debug
-  console.log("[profile] message reçu depuis iframe :", raw);
+  // debug console (tu peux retirer après test)
+  console.log("[profile] message reçu depuis iframe RPM :", raw);
 
-  // supporte 3 cas : objet direct, objet.data, ou string JSON
+  // Normaliser le message : si c'est une string JSON -> parser
   let data = raw;
   if (typeof raw === "string") {
-    try { data = JSON.parse(raw); } catch (e) { /* reste string si non JSON */ }
+    try {
+      data = JSON.parse(raw);
+    } catch (e) {
+      // reste sous forme de string si ce n'est pas JSON
+    }
   }
 
-  // 1) pattern v1.avatar.exported (plusieurs formes possibles)
-  if (data && (data.eventName === "v1.avatar.exported" || (data.name === "avatar-exported"))) {
-    // récupérer l'URL où qu'elle soit
-    const avatarURL = data.url || data.data?.url || data?.data || null;
+  // 1) Cas courant : eventName === "v1.avatar.exported"
+  if (data && data.eventName === "v1.avatar.exported") {
+    // l'URL peut être dans data.url ou data.data.url selon la version
+    const avatarURL = data.url || data.data?.url || (data?.data && data.data.url);
     if (avatarURL) {
-      applyAvatarUrl(avatarURL);
+      avatar3D.src = avatarURL;
+      try { localStorage.setItem("avatarURL", avatarURL); } catch (err) { /* ignore */ }
+      rpmModal.style.display = "none";
+      console.log("[profile] avatar appliqué depuis RPM :", avatarURL);
       return;
     }
   }
 
-  // 2) s'il y a un champ data.data.url (autre pattern)
-  if (data && data.data && data.data.url) {
-    applyAvatarUrl(data.data.url);
+  // 2) Autre pattern : { name: "avatar-exported", data: { url: "..." } }
+  if (data && data.name === "avatar-exported" && data.data && data.data.url) {
+    const avatarURL = data.data.url;
+    avatar3D.src = avatarURL;
+    try { localStorage.setItem("avatarURL", avatarURL); } catch (err) { /* ignore */ }
+    rpmModal.style.display = "none";
+    console.log("[profile] avatar appliqué depuis RPM (alt pattern) :", avatarURL);
     return;
   }
 
-  // 3) si frame ready, envoyer subscribe (une seule fois)
-  const isFrameReady = (data.eventName === "v1.frame.ready") || (data.name === "frame-ready") || (typeof raw === "string" && raw.includes("v1.frame.ready"));
-  if (isFrameReady && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
+  // 3) Parfois l'objet est plus imbriqué : data.data.url
+  if (data && data.data && data.data.url) {
+    const avatarURL = data.data.url;
+    avatar3D.src = avatarURL;
+    try { localStorage.setItem("avatarURL", avatarURL); } catch (err) { /* ignore */ }
+    rpmModal.style.display = "none";
+    console.log("[profile] avatar appliqué depuis RPM (data.data.url) :", avatarURL);
+    return;
+  }
+
+  // 4) si le frame indique qu'il est prêt, on envoie le subscribe (stringifié comme dans ton code)
+  const isFrameReady =
+    (data && data.eventName === "v1.frame.ready") ||
+    (data && data.name === "frame-ready") ||
+    (typeof raw === "string" && raw.includes("v1.frame.ready"));
+  if (isFrameReady && rpmFrame && rpmFrame.contentWindow) {
     try {
-      // Envoie un objet (Ready Player Me accepte aussi stringified JSON, mais objet est ok)
-      const subscribeMsg = {
-        target: "readyplayerme",
-        type: "subscribe",
-        eventName: "v1.avatar.exported"
-      };
-      rpmFrame.contentWindow.postMessage(subscribeMsg, "*");
-      rpmSubscribed = true;
-      console.log("[profile] subscribe envoyé au frame RPM :", subscribeMsg);
+      rpmFrame.contentWindow.postMessage(
+        JSON.stringify({
+          target: "readyplayerme",
+          type: "subscribe",
+          eventName: "v1.avatar.exported"
+        }),
+        "*"
+      );
+      console.log("[profile] subscribe envoyé au frame RPM");
     } catch (err) {
       console.warn("[profile] impossible d'envoyer subscribe :", err);
     }
@@ -150,8 +141,6 @@ window.addEventListener("message", (event) => {
 });
 
 // Fermer Ready Player Me au clic extérieur
-if (rpmModal) {
-  rpmModal.addEventListener("click", (e) => {
-    if (e.target === rpmModal) rpmModal.style.display = "none";
-  });
-}
+rpmModal.addEventListener("click", (e) => {
+  if (e.target === rpmModal) rpmModal.style.display = "none";
+});
