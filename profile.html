@@ -22,7 +22,7 @@
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
-    <!-- Avatar -->
+    <!-- Conteneur avatar + halo + reflet -->
     <div class="avatar-container-large">
       <div class="avatar-glow"></div>
       <model-viewer
@@ -30,14 +30,12 @@
         camera-controls
         auto-rotate
         auto-rotate-delay="0"
-        rotation-per-second="50deg"
+        rotation-per-second="60deg"
         ar
         shadow-intensity="1"
         exposure="1"
       ></model-viewer>
-
-      <!-- Image invisible (pour stockage local) -->
-      <img id="avatarPreview" style="display:none;">
+      <div class="avatar-reflection"></div>
     </div>
 
     <h3 id="pseudoDisplay">Sans pseudo</h3>
