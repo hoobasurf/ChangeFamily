@@ -23,6 +23,7 @@
       <img id="miniCircleImg" src="avatar-default.png" alt="profil" />
     </div>
 
+    <!-- ✅ Avatar 3D -->
     <div class="avatar-container-large">
       <model-viewer
         id="avatar3D"
@@ -33,8 +34,10 @@
       ></model-viewer>
     </div>
 
+    <!-- ✅ Pseudo -->
     <h3 id="pseudoDisplay">Sans pseudo</h3>
 
+    <!-- ✅ Bouton Modifier -->
     <div class="profile-btns">
       <button id="editProfile" class="glass-btn">Modifier</button>
     </div>
@@ -45,7 +48,17 @@
     <div class="menu-circle">
       <button id="photoLib" class="menu-btn">📷 Photothèque</button>
       <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
+      <button id="createAvatar" class="menu-btn">🧍‍♂️ Créer un avatar 3D</button>
     </div>
+  </div>
+
+  <!-- ✅ Modal Ready Player Me -->
+  <div id="rpmModal" class="rpm-modal" style="display:none;">
+    <iframe
+      id="rpmFrame"
+      allow="camera *; microphone *; clipboard-write"
+      style="width: 100%; height: 100%; border: none;"
+    ></iframe>
   </div>
 
   <!-- ✅ Navigation -->
@@ -56,6 +69,7 @@
     <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
   </div>
 
+  <!-- ✅ Script -->
   <script type="module" src="profile.js"></script>
 </body>
 </html>
