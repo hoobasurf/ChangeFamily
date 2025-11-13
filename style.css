@@ -1,15 +1,21 @@
 body {
   margin: 0;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto;
   background: url("Ville1.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #fff;
   font-family: 'Poppins', sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
+}
+
+.profile-screen {
+  text-align: center;
+  width: 100%;
+  position: relative;
+  padding: 40px 0 150px;
 }
 
 /* Mini cercle */
@@ -21,7 +27,6 @@ body {
   height: 90px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.7));
-  box-shadow: 0 0 20px #ff00ff, 0 0 40px #a200ff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,18 +44,21 @@ body {
 
 /* Avatar 3D */
 .avatar-container-large {
-  position: relative;
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 280px;
   height: 280px;
-  margin: 0 auto 20px auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 5;
 }
 
 model-viewer {
-  width: 250px;
-  height: 250px;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
 }
 
@@ -59,37 +67,20 @@ model-viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
-  z-index: 20;
+  z-index: 999;
 }
 
 .menu-circle {
-  background: rgba(30, 0, 30, 0.95);
-  border-radius: 20px;
-  padding: 30px;
+  background: rgba(20,20,30,0.9);
+  padding: 25px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  box-shadow: 0 0 30px #ff00ff;
-}
-
-.menu-btn {
-  background: transparent;
-  border: 2px solid #ff00ff;
-  color: #fff;
-  padding: 12px 25px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.menu-btn:hover {
-  background: #ff00ff;
-  color: black;
-  box-shadow: 0 0 20px #ff00ff;
+  gap: 10px;
+  max-width: 90%;
 }
 
 /* Modal Ready Player Me */
@@ -97,59 +88,43 @@ model-viewer {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.95);
   justify-content: center;
   align-items: center;
-  z-index: 50;
+  z-index: 3000;
+  animation: zoomIn 0.4s ease forwards;
 }
 
-.rpm-frame {
-  width: 90%;
-  height: 90%;
+#rpmFrame {
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 15px;
 }
 
-/* Bottom nav */
+@keyframes zoomIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Navigation */
 .bottom-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(10px);
   position: fixed;
   bottom: 0;
   width: 100%;
+  background: rgba(30,30,50,0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-around;
   padding: 10px 0;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,0,255,0.3);
+  z-index: 5000;
 }
 
 .bottom-nav a {
-  color: #999;
+  color: white;
   font-size: 22px;
-  transition: 0.3s;
 }
 
-.bottom-nav a.active,
-.bottom-nav a:hover {
+.bottom-nav a.active {
   color: #ff00ff;
-  text-shadow: 0 0 10px #ff00ff;
-}
-
-/* Bouton Modifier */
-.glass-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #ff00ff;
-  border-radius: 12px;
-  padding: 10px 25px;
-  color: #fff;
-  font-weight: bold;
-  box-shadow: 0 0 10px #ff00ff;
-  transition: 0.3s;
-}
-
-.glass-btn:hover {
-  background: #ff00ff;
-  color: black;
-  box-shadow: 0 0 25px #ff00ff;
 }
