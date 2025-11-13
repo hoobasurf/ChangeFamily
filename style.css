@@ -16,7 +16,7 @@ body {
   text-align: center;
   width: 100%;
   position: relative;
-  padding: 40px 0 120px; /* Espace bas pour bouton + nav */
+  padding: 40px 0 120px; /* Espace pour bouton + nav */
 }
 
 /* ====== Bouton Modifier ====== */
@@ -60,6 +60,7 @@ model-viewer {
   width: 260px;
   height: 260px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 /* ====== Mini cercle profil ====== */
@@ -107,6 +108,7 @@ model-viewer {
   flex-direction: column;
   gap: 10px;
   max-width: 90%;
+  animation: fadeIn 0.3s ease;
 }
 
 .menu-btn {
@@ -127,27 +129,44 @@ model-viewer {
   box-shadow: 0 0 20px #ff00ff;
 }
 
-/* ====== Ready Player Me Modal ====== */
+/* ====== Modal Ready Player Me ====== */
 .rpm-modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.95);
   justify-content: center;
   align-items: center;
-  z-index: 2000;
-  padding: 20px;
+  z-index: 3000;
+  animation: zoomIn 0.4s ease forwards;
 }
 
 #rpmFrame {
-  width: 95%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 15px;
-  box-shadow: 0 0 20px #ff00ff;
+  border-radius: 0;
+  box-shadow: 0 0 30px #ff00ff;
 }
 
-/* ====== Bouton Modifier ====== */
+/* ✅ Animation pour effet zoom */
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ====== Boutons ====== */
 .glass-btn {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,0,255,0.5);
@@ -170,6 +189,7 @@ model-viewer {
   justify-content: space-around;
   padding: 10px 0;
   border-top: 1px solid rgba(255, 0, 255, 0.3);
+  z-index: 5000;
 }
 
 .bottom-nav a {
