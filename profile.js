@@ -1,5 +1,6 @@
-// profile.js — intégration Ready Player Me sans boucle de chargement
-// => Ne modifie pas le visuel. Corrige la boucle de reload en utilisant des flags.
+// profile.js (modifié légèrement — même structure que le tien)
+// But : quand tu cliques "Suivant" dans Ready Player Me, l'avatar apparaît automatiquement dans l'app.
+// Aucun changement visuel — uniquement JS.
 
 const avatar3D = document.getElementById("avatar3D");
 const pseudoDisplay = document.getElementById("pseudoDisplay");
@@ -11,218 +12,161 @@ const createAvatar = document.getElementById("createAvatar");
 const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 
-// URL iframe officielle (remplace si tu as une URL partner)
-const RPM_IFRAME_SRC = "https://iframe.readyplayer.me/avatar?frameApi";
-
-// Flags pour éviter répétitions / boucles
-let rpmSrcSet = false;
-let rpmSubscribed = false;
-let rpmLoadCount = 0;
-const RPM_MAX_LOADS = 6; // sécurité : stoppe si l'iframe se recharge trop souvent
-
-// Charger pseudo + avatar sauvegardés
+// ✅ Charger pseudo + avatar sauvegardés
 window.addEventListener("DOMContentLoaded", () => {
-  try {
-    const pseudo = localStorage.getItem("pseudo");
-    if (pseudo && pseudoDisplay) pseudoDisplay.textContent = pseudo;
+  const pseudo = localStorage.getItem("pseudo");
+  if (pseudo) pseudoDisplay.textContent = pseudo;
 
-    const avatarURL = localStorage.getItem("avatarURL");
-    if (avatarURL && avatar3D) avatar3D.src = avatarURL;
-  } catch (e) {
-    console.warn("[profile] erreur au chargement initial :", e);
+  const avatarURL = localStorage.getItem("avatarURL");
+  if (avatarURL) {
+    // applique l'URL sauvegardée (image ou .glb)
+    avatar3D.src = avatarURL;
   }
 });
 
-// Ouvre / ferme menu modifier
-if (editBtn && editMenu) {
-  editBtn.addEventListener("click", () => {
-    editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
-  });
-}
+// ✅ Bouton Modifier -> ouvre le menu
+editBtn.addEventListener("click", () => {
+  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
+});
 
-// Photothèque : applique directement l'image (pas de changement visuel)
-if (photoLib) {
-  photoLib.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (e) => {
-      const file = e.target.files?.[0];
-      if (file && avatar3D) {
-        const url = URL.createObjectURL(file);
-        avatar3D.src = url;
-        try { localStorage.setItem("avatarURL", url); } catch (e) {}
-      }
-    };
-    input.click();
-    if (editMenu) editMenu.style.display = "none";
-  });
-}
-
-// Prendre photo (camera)
-if (takePhoto) {
-  takePhoto.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.capture = "camera";
-    input.onchange = (e) => {
-      const file = e.target.files?.[0];
-      if (file && avatar3D) {
-        const url = URL.createObjectURL(file);
-        avatar3D.src = url;
-        try { localStorage.setItem("avatarURL", url); } catch (e) {}
-      }
-    };
-    input.click();
-    if (editMenu) editMenu.style.display = "none";
-  });
-}
-
-// ---------- READY PLAYER ME : ouverture + prévention boucle ----------
-if (createAvatar) {
-  createAvatar.addEventListener("click", () => {
-    if (!rpmModal || !rpmFrame) {
-      alert("Erreur : modal Ready Player Me introuvable.");
-      return;
+// ✅ Photothèque
+photoLib.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      avatar3D.src = url;
+      try { localStorage.setItem("avatarURL", url); } catch (err) { /* ignore */ }
     }
+  };
+  input.click();
+});
 
-    // Désactive tentative si iframe a rechargé trop souvent
-    if (rpmLoadCount >= RPM_MAX_LOADS) {
-      console.error("[RPM] trop de reloads détectés — ouverture bloquée.");
-      alert("Impossible d'ouvrir Ready Player Me : problème de chargement. Vérifie la console.");
-      return;
+// ✅ Prendre une photo
+takePhoto.addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "camera";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      avatar3D.src = url;
+      try { localStorage.setItem("avatarURL", url); } catch (err) { /* ignore */ }
     }
+  };
+  input.click();
+});
 
-    // Positionne SRC une seule fois (évite réaffectations qui causent des reloads)
-    if (!rpmSrcSet) {
-      rpmFrame.src = RPM_IFRAME_SRC;
-      rpmSrcSet = true;
-      console.log("[RPM] src défini pour la première fois :", RPM_IFRAME_SRC);
-    } else {
-      console.log("[RPM] src déjà défini — on ne le redéfinit pas.");
-    }
+// ---------- READY PLAYER ME : intégration automatique ----------
 
-    // Affiche la modal (mais on ne touche pas au src après)
-    rpmModal.style.display = "flex";
-    try { rpmFrame.focus(); } catch (e) {}
-    if (editMenu) editMenu.style.display = "none";
-  });
-}
+// iframe source officielle (utilise frameApi pour postMessage)
+const RPM_IFRAME_URL = "https://iframe.readyplayer.me/avatar?frameApi";
 
-// Sécurité/diagnostic : compter les chargements pour détecter boucles
-if (rpmFrame) {
-  rpmFrame.addEventListener("load", () => {
-    rpmLoadCount += 1;
-    console.log(`[RPM] iframe loaded (count=${rpmLoadCount})`);
-    if (rpmLoadCount >= RPM_MAX_LOADS) {
-      console.error("[RPM] nombre max de reloads atteint — on n'enverra plus de messages au frame.");
-      // On évite d'envoyer autre chose si load trop souvent
-    }
-  });
+// Flags pour éviter réaffectation répétée du src et double-subscribe
+let rpmSrcSet = false;
+let rpmSubscribed = false;
 
-  rpmFrame.addEventListener("error", () => {
-    console.error("[RPM] erreur de chargement iframe");
-  });
-}
-
-// Helper : autoriser origines qui contiennent readyplayer.me (tolérant pour sous-domaines)
-function isTrustedOrigin(origin) {
-  try {
-    if (!origin || typeof origin !== "string") return false;
-    const u = new URL(origin);
-    return u.hostname.includes("readyplayer.me");
-  } catch (e) {
-    return false;
-  }
-}
-
-// Applique l'URL d'avatar reçue
-function applyAvatarUrl(url) {
-  if (!url) return;
-  if (avatar3D) {
-    avatar3D.src = url;
-    try { localStorage.setItem("avatarURL", url); } catch (e) {}
-    console.log("[RPM] Avatar appliqué :", url);
-  } else {
-    window.open(url, "_blank");
-  }
-  // ferme modal si ouverte
-  if (rpmModal) rpmModal.style.display = "none";
-}
-
-// Écoute postMessage depuis l'iframe RPM
-window.addEventListener("message", (event) => {
-  // Si tu veux, active la vérif. Pour debug local, tu peux commenter la vérif.
-  if (!isTrustedOrigin(event.origin)) {
-    // ignore messages d'origines non readyplayer.me
-    // console.warn("[RPM] Ignoré origine non trustée:", event.origin);
-    // return;
-  }
-
-  const data = event.data;
-  if (!data) return;
-  console.log("[RPM] message reçu :", data);
-
-  // Si too many reloads, on n'essaye pas d'interagir davantage
-  if (rpmLoadCount >= RPM_MAX_LOADS) {
-    console.warn("[RPM] Ignoré message car trop de reloads détectés.");
+createAvatar.addEventListener("click", () => {
+  // Si l'élément modal/iframe introuvable -> erreur
+  if (!rpmModal || !rpmFrame) {
+    alert("Erreur : modal Ready Player Me introuvable.");
     return;
   }
 
-  try {
-    // Cas courant : objet avec eventName
-    if (data?.eventName === "v1.avatar.exported") {
-      // certaines versions mettent l'url dans data.url ou data.data.url
-      const url = data.url || data?.data?.url || (data?.data && data.data.url);
-      if (url) {
-        applyAvatarUrl(url);
-        return;
-      }
-    }
+  // Définit la src une seule fois pour éviter boucles
+  if (!rpmSrcSet) {
+    rpmFrame.src = RPM_IFRAME_URL;
+    rpmSrcSet = true;
+    // debug léger
+    console.log("[profile] RPM iframe src défini :", RPM_IFRAME_URL);
+  } else {
+    console.log("[profile] RPM iframe src déjà défini (pas de reload).");
+  }
 
-    // Autre pattern : name: "avatar-exported"
-    if (data?.name === "avatar-exported" && data?.data?.url) {
-      applyAvatarUrl(data.data.url);
+  // Affiche la modal
+  rpmModal.style.display = "flex";
+  editMenu.style.display = "none";
+});
+
+// Optionnel : logs de chargement (utile si tu debugues)
+if (rpmFrame) {
+  rpmFrame.addEventListener("load", () => console.log("[profile] RPM iframe loaded"));
+  rpmFrame.addEventListener("error", () => console.error("[profile] RPM iframe error"));
+}
+
+// Helper — applique l'URL reçue et sauvegarde
+function applyAvatarUrl(avatarURL) {
+  if (!avatarURL) return;
+  avatar3D.src = avatarURL;
+  try { localStorage.setItem("avatarURL", avatarURL); } catch (e) { /* ignore */ }
+  // fermer modal RPM si ouvert
+  if (rpmModal) rpmModal.style.display = "none";
+  console.log("[profile] Avatar appliqué automatiquement :", avatarURL);
+}
+
+// Écoute les messages postMessage depuis l'iframe Ready Player Me
+window.addEventListener("message", (event) => {
+  // NOTE: event.origin peut être vérifié si tu veux restreindre, mais en dev local ça peut bloquer.
+  const data = event.data;
+  if (!data) return;
+
+  // Pour debug, affiche le message (supprime si tu veux)
+  console.log("[profile] message reçu depuis iframe RPM :", data);
+
+  // Cas courant 1 : objet avec eventName 'v1.avatar.exported'
+  if (data?.eventName === "v1.avatar.exported") {
+    // certaines versions envoient url directement, d'autres dans data.data.url
+    const avatarURL = data.url || data?.data?.url || (data?.data && data.data.url);
+    if (avatarURL) {
+      applyAvatarUrl(avatarURL);
       return;
     }
+  }
 
-    // Parfois le message est stringifié JSON
-    if (typeof data === "string") {
-      let parsed = null;
-      try { parsed = JSON.parse(data); } catch (e) { parsed = null; }
-      if (parsed) {
-        if (parsed.eventName === "v1.avatar.exported") {
-          const url = parsed.url || parsed?.data?.url;
-          if (url) { applyAvatarUrl(url); return; }
-        }
-        if (parsed.name === "avatar-exported" && parsed?.data?.url) {
-          applyAvatarUrl(parsed.data.url); return;
-        }
+  // Cas courant 2 : { name: "avatar-exported", data: { url: "..." } }
+  if (data?.name === "avatar-exported" && data?.data?.url) {
+    applyAvatarUrl(data.data.url);
+    return;
+  }
+
+  // Parfois le message est stringifié JSON
+  if (typeof data === "string") {
+    let parsed = null;
+    try { parsed = JSON.parse(data); } catch (e) { parsed = null; }
+    if (parsed) {
+      if (parsed?.eventName === "v1.avatar.exported") {
+        const avatarURL = parsed.url || parsed?.data?.url;
+        if (avatarURL) { applyAvatarUrl(avatarURL); return; }
+      }
+      if (parsed?.name === "avatar-exported" && parsed?.data?.url) {
+        applyAvatarUrl(parsed.data.url); return;
       }
     }
+  }
 
-    // Si frame indique qu'il est prêt, on s'abonne **une seule fois** (subscribe)
-    if ((data?.eventName === "v1.frame.ready" || data?.name === "frame-ready" || (typeof data === "string" && data.includes("v1.frame.ready"))) && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
-      try {
-        const subscribeMsg = {
-          target: "readyplayerme",
-          type: "subscribe",
-          eventName: "v1.avatar.exported"
-        };
-        rpmFrame.contentWindow.postMessage(subscribeMsg, "*");
-        rpmSubscribed = true;
-        console.log("[RPM] subscribe envoyé au frame :", subscribeMsg);
-      } catch (e) {
-        console.warn("[RPM] impossible d'envoyer subscribe :", e);
-      }
+  // Si le frame indique qu'il est prêt, on s'abonne (subscribe) une seule fois
+  if ((data?.eventName === "v1.frame.ready" || data?.name === "frame-ready" || (typeof data === "string" && data.includes("v1.frame.ready"))) && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
+    try {
+      const subscribeMsg = {
+        target: "readyplayerme",
+        type: "subscribe",
+        eventName: "v1.avatar.exported"
+      };
+      rpmFrame.contentWindow.postMessage(subscribeMsg, "*");
+      rpmSubscribed = true;
+      console.log("[profile] subscribe envoyé au frame RPM :", subscribeMsg);
+    } catch (err) {
+      console.warn("[profile] impossible d'envoyer subscribe :", err);
     }
-  } catch (err) {
-    console.error("[RPM] erreur traitement message :", err);
   }
 });
 
-// Fermer modal si clic en dehors
+// Fermer Ready Player Me au clic extérieur (ton code)
 if (rpmModal) {
   rpmModal.addEventListener("click", (e) => {
     if (e.target === rpmModal) rpmModal.style.display = "none";
