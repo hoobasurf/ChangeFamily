@@ -17,30 +17,37 @@ const rpmFrame = document.getElementById("rpmFrame");
 // 🌟 CHARGEMENT AU DÉMARRAGE
 // ===============================
 window.addEventListener("DOMContentLoaded", () => {
-  // Charger photo mini-cercle
   const savedPhoto = localStorage.getItem("miniCirclePhoto");
   if (savedPhoto) miniCircleImg.src = savedPhoto;
 
-  // Charger pseudo + avatar Ready Player Me
   const pseudo = localStorage.getItem("pseudo");
   if (pseudo) pseudoDisplay.textContent = pseudo;
 
   const avatarURL = localStorage.getItem("avatarURL");
   if (avatarURL) {
     avatar3D.src = avatarURL;
-    miniCircleImg.src = avatarURL; // ✅ L’avatar 3D s’affiche aussi dans le mini cercle
+    miniCircleImg.src = avatarURL;
   }
 });
 
 // ===============================
-// 🌟 OUVERTURE / FERMETURE MENU
+// 🌟 OUVRIR / FERMER LE MENU MODIFIER
 // ===============================
-editBtn.addEventListener("click", () => {
-  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
+editBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  editMenu.style.display =
+    editMenu.style.display === "flex" ? "none" : "flex";
 });
 
+// ✅ Fermer le menu si on clique en dehors
 window.addEventListener("click", (e) => {
-  if (e.target === editMenu) editMenu.style.display = "none";
+  if (
+    editMenu.style.display === "flex" &&
+    !editMenu.contains(e.target) &&
+    e.target !== editBtn
+  ) {
+    editMenu.style.display = "none";
+  }
 });
 
 // ===============================
@@ -50,51 +57,65 @@ photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
+
   input.onchange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const url = reader.result;
       miniCircleImg.src = url;
-      avatar3D.src = url; // ✅ Synchronisation avec avatar 3D
+      avatar3D.src = url;
       localStorage.setItem("miniCirclePhoto", url);
       localStorage.setItem("avatarURL", url);
-    }
+    };
+    reader.readAsDataURL(file);
   };
+
   input.click();
 });
 
 // ===============================
-// 🌟 PRENDRE UNE PHOTO
+// 🌟 PRENDRE UNE PHOTO (CAMÉRA)
 // ===============================
 takePhoto.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
-  input.capture = "camera";
+  input.capture = "environment"; // caméra arrière par défaut
+
   input.onchange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const url = reader.result;
       miniCircleImg.src = url;
-      avatar3D.src = url; // ✅ Synchronisation avec avatar 3D
+      avatar3D.src = url;
       localStorage.setItem("miniCirclePhoto", url);
       localStorage.setItem("avatarURL", url);
-    }
+    };
+    reader.readAsDataURL(file);
   };
+
   input.click();
 });
 
 // ===============================
-// 🌟 CRÉER AVATAR (READY PLAYER ME)
+// 🌟 CRÉER UN AVATAR (READY PLAYER ME)
 // ===============================
-createAvatar.addEventListener("click", () => {
-  rpmModal.style.display = "flex";
-  rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
-  editMenu.style.display = "none";
-});
+if (createAvatar) {
+  createAvatar.addEventListener("click", () => {
+    rpmModal.style.display = "flex";
+    rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
+    editMenu.style.display = "none";
+  });
+}
 
 // ===============================
-// 🌟 ÉCOUTER LES MESSAGES DU FRAME RPM
+// 🌟 GESTION DU READY PLAYER ME
 // ===============================
 window.addEventListener("message", (event) => {
   let data;
@@ -106,7 +127,6 @@ window.addEventListener("message", (event) => {
 
   if (!data || data.source !== "readyplayerme") return;
 
-  // Quand le frame est prêt
   if (data.eventName === "v1.frame.ready") {
     rpmFrame.contentWindow.postMessage(
       JSON.stringify({
@@ -118,18 +138,17 @@ window.addEventListener("message", (event) => {
     );
   }
 
-  // Quand l’avatar est exporté après "Suivant"
   if (data.eventName === "v1.avatar.exported") {
     const avatarURL = data.data.url;
     avatar3D.src = avatarURL;
-    miniCircleImg.src = avatarURL; // ✅ Avatar visible aussi dans mini cercle
+    miniCircleImg.src = avatarURL;
     localStorage.setItem("avatarURL", avatarURL);
     localStorage.setItem("miniCirclePhoto", avatarURL);
     rpmModal.style.display = "none";
   }
 });
 
-// ✅ Fermer Ready Player Me au clic extérieur
+// ✅ Fermer le modal RPM en cliquant à l’extérieur
 rpmModal.addEventListener("click", (e) => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
@@ -137,8 +156,8 @@ rpmModal.addEventListener("click", (e) => {
 // ===============================
 // 🌟 DRAG DU MINI CERCLE
 // ===============================
-let isDragging = false,
-  offsetX = 0,
+let isDragging = false;
+let offsetX = 0,
   offsetY = 0;
 
 miniCircle.addEventListener("mousedown", startDrag);
