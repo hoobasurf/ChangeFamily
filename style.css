@@ -1,7 +1,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-y: auto; /* ✅ Autorise le scroll */
+  overflow-y: auto;
   background: url("Ville1.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #fff;
@@ -11,41 +11,41 @@ body {
   align-items: center;
 }
 
-/* ====== Écran Profil ====== */
 .profile-screen {
   text-align: center;
   width: 100%;
   position: relative;
-  padding: 40px 0 120px; /* Espace pour bouton + nav */
+  padding: 40px 0 150px;
 }
 
-/* ====== Bouton Modifier ====== */
-.profile-btns-top {
-  text-align: center;
-  margin-bottom: 15px;
+/* Mini cercle */
+.mini-circle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.7));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  z-index: 1000;
 }
 
-.glass-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #ff00ff;
-  border-radius: 12px;
-  padding: 10px 25px;
-  color: #fff;
-  font-weight: bold;
-  box-shadow: 0 0 10px #ff00ff;
-  transition: 0.3s;
+.mini-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
-.glass-btn:hover {
-  background: #ff00ff;
-  color: black;
-  box-shadow: 0 0 25px #ff00ff;
-}
-
-/* ====== Avatar principal ====== */
+/* Avatar 3D */
 .avatar-container-large {
   position: fixed;
-  bottom: 70px; /* ✅ Juste au-dessus de la bottom-nav */
+  bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
   width: 280px;
@@ -63,37 +63,12 @@ model-viewer {
   object-fit: cover;
 }
 
-/* ====== Mini cercle profil ====== */
-.mini-circle {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.7));
-  box-shadow: 0 0 20px #ff00ff, 0 0 40px #a200ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: grab;
-  z-index: 1000;
-}
-
-.mini-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-/* ====== Menu modifier ====== */
+/* Menu Modifier */
 .edit-menu {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
   z-index: 999;
@@ -103,7 +78,6 @@ model-viewer {
   background: rgba(20,20,30,0.9);
   padding: 25px;
   border-radius: 15px;
-  box-shadow: 0 0 15px #ff00ff;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -129,15 +103,18 @@ model-viewer {
   box-shadow: 0 0 20px #ff00ff;
 }
 
-/* ====== Modal Ready Player Me ====== */
+/* Modal Ready Player Me */
 .rpm-modal {
   display: none;
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.95);
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  z-index: 3000;
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3000;
   animation: zoomIn 0.4s ease forwards;
 }
 
@@ -146,19 +123,11 @@ model-viewer {
   height: 100%;
   border: none;
   border-radius: 0;
-  box-shadow: 0 0 30px #ff00ff;
 }
 
-/* ✅ Animation pour effet zoom */
 @keyframes zoomIn {
-  0% {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeIn {
@@ -166,7 +135,7 @@ model-viewer {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ====== Boutons ====== */
+/* Boutons */
 .glass-btn {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,0,255,0.5);
@@ -178,17 +147,17 @@ model-viewer {
   margin-top: 15px;
 }
 
-/* ====== Dock navigation ====== */
+/* Navigation */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: rgba(30, 30, 50, 0.85);
+  background: rgba(30,30,50,0.85);
   backdrop-filter: blur(10px);
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
-  border-top: 1px solid rgba(255, 0, 255, 0.3);
+  border-top: 1px solid rgba(255,0,255,0.3);
   z-index: 5000;
 }
 
