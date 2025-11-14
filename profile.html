@@ -5,42 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil</title>
   <link rel="stylesheet" href="style.css" />
-
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <script type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js">
-  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 </head>
 
 <body>
 
+  <!-- MINI CIRCLE -->
+  <div id="miniCircle" class="mini-circle">
+    <img id="miniCircleImg" src="">
+  </div>
+
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
-    <!-- Boutons haut -->
     <div class="profile-btns">
       <button id="editProfile" class="glass-btn">Modifier</button>
       <button id="danceBtn" class="glass-btn">💃 Danser</button>
     </div>
 
-    <!-- Avatar 3D -->
     <div class="avatar-container-large">
-      <model-viewer id="avatar3D"
+      <model-viewer
+        id="avatar3D"
         camera-controls
-        ar shadow-intensity="1"
-        exposure="1"
-        style="width:180px;height:180px;">
+        ar
+        shadow-intensity="1"
+        exposure="1">
       </model-viewer>
-
-      <img id="avatarPreview" style="display:none;">
     </div>
 
     <h3 id="pseudoDisplay">Sans pseudo</h3>
   </div>
 
-  <!-- Menu Modifier -->
+  <!-- MENU -->
   <div id="editMenu" class="edit-menu">
     <div class="menu-circle">
       <button id="photoLib" class="glass-btn">📷 Photothèque</button>
@@ -49,15 +46,12 @@
     </div>
   </div>
 
-  <!-- READY PLAYER ME full-screen -->
-  <div id="rpmModal" class="avatar-modal">
-    <iframe id="rpmFrame"
-      allow="camera *; microphone *; clipboard-write"
-      title="Ready Player Me">
-    </iframe>
+  <!-- READY PLAYER ME MODAL -->
+  <div id="rpmModal">
+    <div id="closeRPM">✖</div>
+    <iframe id="rpmFrame" allow="camera *; microphone *"></iframe>
   </div>
 
-  <!-- Navigation bas -->
   <div class="bottom-nav">
     <a href="home.html"><i class="fa-solid fa-house"></i></a>
     <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
