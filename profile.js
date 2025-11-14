@@ -212,3 +212,45 @@ document.addEventListener("touchmove", onDrag, { passive: false });
 
 document.addEventListener("mouseup", endDrag);
 document.addEventListener("touchend", endDrag);
+
+// ==========================
+// MINI CIRCLE PHOTO FIX
+// ==========================
+
+// On garde l'image même après rechargement interne
+let savedMiniAvatar = localStorage.getItem("miniAvatar");
+const miniAvatarImg = document.getElementById("miniAvatarImg");
+
+if (savedMiniAvatar) {
+    miniAvatarImg.src = savedMiniAvatar;
+}
+
+// Quand on choisit une photo
+function setMiniAvatar(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        miniAvatarImg.src = e.target.result;
+        localStorage.setItem("miniAvatar", e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+
+// ==========================
+// FERMETURE DU MENU EN CLIQUANT AILLEURS
+// ==========================
+
+const modifyMenu = document.getElementById("modifyMenu");
+const modifyBtn = document.getElementById("modifyBtn");
+
+// Toggle normal
+modifyBtn.addEventListener("click", () => {
+    modifyMenu.classList.toggle("show");
+});
+
+// Ferme si on clique ailleurs
+document.addEventListener("click", (e) => {
+    if (!modifyMenu.contains(e.target) && !modifyBtn.contains(e.target)) {
+        modifyMenu.classList.remove("show");
+    }
+});
