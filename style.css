@@ -18,7 +18,7 @@ body {
   padding: 40px 0 150px;
 }
 
-/* Mini cercle */
+/* MINI CIRCLE (photo ou avatar 3D) */
 .mini-circle {
   position: absolute;
   top: 20px;
@@ -26,13 +26,20 @@ body {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.4), rgba(0,0,0,0.7));
+  background: radial-gradient(circle, rgba(255,0,255,0.6), rgba(0,0,0,0.6));
+  box-shadow: 0 0 12px #ff00ff, 0 0 24px #ff00ff;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   cursor: grab;
   z-index: 1000;
+  transition: 0.2s;
+}
+
+.mini-circle:active {
+  cursor: grabbing;
+  transform: scale(1.05);
 }
 
 .mini-circle img {
@@ -42,7 +49,7 @@ body {
   border-radius: 50%;
 }
 
-/* Avatar 3D */
+/* AVATAR 3D */
 .avatar-container-large {
   position: fixed;
   bottom: 70px;
@@ -50,19 +57,34 @@ body {
   transform: translateX(-50%);
   width: 280px;
   height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 5;
 }
 
 model-viewer {
   width: 260px;
   height: 260px;
-  border-radius: 50%;
 }
 
-/* Menu Modifier */
+/* BOUTONS EN HAUT DU PROFIL */
+.glass-btn {
+  background: rgba(255,0,255,0.25);
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: white;
+  font-size: 18px;
+  border: 2px solid rgba(255,0,255,0.4);
+  backdrop-filter: blur(6px);
+  margin: 5px;
+  box-shadow: 0 0 12px #ff00ff;
+  transition: 0.2s;
+}
+
+.glass-btn:hover {
+  box-shadow: 0 0 22px #ff00ff, 0 0 45px #ff00ff;
+  transform: scale(1.05);
+}
+
+/* MENU MODIFIER */
 .edit-menu {
   display: none;
   position: fixed;
@@ -80,11 +102,10 @@ model-viewer {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 90%;
 }
 
-/* Modal Ready Player Me */
-.rpm-modal {
+/* Fenêtre READY PLAYER ME full screen */
+.avatar-modal {
   display: none;
   position: fixed;
   inset: 0;
@@ -92,7 +113,6 @@ model-viewer {
   justify-content: center;
   align-items: center;
   z-index: 3000;
-  animation: zoomIn 0.4s ease forwards;
 }
 
 #rpmFrame {
@@ -101,12 +121,7 @@ model-viewer {
   border: none;
 }
 
-@keyframes zoomIn {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Navigation */
+/* NAVIGATION BAS */
 .bottom-nav {
   position: fixed;
   bottom: 0;
