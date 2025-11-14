@@ -12,7 +12,7 @@ const danceBtn = document.getElementById("danceBtn");
 const miniCircle = document.getElementById("miniCircle");
 const miniAvatar = document.getElementById("miniAvatar");
 
-/* --- Charger le pseudo et l'avatar --- */
+/* --- Charger le pseudo et avatar --- */
 window.addEventListener("DOMContentLoaded", () => {
   const pseudo = localStorage.getItem("pseudo");
   if (pseudo) pseudoDisplay.textContent = pseudo;
@@ -23,6 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
     miniAvatar.src = avatarURL;
   }
 });
+
 
 /* --- Menu Modifier --- */
 editBtn.addEventListener("click", () => {
@@ -35,7 +36,8 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* --- Upload Photothèque --- */
+
+/* --- Photothèque --- */
 photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
@@ -53,6 +55,7 @@ photoLib.addEventListener("click", () => {
 
   input.click();
 });
+
 
 /* --- Prendre une photo --- */
 takePhoto.addEventListener("click", () => {
@@ -74,25 +77,38 @@ takePhoto.addEventListener("click", () => {
   input.click();
 });
 
-/* --- Créer Avatar : Ready Player Me --- */
+
+/* --- Ready Player Me intégré --- */
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
+/* --- API ReadyPlayerMe (version correcte) --- */
 window.addEventListener("message", (event) => {
-  if (!event.data || event.data.source !== "readyplayerme") return;
+  if (!event.data) return;
 
-  if (event.data.eventName === "v1.avatar.exported") {
-    const avatarURL = event.data.data.url;
+  let data = {};
+
+  try { data = JSON.parse(event.data); } catch (e) { return; }
+
+  if (data.source !== "readyplayerme") return;
+
+  // Avatar prêt
+  if (data.eventName === "v1.avatar.exported") {
+    const avatarURL = data.data.url;
+
     avatar3D.src = avatarURL;
     miniAvatar.src = avatarURL;
+
     localStorage.setItem("avatarURL", avatarURL);
+
     rpmModal.style.display = "none";
   }
 
-  if (event.data.eventName === "v1.frame.ready") {
+  // Quand le frame est prêt → abonnement automatique
+  if (data.eventName === "v1.frame.ready") {
     rpmFrame.contentWindow.postMessage(
       JSON.stringify({
         target: "readyplayerme",
@@ -104,31 +120,58 @@ window.addEventListener("message", (event) => {
   }
 });
 
-/* --- Fermer RPM si clic extérieur --- */
+/* --- Fermer RPM au clic extérieur --- */
 rpmModal.addEventListener("click", (e) => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
 
-/* --- Effet danse simple --- */
+
+/* --- Animation danse simple --- */
 danceBtn.addEventListener("click", () => {
   avatar3D.style.transition = "transform 2s linear";
   avatar3D.style.transform = "rotateY(720deg)";
-  setTimeout(() => (avatar3D.style.transform = "rotateY(0deg)"), 2000);
+  setTimeout(() => {
+    avatar3D.style.transform = "rotateY(0deg)";
+  }, 2000);
 });
 
-/* --- DRAG MINI CIRCLE --- */
-let offsetX = 0, offsetY = 0, dragging = false;
 
-miniCircle.addEventListener("mousedown", (e) => {
+/* --- MINI CIRCLE DRAGGABLE MOBILE + DESKTOP --- */
+let dragging = false;
+let offsetX = 0;
+let offsetY = 0;
+
+function startDrag(e) {
   dragging = true;
-  offsetX = e.clientX - miniCircle.offsetLeft;
-  offsetY = e.clientY - miniCircle.offsetTop;
-});
 
-document.addEventListener("mousemove", (e) => {
+  const isTouch = e.type === "touchstart";
+  const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+  const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
+  offsetX = clientX - miniCircle.offsetLeft;
+  offsetY = clientY - miniCircle.offsetTop;
+}
+
+function drag(e) {
   if (!dragging) return;
-  miniCircle.style.left = `${e.clientX - offsetX}px`;
-  miniCircle.style.top = `${e.clientY - offsetY}px`;
-});
 
-document.addEventListener("mouseup", () => dragging = false);
+  const isTouch = e.type === "touchmove";
+  const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+  const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
+  miniCircle.style.left = `${clientX - offsetX}px`;
+  miniCircle.style.top = `${clientY - offsetY}px`;
+}
+
+function endDrag() {
+  dragging = false;
+}
+
+miniCircle.addEventListener("mousedown", startDrag);
+miniCircle.addEventListener("touchstart", startDrag);
+
+document.addEventListener("mousemove", drag);
+document.addEventListener("touchmove", drag);
+
+document.addEventListener("mouseup", endDrag);
+document.addEventListener("touchend", endDrag);
