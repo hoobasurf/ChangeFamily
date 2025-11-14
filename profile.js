@@ -204,3 +204,53 @@ document.addEventListener("mousemove", onDrag);
 document.addEventListener("touchmove", onDrag, { passive: false });
 document.addEventListener("mouseup", endDrag);
 document.addEventListener("touchend", endDrag);
+
+// ---------------------
+//   AVATAR ANIMAL 3D
+// ---------------------
+
+const createAnimal = document.getElementById("createAnimal");
+const animalModal = document.getElementById("animalModal");
+const animalFrame = document.getElementById("animalFrame");
+
+// 👉 1. Ouvrir la modale animal
+createAnimal.addEventListener("click", () => {
+  animalModal.style.display = "flex";
+
+  // URL du créateur animal (stable)
+  animalFrame.src = "https://animal-avatar-api.vercel.app/?frameApi";
+
+  editMenu.style.display = "none";
+});
+
+// 👉 2. Recevoir avatar 3D envoyé par l'iframe
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  try {
+    const msg = JSON.parse(event.data);
+
+    if (msg?.source === "animalcreator" && msg?.event === "avatar-ready") {
+
+      const url = msg.url;
+
+      // Afficher dans ton modèle 3D
+      avatar3D.src = url;
+
+      // Sauvegarder
+      localStorage.setItem("avatarURL", url);
+
+      // Fermer modal
+      animalModal.style.display = "none";
+    }
+  } catch (e) {
+    // ignore les messages qui ne viennent pas de l'avatar animal
+  }
+});
+
+// 👉 3. Fermer en cliquant en dehors
+animalModal.addEventListener("click", (e) => {
+  if (e.target === animalModal) {
+    animalModal.style.display = "none";
+  }
+});
