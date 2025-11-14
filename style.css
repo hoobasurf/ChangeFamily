@@ -143,3 +143,14 @@ model-viewer {
 .bottom-nav a.active {
   color: #ff00ff;
 }
+
+/* Halo néon autour du mini-circle */
+#miniAvatar {
+    box-shadow: 0 0 25px #ff00ff, 0 0 45px #ff00ff;
+}
+
+/* Boutons néon */
+.btn-neon {
+    box-shadow: 0 0 15px #ae00ff, 0 0 35px #ae00ff inset;
+    border: 2px solid #ae00ff;
+}
