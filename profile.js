@@ -21,7 +21,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCVl5ktUmuiVeMtYUHtxORytkeu71_XBF0",
   authDomain: "changefamilysnap.firebaseapp.com",
   projectId: "changefamilysnap",
-  storageBucket: "changefamilysnap.firebasestorage.app",
+  storageBucket: "changefamilysnap.appspot.com",
   messagingSenderId: "335835110495",
   appId: "1:335835110495:web:13194c4bd4579d4f434fea", 
 };
