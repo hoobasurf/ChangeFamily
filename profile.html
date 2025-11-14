@@ -5,25 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profil</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 </head>
 
 <body>
 
-  <!-- MINI CIRCLE -->
-  <div id="miniCircle" class="mini-circle">
-    <img id="miniCircleImg" src="">
+  <!-- MINI CERCLE -->
+  <div class="mini-circle" id="miniCircle">
+    <img id="miniAvatar" src="default.jpg" />
   </div>
 
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
+    <!-- BOUTONS -->
     <div class="profile-btns">
       <button id="editProfile" class="glass-btn">Modifier</button>
       <button id="danceBtn" class="glass-btn">💃 Danser</button>
     </div>
 
+    <!-- AVATAR 3D EN BAS -->
     <div class="avatar-container-large">
       <model-viewer
         id="avatar3D"
@@ -37,21 +39,26 @@
     <h3 id="pseudoDisplay">Sans pseudo</h3>
   </div>
 
-  <!-- MENU -->
+  <!-- MENU MODIFIER -->
   <div id="editMenu" class="edit-menu">
     <div class="menu-circle">
-      <button id="photoLib" class="glass-btn">📷 Photothèque</button>
-      <button id="takePhoto" class="glass-btn">🤳 Prendre une photo</button>
-      <button id="createAvatar" class="glass-btn">✨ Créer avatar</button>
+      <button id="photoLib" class="menu-btn">📷 Photothèque</button>
+      <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
+      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
     </div>
   </div>
 
-  <!-- READY PLAYER ME MODAL -->
+  <!-- READY PLAYER ME -->
   <div id="rpmModal">
-    <div id="closeRPM">✖</div>
-    <iframe id="rpmFrame" allow="camera *; microphone *"></iframe>
+    <iframe
+      id="rpmFrame"
+      allow="camera *; microphone *; clipboard-write"
+      title="Ready Player Me"
+      class="rpm-frame">
+    </iframe>
   </div>
 
+  <!-- NAV BAR -->
   <div class="bottom-nav">
     <a href="home.html"><i class="fa-solid fa-house"></i></a>
     <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
