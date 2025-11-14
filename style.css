@@ -1,3 +1,4 @@
+/* ---------- Base + fond ---------- */
 body {
   margin: 0;
   min-height: 100vh;
@@ -19,7 +20,7 @@ body {
   padding: 40px 0 150px;
 }
 
-/* --- MINI CIRCLE --- */
+/* MINI CIRCLE */
 .mini-circle {
   position: absolute;
   top: 20px;
@@ -40,7 +41,6 @@ body {
   z-index: 2000;
   transition: transform 0.12s ease;
 }
-
 .mini-circle:active { cursor: grabbing; transform: scale(1.04); }
 
 .mini-circle img {
@@ -48,9 +48,10 @@ body {
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  display: block;
 }
 
-/* --- AVATAR 3D EN BAS --- */
+/* AVATAR 3D EN BAS */
 .avatar-container-large {
   position: fixed;
   bottom: 70px;
@@ -63,36 +64,32 @@ body {
   align-items: center;
   z-index: 5;
 }
+model-viewer { width: 260px; height: 260px; border-radius: 50%; }
 
-model-viewer {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-}
-
-/* --- MENU MODIFIER --- */
+/* EDIT MENU */
 .edit-menu {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.6);
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
-
 .menu-circle {
-  background: rgba(20,20,30,0.9);
-  padding: 25px;
-  border-radius: 15px;
+  background: rgba(20,20,30,0.95);
+  padding: 20px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 90%;
+  gap: 12px;
+  width: 86%;
+  max-width: 360px;
+  text-align: center;
 }
 
-/* --- Ready Player Me modal intégré --- */
-#rpmModal {
+/* RPM modal */
+.rpm-modal, #rpmModal {
   display: none;
   position: fixed;
   inset: 0;
@@ -101,27 +98,26 @@ model-viewer {
   align-items: center;
   z-index: 3000;
 }
-
 .rpm-frame {
-  width: 90%;
-  height: 85%;
+  width: 92%;
+  height: 86%;
   border: none;
   border-radius: 12px;
   overflow: hidden;
 }
 
-/* --- Boutons fluo --- */
+/* Buttons neon */
 .glass-btn, .menu-btn {
   padding: 12px 20px;
   border: none;
   border-radius: 12px;
-  background: rgba(255,0,255,0.2);
+  background: rgba(255,0,255,0.18);
   color: white;
   font-size: 16px;
-  box-shadow: 0 0 10px #ff00ff, 0 0 15px rgba(255,0,255,0.5);
+  box-shadow: 0 0 10px #ff00ff, 0 0 15px rgba(255,0,255,0.45);
 }
 
-/* Navigation bas */
+/* Bottom nav */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -134,23 +130,5 @@ model-viewer {
   border-top: 1px solid rgba(255,0,255,0.3);
   z-index: 5000;
 }
-
-.bottom-nav a {
-  color: white;
-  font-size: 22px;
-}
-
-.bottom-nav a.active {
-  color: #ff00ff;
-}
-
-/* Halo néon autour du mini-circle */
-#miniAvatar {
-    box-shadow: 0 0 25px #ff00ff, 0 0 45px #ff00ff;
-}
-
-/* Boutons néon */
-.btn-neon {
-    box-shadow: 0 0 15px #ae00ff, 0 0 35px #ae00ff inset;
-    border: 2px solid #ae00ff;
-}
+.bottom-nav a { color: white; font-size: 22px; }
+.bottom-nav a.active { color: #ff00ff; }
