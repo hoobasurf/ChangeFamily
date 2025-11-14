@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profil</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
-</head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profil — Snap Clone Neon</title>
 
+  <!-- favicon / icônes (si tu as manifest, ajoute le) -->
+  <link rel="icon" href="loov.ico" />
+
+  <!-- Font Awesome (icônes dock) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- model-viewer pour avatar 3D -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+
+  <!-- style principal -->
+  <link rel="stylesheet" href="style.css" />
+</head>
 <body>
 
-  <!-- MINI CERCLE -->
-  <div class="mini-circle" id="miniCircle">
-    <img id="miniAvatar" src="default.jpg" alt="mini avatar" />
+  <!-- MINI CERCLE (persistant, draggable) -->
+  <div id="miniCircle" class="mini-circle" aria-label="Mini avatar draggable">
+    <img id="miniAvatarImg" src="default.jpg" alt="mini avatar" />
   </div>
 
+  <!-- ÉCRAN PROFIL -->
   <div class="screen profile-screen">
     <h2>Mon profil</h2>
 
     <!-- BOUTONS -->
     <div class="profile-btns">
-      <button id="editProfile" class="glass-btn">Modifier</button>
+      <button id="editBtn" class="glass-btn">Modifier</button>
       <button id="danceBtn" class="glass-btn">💃 Danser</button>
     </div>
 
-    <!-- AVATAR 3D EN BAS -->
-    <div class="avatar-container-large">
+    <!-- AVATAR 3D EN BAS (model-viewer) -->
+    <div class="avatar-container-large" aria-hidden="false">
       <model-viewer
         id="avatar3D"
         camera-controls
+        auto-rotate
+        auto-rotate-delay="0"
+        rotation-per-second="40deg"
         ar
         shadow-intensity="1"
         exposure="1">
@@ -39,33 +51,37 @@
     <h3 id="pseudoDisplay">Sans pseudo</h3>
   </div>
 
-  <!-- MENU MODIFIER -->
-  <div id="editMenu" class="edit-menu" aria-hidden="true">
-    <div class="menu-circle" role="dialog" aria-modal="true">
-      <button id="photoLib" class="menu-btn">📷 Photothèque</button>
+  <!-- MENU MODIFIER (dialog) -->
+  <div id="editMenu" class="edit-menu" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="menu-circle">
+      <label class="menu-label">Modifier le profil</label>
+
+      <!-- Upload photo (mini-circle) -->
+      <input type="file" id="uploadPhoto" accept="image/*" hidden />
+      <button id="uploadBtn" class="menu-btn">📷 Photothèque</button>
+
+      <!-- Prendre une photo (mini-circle) -->
       <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
+
+      <!-- Créer avatar Ready Player Me -->
       <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
     </div>
   </div>
 
-  <!-- READY PLAYER ME (modal intégré) -->
-  <div id="rpmModal" aria-hidden="true">
-    <iframe
-      id="rpmFrame"
-      allow="camera *; microphone *; clipboard-write"
-      title="Ready Player Me"
-      class="rpm-frame">
-    </iframe>
+  <!-- READY PLAYER ME MODAL (intégré) -->
+  <div id="rpmModal" class="rpm-modal" aria-hidden="true">
+    <iframe id="rpmFrame" class="rpm-frame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me"></iframe>
   </div>
 
-  <!-- NAV BAR -->
-  <div class="bottom-nav">
-    <a href="home.html"><i class="fa-solid fa-house"></i></a>
-    <a href="camera.html"><i class="fa-solid fa-camera"></i></a>
-    <a href="chat.html"><i class="fa-solid fa-comment"></i></a>
-    <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+  <!-- NAVIGATION BOTTOM -->
+  <div class="bottom-nav" role="navigation" aria-label="Navigation principale">
+    <a href="home.html" title="Accueil"><i class="fa-solid fa-house"></i></a>
+    <a href="camera.html" title="Caméra"><i class="fa-solid fa-camera"></i></a>
+    <a href="chat.html" title="Messages"><i class="fa-solid fa-comment-dots"></i></a>
+    <a href="profile.html" title="Profil" class="active"><i class="fa-solid fa-user"></i></a>
   </div>
 
+  <!-- script principal -->
   <script type="module" src="profile.js"></script>
 </body>
 </html>
