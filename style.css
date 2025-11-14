@@ -1,234 +1,242 @@
 /* ————————————————————————
-   🌆 BACKGROUND + BASE
+   🌆 BACKGROUND + BASE (ton code existant)
 ———————————————————————— */
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-y: auto;
+  overflow: hidden; /* on gère le scroll par panels */
   background: url("Ville1.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #fff;
   font-family: 'Poppins', sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ----------------------------
+   LAYOUT CHAT 2 COLONNES
+   --------------------------- */
+.chat-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ---- Colonne utilisateurs (gauche) ---- */
+.chat-users-panel {
+  width: 240px;
+  min-width: 160px;
+  background: rgba(10,10,20,0.55);
+  backdrop-filter: blur(6px);
+  padding: 12px;
+  box-sizing: border-box;
+  border-right: 2px solid rgba(255,0,255,0.18); /* trait néon discret */
+  box-shadow: 0 0 18px rgba(255,0,255,0.06) inset;
+  z-index: 100;
+}
+
+.panel-title {
+  margin: 6px 6px 10px;
+  font-size: 16px;
+  color: #ff00ff;
+  text-shadow: 0 0 8px rgba(255,0,255,0.35);
+}
+
+/* Liste utilisateurs */
+.users-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 8px;
+  overflow-y: auto;
+  height: calc(100vh - 120px);
+  padding-right: 6px;
 }
 
-/* ————————————————————————
-   👤 PROFIL SCREEN
-———————————————————————— */
-.profile-screen {
-  text-align: center;
-  width: 100%;
-  position: relative;
-  padding: 40px 0 150px;
-}
-
-/* ————————————————————————
-   🔮 MINI CIRCLE AVATAR
-———————————————————————— */
-.mini-circle {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.5), rgba(0,0,0,0.8));
-  box-shadow:
-    0 0 12px rgba(255,0,255,0.9),
-    0 0 28px rgba(153,0,255,0.35),
-    0 0 48px rgba(255,0,255,0.2);
+/* Avatar non-draggable dans la colonne gauche */
+.user-entry {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .12s, transform .12s;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.user-entry:hover {
+  background: rgba(255,0,255,0.04);
+  transform: translateX(4px);
+}
+
+/* avatar circle */
+.user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 12px #ff00ff;
   overflow: hidden;
-  cursor: grab;
-  z-index: 2000;
-  transition: transform 0.12s ease;
+  flex-shrink: 0;
 }
 
-.mini-circle:active {
-  cursor: grabbing;
-  transform: scale(1.04);
-}
+.user-avatar.small { width:42px; height:42px; }
 
-.mini-circle img {
+/* avatar image */
+.user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  display: block;
 }
 
-/* ————————————————————————
-   🧍 AVATAR 3D BAS DE L'ÉCRAN
-———————————————————————— */
-.avatar-container-large {
-  position: fixed;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 280px;
-  height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
-}
-
-model-viewer {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-}
-
-/* ————————————————————————
-   🛠 MENU EDIT
-———————————————————————— */
-.edit-menu {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.menu-circle {
-  background: rgba(20,20,30,0.9);
-  padding: 25px;
-  border-radius: 15px;
+/* user meta (name + last message preview) */
+.user-meta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 90%;
+  min-width: 0;
 }
 
-/* ————————————————————————
-   🧬 READY PLAYER ME POPUP
-———————————————————————— */
-#rpmModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  justify-content: center;
-  align-items: center;
-  z-index: 3000;
+.user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
 }
 
-.rpm-frame {
-  width: 90%;
-  height: 85%;
-  border: none;
-  border-radius: 12px;
+.user-last {
+  font-size: 12px;
+  color: #ddd;
+  opacity: 0.9;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ————————————————————————
-   ✨ BOUTONS FLUO
-———————————————————————— */
-.glass-btn, .menu-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255,0,255,0.2);
-  color: white;
-  font-size: 16px;
-  box-shadow: 0 0 10px #ff00ff, 0 0 15px rgba(255,0,255,0.5);
-}
-
-/* ————————————————————————
-   📱 NAVIGATION BAS
-———————————————————————— */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: rgba(30,30,50,0.85);
-  backdrop-filter: blur(10px);
+/* ---- Colonne conversation (droite) ---- */
+.chat-conversation {
+  flex: 1;
   display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255,0,255,0.3);
-  z-index: 5000;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
-.bottom-nav a {
-  color: white;
-  font-size: 22px;
+/* header conversation */
+.chat-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05));
+  border-bottom: 1px solid rgba(255,0,255,0.06);
+  backdrop-filter: blur(4px);
+  z-index: 50;
 }
 
-.bottom-nav a.active {
-  color: #ff00ff;
+.header-left {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.active-name {
+  font-size:16px;
+  color: #ffb6ff;
+  text-shadow: 0 0 6px rgba(255,0,255,0.15);
+}
+
+/* screen: conteneur des messages */
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  box-sizing: border-box;
 }
 
 /* ————————————————————————
-   💬 CHAT : INPUT BAR NEON
+   🌸 Chat input / neon
 ———————————————————————— */
 .chat-input-container {
-  position: fixed;
-  bottom: 70px; /* juste au-dessus du dock */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 88%;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   display: flex;
-  align-items: center;
   gap: 10px;
-  z-index: 9999;
+  align-items: center;
+  padding: 12px 18px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.2));
+  border-top: 1px solid rgba(255,0,255,0.06);
 }
 
 /* anti-zoom iOS */
-.chat-input-container * {
-  font-size: 16px !important;
-}
+.chat-input-container * { font-size: 16px !important; }
 
-/* Champ message néon */
+/* champ */
 .chat-input-container input {
   flex: 1;
-  padding: 12px 15px;
-  background: rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.22);
   border: 2px solid #ff00ff;
-  border-radius: 25px;
+  border-radius: 28px;
   outline: none;
   color: white;
   backdrop-filter: blur(6px);
   box-shadow: 0 0 12px #ff00ff;
 }
 
-.chat-input-container input::placeholder {
-  color: #ddd;
-}
+/* placeholder */
+.chat-input-container input::placeholder { color: #ddd; }
 
-/* Bouton envoyer néon */
+/* bouton envoyer */
 .chat-input-container button {
-  padding: 12px 16px;
-  background: #ff00ff;
-  border-radius: 25px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg,#ff00ff,#d100d1);
+  border-radius: 22px;
   border: none;
-  box-shadow: 0 0 12px #ff00ff;
+  box-shadow: 0 0 14px #ff00ff;
   color: white;
   font-size: 18px;
 }
 
 /* ————————————————————————
-   💬 CHAT : BULLES DE MESSAGE
+   💬 BULLES MESSAGES NEON (droite/gauche)
 ———————————————————————— */
 .message {
-  max-width: 75%;
-  padding: 10px 15px;
-  margin: 10px;
-  border-radius: 15px;
-  background: rgba(30,30,50,0.6);
+  display: inline-block;
+  max-width: 70%;
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 14px;
+  background: rgba(30,30,50,0.55);
   border: 2px solid #ff00ff;
   box-shadow: 0 0 10px #ff00ff;
   color: white;
+  clear: both;
+  word-wrap: break-word;
 }
 
+/* messages des autres (gauche) */
+.message.other {
+  float: left;
+}
+
+/* messages envoyés (droite) */
 .message.me {
-  margin-left: auto;
-  background: #ff00ff;
+  float: right;
+  background: linear-gradient(180deg,#ff00ff,#d100d1);
   color: black;
-  box-shadow: 0 0 15px #ff00ff;
+  border: 2px solid rgba(255,255,255,0.06);
+  box-shadow: 0 0 18px #ff00ff;
+}
+
+/* petit responsive */
+@media (max-width: 720px) {
+  .chat-users-panel { display: none; } /* on cache liste sur petit écran */
+  .chat-input-container { padding: 10px; }
+  .user-avatar { width:56px; height:56px; }
 }
