@@ -1,31 +1,32 @@
 const chatBox = document.getElementById("chatBox");
-const chatInput = document.getElementById("chatInput");
+const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 
 function sendMessage() {
-  const text = chatInput.value.trim();
+  const text = messageInput.value.trim();
   if (!text) return;
 
   const msg = document.createElement("div");
-  msg.className = "msg me";
+  msg.className = "message me"; // ✔ cohérent avec CSS
   msg.innerText = text;
+
   chatBox.appendChild(msg);
+  messageInput.value = "";
 
-  chatInput.value = "";
-
-  // ✅ Scroll auto en bas stable
+  // Scroll auto
   setTimeout(() => {
     chatBox.scrollTop = chatBox.scrollHeight;
-  }, 100);
+  }, 50);
 }
 
 sendBtn.onclick = sendMessage;
 
-chatInput.addEventListener("keypress", e => {
+// ENTRÉE POUR ENVOYER
+messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// ✅ Si tu veux forcer aussi au chargement de la page :
+// Scroll au chargement
 window.addEventListener("load", () => {
   setTimeout(() => {
     chatBox.scrollTop = chatBox.scrollHeight;
