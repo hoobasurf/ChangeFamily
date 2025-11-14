@@ -13,7 +13,7 @@
 
   <!-- MINI CERCLE -->
   <div class="mini-circle" id="miniCircle">
-    <img id="miniAvatar" src="default.jpg" />
+    <img id="miniAvatar" src="default.jpg" alt="mini avatar" />
   </div>
 
   <div class="screen profile-screen">
@@ -40,16 +40,16 @@
   </div>
 
   <!-- MENU MODIFIER -->
-  <div id="editMenu" class="edit-menu">
-    <div class="menu-circle">
+  <div id="editMenu" class="edit-menu" aria-hidden="true">
+    <div class="menu-circle" role="dialog" aria-modal="true">
       <button id="photoLib" class="menu-btn">📷 Photothèque</button>
       <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
       <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
     </div>
   </div>
 
-  <!-- READY PLAYER ME -->
-  <div id="rpmModal">
+  <!-- READY PLAYER ME (modal intégré) -->
+  <div id="rpmModal" aria-hidden="true">
     <iframe
       id="rpmFrame"
       allow="camera *; microphone *; clipboard-write"
