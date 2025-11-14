@@ -1,3 +1,6 @@
+/* ————————————————————————
+   🌆 BACKGROUND + BASE
+———————————————————————— */
 body {
   margin: 0;
   min-height: 100vh;
@@ -11,7 +14,9 @@ body {
   align-items: center;
 }
 
-/* Écran profil */
+/* ————————————————————————
+   👤 PROFIL SCREEN
+———————————————————————— */
 .profile-screen {
   text-align: center;
   width: 100%;
@@ -19,7 +24,9 @@ body {
   padding: 40px 0 150px;
 }
 
-/* --- MINI CIRCLE --- */
+/* ————————————————————————
+   🔮 MINI CIRCLE AVATAR
+———————————————————————— */
 .mini-circle {
   position: absolute;
   top: 20px;
@@ -41,7 +48,10 @@ body {
   transition: transform 0.12s ease;
 }
 
-.mini-circle:active { cursor: grabbing; transform: scale(1.04); }
+.mini-circle:active {
+  cursor: grabbing;
+  transform: scale(1.04);
+}
 
 .mini-circle img {
   width: 100%;
@@ -50,7 +60,9 @@ body {
   border-radius: 50%;
 }
 
-/* --- AVATAR 3D EN BAS --- */
+/* ————————————————————————
+   🧍 AVATAR 3D BAS DE L'ÉCRAN
+———————————————————————— */
 .avatar-container-large {
   position: fixed;
   bottom: 70px;
@@ -70,7 +82,9 @@ model-viewer {
   border-radius: 50%;
 }
 
-/* --- MENU MODIFIER --- */
+/* ————————————————————————
+   🛠 MENU EDIT
+———————————————————————— */
 .edit-menu {
   display: none;
   position: fixed;
@@ -91,7 +105,9 @@ model-viewer {
   max-width: 90%;
 }
 
-/* --- Ready Player Me modal intégré --- */
+/* ————————————————————————
+   🧬 READY PLAYER ME POPUP
+———————————————————————— */
 #rpmModal {
   display: none;
   position: fixed;
@@ -110,7 +126,9 @@ model-viewer {
   overflow: hidden;
 }
 
-/* --- Boutons fluo --- */
+/* ————————————————————————
+   ✨ BOUTONS FLUO
+———————————————————————— */
 .glass-btn, .menu-btn {
   padding: 12px 20px;
   border: none;
@@ -121,7 +139,9 @@ model-viewer {
   box-shadow: 0 0 10px #ff00ff, 0 0 15px rgba(255,0,255,0.5);
 }
 
-/* Navigation bas */
+/* ————————————————————————
+   📱 NAVIGATION BAS
+———————————————————————— */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -142,4 +162,73 @@ model-viewer {
 
 .bottom-nav a.active {
   color: #ff00ff;
+}
+
+/* ————————————————————————
+   💬 CHAT : INPUT BAR NEON
+———————————————————————— */
+.chat-input-container {
+  position: fixed;
+  bottom: 70px; /* juste au-dessus du dock */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+}
+
+/* anti-zoom iOS */
+.chat-input-container * {
+  font-size: 16px !important;
+}
+
+/* Champ message néon */
+.chat-input-container input {
+  flex: 1;
+  padding: 12px 15px;
+  background: rgba(0,0,0,0.2);
+  border: 2px solid #ff00ff;
+  border-radius: 25px;
+  outline: none;
+  color: white;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px #ff00ff;
+}
+
+.chat-input-container input::placeholder {
+  color: #ddd;
+}
+
+/* Bouton envoyer néon */
+.chat-input-container button {
+  padding: 12px 16px;
+  background: #ff00ff;
+  border-radius: 25px;
+  border: none;
+  box-shadow: 0 0 12px #ff00ff;
+  color: white;
+  font-size: 18px;
+}
+
+/* ————————————————————————
+   💬 CHAT : BULLES DE MESSAGE
+———————————————————————— */
+.message {
+  max-width: 75%;
+  padding: 10px 15px;
+  margin: 10px;
+  border-radius: 15px;
+  background: rgba(30,30,50,0.6);
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 10px #ff00ff;
+  color: white;
+}
+
+.message.me {
+  margin-left: auto;
+  background: #ff00ff;
+  color: black;
+  box-shadow: 0 0 15px #ff00ff;
 }
