@@ -28,14 +28,20 @@ body {
   height: 90px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,0,255,0.5), rgba(0,0,0,0.8));
-  box-shadow: 0 0 15px #ff00ff, 0 0 30px rgba(255,0,255,0.6);
+  box-shadow:
+    0 0 12px rgba(255,0,255,0.9),
+    0 0 28px rgba(153,0,255,0.35),
+    0 0 48px rgba(255,0,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   cursor: grab;
   z-index: 2000;
+  transition: transform 0.12s ease;
 }
+
+.mini-circle:active { cursor: grabbing; transform: scale(1.04); }
 
 .mini-circle img {
   width: 100%;
@@ -61,6 +67,7 @@ body {
 model-viewer {
   width: 260px;
   height: 260px;
+  border-radius: 50%;
 }
 
 /* --- MENU MODIFIER --- */
@@ -84,12 +91,12 @@ model-viewer {
   max-width: 90%;
 }
 
-/* --- Ready Player Me Modal --- */
+/* --- Ready Player Me modal intégré --- */
 #rpmModal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0,0,0,0.85);
   justify-content: center;
   align-items: center;
   z-index: 3000;
