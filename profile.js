@@ -9,75 +9,85 @@ const rpmModal = document.getElementById("rpmModal");
 const rpmFrame = document.getElementById("rpmFrame");
 const danceBtn = document.getElementById("danceBtn");
 
-// ✅ Charger pseudo + avatar sauvegardés
+const miniCircle = document.getElementById("miniCircle");
+const miniAvatar = document.getElementById("miniAvatar");
+
+/* --- Charger le pseudo et l'avatar --- */
 window.addEventListener("DOMContentLoaded", () => {
   const pseudo = localStorage.getItem("pseudo");
   if (pseudo) pseudoDisplay.textContent = pseudo;
 
   const avatarURL = localStorage.getItem("avatarURL");
-  if (avatarURL) avatar3D.src = avatarURL;
+  if (avatarURL) {
+    avatar3D.src = avatarURL;
+    miniAvatar.src = avatarURL;
+  }
 });
 
-// ✅ Bouton Modifier -> ouvre/ferme le menu
+/* --- Menu Modifier --- */
 editBtn.addEventListener("click", () => {
-  const visible = editMenu.style.display === "flex";
-  editMenu.style.display = visible ? "none" : "flex";
+  editMenu.style.display = editMenu.style.display === "flex" ? "none" : "flex";
 });
 
-// ✅ Fermer si on clique hors du menu
 document.addEventListener("click", (e) => {
   if (!editMenu.contains(e.target) && e.target !== editBtn) {
     editMenu.style.display = "none";
   }
 });
 
-// ✅ Photothèque
+/* --- Upload Photothèque --- */
 photoLib.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
+
   input.onchange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      avatar3D.src = url;
-      localStorage.setItem("avatarURL", url);
-    }
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    avatar3D.src = url;
+    miniAvatar.src = url;
+    localStorage.setItem("avatarURL", url);
   };
+
   input.click();
 });
 
-// ✅ Prendre une photo
+/* --- Prendre une photo --- */
 takePhoto.addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
   input.capture = "camera";
+
   input.onchange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      avatar3D.src = url;
-      localStorage.setItem("avatarURL", url);
-    }
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    avatar3D.src = url;
+    miniAvatar.src = url;
+    localStorage.setItem("avatarURL", url);
   };
+
   input.click();
 });
 
-// ✅ Créer avatar (Ready Player Me)
+/* --- Créer Avatar : Ready Player Me --- */
 createAvatar.addEventListener("click", () => {
   rpmModal.style.display = "flex";
   rpmFrame.src = "https://readyplayer.me/avatar?frameApi";
   editMenu.style.display = "none";
 });
 
-// ✅ Écoute les messages du frame Ready Player Me
 window.addEventListener("message", (event) => {
-  if (!event.data || !event.data.source || event.data.source !== "readyplayerme") return;
+  if (!event.data || event.data.source !== "readyplayerme") return;
 
   if (event.data.eventName === "v1.avatar.exported") {
     const avatarURL = event.data.data.url;
     avatar3D.src = avatarURL;
+    miniAvatar.src = avatarURL;
     localStorage.setItem("avatarURL", avatarURL);
     rpmModal.style.display = "none";
   }
@@ -94,16 +104,31 @@ window.addEventListener("message", (event) => {
   }
 });
 
-// Fermer Ready Player Me au clic extérieur
+/* --- Fermer RPM si clic extérieur --- */
 rpmModal.addEventListener("click", (e) => {
   if (e.target === rpmModal) rpmModal.style.display = "none";
 });
 
-// ✅ Effet "Danser" — rotation rapide 2 secondes
+/* --- Effet danse simple --- */
 danceBtn.addEventListener("click", () => {
   avatar3D.style.transition = "transform 2s linear";
   avatar3D.style.transform = "rotateY(720deg)";
-  setTimeout(() => {
-    avatar3D.style.transform = "rotateY(0deg)";
-  }, 2000);
+  setTimeout(() => (avatar3D.style.transform = "rotateY(0deg)"), 2000);
 });
+
+/* --- DRAG MINI CIRCLE --- */
+let offsetX = 0, offsetY = 0, dragging = false;
+
+miniCircle.addEventListener("mousedown", (e) => {
+  dragging = true;
+  offsetX = e.clientX - miniCircle.offsetLeft;
+  offsetY = e.clientY - miniCircle.offsetTop;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!dragging) return;
+  miniCircle.style.left = `${e.clientX - offsetX}px`;
+  miniCircle.style.top = `${e.clientY - offsetY}px`;
+});
+
+document.addEventListener("mouseup", () => dragging = false);
