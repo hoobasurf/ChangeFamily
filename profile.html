@@ -7,66 +7,167 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+<style>
+body{margin:0;font-family:sans-serif;background:#121212;color:#fff;}
+.screen{display:flex;height:100vh;}
+.left-panel,.right-panel{flex:1;position:relative;overflow:auto;padding:20px;}
+.left-panel{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.right-panel{background:#222;}
+.mini-circle{position:fixed;top:80px;left:20px;z-index:50;width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid #0ff;}
+.mini-circle img{width:100%;height:100%;object-fit:cover;}
+.pill-btn{padding:6px 14px;margin:5px;border-radius:20px;border:none;background:#0ff;color:#000;cursor:pointer;}
+.pill-btn.small-btn{padding:4px 10px;font-size:0.9em;}
+.popup{position:absolute;background:#333;padding:10px;border-radius:8px;top:50px;display:none;z-index:100;}
+.popup button{display:block;width:100%;margin:4px 0;}
+.rpm-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:200;}
+.rpm-modal iframe{width:90%;height:90%;border:none;}
+.rpm-modal button{position:absolute;top:10px;right:10px;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;}
+</style>
 </head>
 <body>
 
+<div class="screen">
+  <!-- LEFT PANEL: Avatar + Creature -->
+  <div class="left-panel">
+    <model-viewer id="avatar3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:250px;height:250px;"></model-viewer>
+    <div id="creatureContainer" style="margin-top:20px;">
+      <model-viewer id="animal3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:180px;height:180px;"></model-viewer>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Boutons + menus -->
+  <div class="right-panel">
+    <h2>Mon profil</h2>
+    <h3 id="pseudoDisplay">Sans pseudo</h3>
+
+    <div class="create-container">
+      <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
+    </div>
+
+    <!-- MENU CREER -->
+    <div id="createMenu" class="popup">
+      <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
+      <button id="btnAvatar" class="pill-btn small-btn">Avatar</button>
+      <button id="btnCreature" class="pill-btn small-btn">Créature</button>
+    </div>
+
+    <!-- SOUS-MENU PHOTO -->
+    <div id="menuPhoto" class="popup">
+      <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
+      <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
+    </div>
+
+    <!-- SOUS-MENU CREATURE -->
+    <div id="menuCreature" class="popup">
+      <button id="chooseCreature" class="pill-btn small-btn">Choisir une créature</button>
+      <button id="createCreature" class="pill-btn small-btn">Créer une créature</button>
+    </div>
+
+    <!-- LISTE CRÉATURES -->
+    <div id="chooseCreatureMenu" class="popup">
+      <button class="pill-btn small-btn">Licorne</button>
+      <button class="pill-btn small-btn">Dragon</button>
+    </div>
+
+    <!-- CREATEUR DE CREATURE -->
+    <div id="createCreatureMenu" class="popup">
+      <label>Couleur:<input type="color" id="colorCreature"></label>
+      <label>Taille:
+        <select id="sizeCreature">
+          <option>Petite</option>
+          <option>Moyenne</option>
+          <option>Grande</option>
+        </select>
+      </label>
+      <button id="validateCreature" class="pill-btn small-btn">Valider</button>
+    </div>
+  </div>
+</div>
+
 <!-- MINI CIRCLE -->
-<div id="miniCircle" class="mini-circle" style="position:fixed;top:80px;left:20px;z-index:50;">
-  <img id="miniAvatar" src="default.jpg" alt="mini avatar" style="width:60px;height:60px;border-radius:50%;border:2px solid #0ff;">
-</div>
-
-<h2>Mon profil</h2>
-
-<!-- BOUTON CREER -->
-<div class="create-container">
-  <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
-</div>
-
-<!-- MENU CREER -->
-<div id="createMenu" class="popup hidden">
-  <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
-  <button id="btnAvatar" class="pill-btn small-btn">Avatar</button>
-  <button id="btnCreature" class="pill-btn small-btn">Créature</button>
-</div>
-
-<!-- SOUS-MENU PHOTO -->
-<div id="menuPhoto" class="popup hidden">
-  <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
-  <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
-</div>
-
-<!-- SOUS-MENU CREATURE -->
-<div id="menuCreature" class="popup hidden">
-  <button id="chooseCreature" class="pill-btn small-btn">Choisir une créature</button>
-  <button id="createCreature" class="pill-btn small-btn">Créer une créature</button>
-</div>
-
-<!-- LISTE CRÉATURES -->
-<div id="chooseCreatureMenu" class="popup hidden">
-  <button class="pill-btn small-btn">Licorne</button>
-  <button class="pill-btn small-btn">Dragon</button>
-</div>
-
-<!-- CREATEUR DE CREATURE -->
-<div id="createCreatureMenu" class="popup hidden">
-  <label>Couleur:<input type="color" id="colorCreature"></label>
-  <label>Taille:<select id="sizeCreature">
-    <option>Petite</option>
-    <option>Moyenne</option>
-    <option>Grande</option>
-  </select></label>
-  <button id="validateCreature" class="pill-btn small-btn">Valider</button>
+<div id="miniCircle" class="mini-circle">
+  <img id="miniAvatar" src="default.jpg" alt="mini avatar">
 </div>
 
 <!-- READY PLAYER ME MODAL -->
-<div id="rpmModal" class="popup hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:100;display:flex;justify-content:center;align-items:center;">
-  <iframe id="rpmFrame" style="width:90%;height:90%;border:none;"></iframe>
-  <button id="closeRpm" class="pill-btn small-btn" style="position:absolute;top:10px;right:10px;">✖</button>
+<div id="rpmModal" class="rpm-modal">
+  <iframe id="rpmFrame"></iframe>
+  <button id="closeRpm">✖</button>
 </div>
 
+<!-- Hidden inputs -->
 <input id="hiddenFile" type="file" accept="image/*" style="display:none">
 <input id="hiddenFileChoose" type="file" accept="image/*" style="display:none">
 
-<script type="module" src="profile.js"></script>
+<script type="module">
+// --- helpers ---
+const $=id=>document.getElementById(id);
+const menus=[ $('createMenu'),$('menuPhoto'),$('menuCreature'),$('chooseCreatureMenu'),$('createCreatureMenu'),$('rpmModal') ];
+function closeAll(){menus.forEach(m=>m.style.display='none')}
+function openMenu(m){closeAll();m.style.display='block'}
+
+// --- CREATE BUTTON ---
+$('openCreateMenu').onclick=e=>{e.stopPropagation();openMenu($('createMenu'))}
+$('btnPhoto').onclick=e=>{e.stopPropagation();openMenu($('menuPhoto'))}
+$('btnAvatar').onclick=e=>{
+  e.stopPropagation();
+  openMenu($('rpmModal'));
+  if(!$('rpmFrame').src)$('rpmFrame').src='https://iframe.readyplayer.me/avatar?frameApi';
+}
+$('btnCreature').onclick=e=>{e.stopPropagation();openMenu($('menuCreature'))}
+$('chooseCreature').onclick=e=>{e.stopPropagation();openMenu($('chooseCreatureMenu'))}
+$('createCreature').onclick=e=>{e.stopPropagation();openMenu($('createCreatureMenu'))}
+
+// --- prevent closing on click inside ---
+menus.forEach(m=>{m.onclick=e=>e.stopPropagation()})
+document.body.onclick=closeAll
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll();})
+
+// --- MINI-CIRCLE DRAG ---
+(function(){
+  let dragging=false,offsetX=0,offsetY=0;
+  const mini=$('miniCircle');
+  mini.addEventListener('mousedown',start);
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',end);
+  mini.addEventListener('touchstart',start,{passive:false});
+  document.addEventListener('touchmove',move,{passive:false});
+  document.addEventListener('touchend',end);
+  function start(e){
+    dragging=true;
+    const p=e.touches?e.touches[0]:e;
+    const rect=mini.getBoundingClientRect();
+    offsetX=p.clientX-rect.left; offsetY=p.clientY-rect.top;
+    if(e.touches)e.preventDefault();
+  }
+  function move(e){if(!dragging)return;
+    const p=e.touches?e.touches[0]:e;
+    let x=p.clientX-offsetX; let y=p.clientY-offsetY;
+    x=Math.max(0,Math.min(window.innerWidth-mini.offsetWidth,x));
+    y=Math.max(0,Math.min(window.innerHeight-mini.offsetHeight,y));
+    mini.style.left=x+'px'; mini.style.top=y+'px';
+  }
+  function end(){dragging=false;}
+})();
+
+// --- PHOTO ---
+$('photoLib').onclick=()=>$('hiddenFileChoose').click();
+$('takePhoto').onclick=()=>{
+  const input=document.createElement('input');
+  input.type='file';input.accept='image/*';input.capture='environment';
+  input.onchange=onChooseFile;input.click();
+}
+$('hiddenFile').onchange=$('hiddenFileChoose').onchange=onChooseFile;
+function onChooseFile(e){
+  const f=e.target.files[0]; if(!f)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{ $('miniAvatar').src=ev.target.result; localStorage.setItem('circlePhoto',ev.target.result); closeAll(); }
+  reader.readAsDataURL(f);
+}
+
+// --- RPM CLOSE ---
+$('closeRpm').onclick=()=>{ $('rpmModal').style.display='none'; $('rpmFrame').src=''; }
+
+</script>
 </body>
 </html>
