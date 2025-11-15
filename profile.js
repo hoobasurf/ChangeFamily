@@ -37,14 +37,12 @@ pseudo.addEventListener('change',()=>localStorage.setItem('pseudo',pseudo.value)
 const menus=['createMenu','menuPhoto','menuCreature','chooseCreatureMenu','createCreatureMenu','rpmModal'].map($);
 function closeAll(){menus.forEach(m=>m.classList.add('hidden'))}
 function openMenu(m){closeAll(); m.classList.remove('hidden')}
-
 $('openCreateMenu').onclick=e=>{e.stopPropagation();openMenu($('createMenu'))}
 $('btnPhoto').onclick=e=>{e.stopPropagation();openMenu($('menuPhoto'))}
 $('btnAvatar').onclick=e=>{e.stopPropagation();openMenu($('rpmModal'));if(!$('rpmFrame').src)$('rpmFrame').src='https://iframe.readyplayer.me/avatar?frameApi';}
 $('btnCreature').onclick=e=>{e.stopPropagation();openMenu($('menuCreature'))}
 $('chooseCreature').onclick=e=>{e.stopPropagation();openMenu($('chooseCreatureMenu'))}
 $('createCreature').onclick=e=>{e.stopPropagation();openMenu($('createCreatureMenu'))}
-
 menus.forEach(m=>{m.onclick=e=>e.stopPropagation()})
 document.body.onclick=closeAll
 document.addEventListener('keydown', e=>{if(e.key==='Escape')closeAll();})
