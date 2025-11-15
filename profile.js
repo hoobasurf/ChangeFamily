@@ -1,114 +1,207 @@
-// ==========================
-// MINI CIRCLE PHOTO FIX
-// ==========================
-let savedMiniAvatar = localStorage.getItem("miniAvatar");
-const miniAvatarImg = document.getElementById("miniAvatarImg");
+// =======================
+// GETTER
+// =======================
+const $ = id => document.getElementById(id);
 
-if (savedMiniAvatar) {
-    miniAvatarImg.src = savedMiniAvatar;
+// =======================
+// MINI-CIRCLE DRAG
+// =======================
+(function(){
+  const mini = $('miniCircle');
+  if(!mini) return;
+
+  let drag = false, offX = 0, offY = 0;
+
+  function start(e){
+    drag = true;
+    const p = e.touches ? e.touches[0] : e;
+    const r = mini.getBoundingClientRect();
+    offX = p.clientX - r.left;
+    offY = p.clientY - r.top;
+    if(e.touches) e.preventDefault();
+  }
+
+  function move(e){
+    if(!drag) return;
+    const p = e.touches ? e.touches[0] : e;
+    let x = p.clientX - offX;
+    let y = p.clientY - offY;
+    x = Math.max(0, Math.min(window.innerWidth - mini.offsetWidth, x));
+    y = Math.max(0, Math.min(window.innerHeight - mini.offsetHeight, y));
+    mini.style.left = x + 'px';
+    mini.style.top  = y + 'px';
+  }
+
+  function end(){ drag = false; }
+
+  mini.addEventListener('mousedown', start);
+  document.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', end);
+
+  mini.addEventListener('touchstart', start, {passive:false});
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end);
+})();
+
+// =======================
+// INIT PSEUDO
+// =======================
+const pseudo = $('pseudoInput');
+if (pseudo){
+  if(localStorage.getItem('pseudo')) pseudo.value = localStorage.getItem('pseudo');
+  pseudo.addEventListener('change', ()=> localStorage.setItem('pseudo', pseudo.value));
 }
 
-function setMiniAvatar(file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        miniAvatarImg.src = e.target.result;
-        localStorage.setItem("miniAvatar", e.target.result);
-    };
-    reader.readAsDataURL(file);
+// =======================
+// MENUS
+// =======================
+const M = {
+  create: $('createMenu'),
+  photo: $('menuPhoto'),
+  creature: $('menuCreature'),
+  chooseCreature: $('chooseCreatureMenu'),
+  createCreature: $('createCreatureMenu'),
+  rpm: $('rpmModal')
+};
+
+// liste pour fermer proprement
+const allMenus = Object.values(M);
+
+function closeAll(){
+  allMenus.forEach(m => m && m.classList.add('hidden'));
 }
 
-
-// ==========================
-// MENUS / BOUTONS
-// ==========================
-const btnCreate = document.getElementById("btnCreate");
-const createMenu = document.getElementById("createMenu");
-
-const btnPhoto = document.getElementById("btnPhoto");
-const btnAvatar = document.getElementById("btnAvatar");
-const btnCreature = document.getElementById("btnCreature");
-
-const photoMenu = document.getElementById("photoMenu");
-const libraryBtn = document.getElementById("libraryBtn");
-const cameraBtn = document.getElementById("cameraBtn");
-
-
-// ==========================
-// FERMETURE DES MENUS
-// ==========================
-function closeAll() {
-    createMenu.style.display = "none";
-    photoMenu.style.display = "none";
+function openMenu(menu){
+  closeAll();
+  if(menu) menu.classList.remove('hidden');
 }
 
-document.addEventListener("click", () => {
-    closeAll();
+// rendre les popup étanches au clic
+allMenus.forEach(m=>{
+  if(!m) return;
+  m.addEventListener('click', e => e.stopPropagation());
 });
 
+// clic sur le body = ferme
+document.body.onclick = closeAll;
 
-// Empêche la fermeture lorsqu'on clique sur les menus
-createMenu.addEventListener("click", e => e.stopPropagation());
-photoMenu.addEventListener("click", e => e.stopPropagation());
+// =======================
+// BOUTON CREER
+// =======================
+$('openCreateMenu').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.create);
+};
 
+// =======================
+// PHOTO
+// =======================
+$('btnPhoto').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.photo);
+};
 
-// ==========================
-// BOUTON CREER (FIX)
-// ==========================
-btnCreate.addEventListener("click", function (e) {
-    e.stopPropagation(); // IMPORTANT : empêche le body de fermer
-    if (createMenu.style.display === "flex") {
-        createMenu.style.display = "none";
-    } else {
-        closeAll();
-        createMenu.style.display = "flex";
+$('photoLib').onclick = () => $('hiddenFileChoose').click();
+$('takePhoto').onclick = () => {
+  const input = document.createElement('input');
+  input.type = "file";
+  input.accept = "image/*";
+  input.capture = "environment";
+  input.onchange = onChooseFile;
+  input.click();
+};
+
+$('hiddenFile').onchange = onChooseFile;
+$('hiddenFileChoose').onchange = onChooseFile;
+
+function onChooseFile(e){
+  const f = e.target.files[0];
+  if(!f) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    $('miniAvatar').src = ev.target.result;
+    localStorage.setItem('circlePhoto', ev.target.result);
+    closeAll();
+  };
+  reader.readAsDataURL(f);
+}
+
+// =======================
+// AVATAR — READY PLAYER ME
+// =======================
+$('btnAvatar').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.rpm);
+
+  if(!$('rpmFrame').src)
+    $('rpmFrame').src = "https://iframe.readyplayer.me/avatar?frameApi";
+};
+
+$('closeRpm').onclick = () => {
+  M.rpm.classList.add('hidden');
+  $('rpmFrame').src = "";
+};
+
+window.addEventListener('message', (event)=>{
+  if(!event.data) return;
+
+  let data = event.data;
+  try { data = typeof data === "string" ? JSON.parse(data) : data; }catch{}
+
+  if(data?.eventName === "v1.avatar.exported" || data?.name === "avatar-exported"){
+    const url = data.data?.url || data.url;
+    if(url){
+      $('avatar3D').src = url;
+      localStorage.setItem("avatarURL", url);
     }
+    M.rpm.classList.add('hidden');
+    $('rpmFrame').src = "";
+  }
 });
 
+// =======================
+// CREATURE
+// =======================
+$('btnCreature').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.creature);
+};
 
-// ==========================
-// BOUTON PHOTO
-// ==========================
-btnPhoto.addEventListener("click", function (e) {
-    e.stopPropagation();
-    closeAll();
-    photoMenu.style.display = "flex";
-});
+$('chooseCreature').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.chooseCreature);
+};
 
+$('createCreature').onclick = e => {
+  e.stopPropagation();
+  openMenu(M.createCreature);
+};
 
-// ==========================
-// BOUTON AVATAR
-// ==========================
-btnAvatar.addEventListener("click", function (e) {
-    e.stopPropagation();
-    closeAll();
+// CHOISIR UNE CRÉATURE PRÉ-FABRIQUÉE
+document.querySelectorAll('#chooseCreatureMenu button[data-creature]')
+  .forEach(btn=>{
+    btn.onclick = ()=>{
+      const type = btn.dataset.creature;
 
-    // OUVERTURE REALITY PLAYER ME
-    window.location.href = "/avatar.html"; 
-});
+      let url = "";
+      if(type === "Licorne") url = "https://modelviewer.dev/shared-assets/models/Astronaut.glb";  
+      if(type === "Dragon")  url = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
+      if(type === "ChatAile") url = "https://modelviewer.dev/shared-assets/models/Robot.glb";
 
+      $('animal3D').src = url;
+      localStorage.setItem("creatureURL", url);
 
-// ==========================
-// BOUTON CREATURE
-// ==========================
-btnCreature.addEventListener("click", function (e) {
-    e.stopPropagation();
-    closeAll();
+      closeAll();
+    };
+  });
 
-    // PAGE SELECTION CREATURE
-    window.location.href = "/creature.html";
-});
+// CREER UNE NOUVELLE CRÉATURE (fake)
+$('validateCreature').onclick = ()=>{
+  const size = $('sizeCreature').value;
 
+  let url = "https://modelviewer.dev/shared-assets/models/Robot.glb";
+  $('animal3D').src = url;
 
-// ==========================
-// PHOTO : OUVERTURE LIBRARY
-// ==========================
-libraryBtn.addEventListener("click", function () {
-    document.getElementById("photoInput").click();
-});
-
-// ==========================
-// PHOTO : OUVERTURE CAMERA
-// ==========================
-cameraBtn.addEventListener("click", function () {
-    document.getElementById("cameraInput").click();
-});
+  closeAll();
+};
