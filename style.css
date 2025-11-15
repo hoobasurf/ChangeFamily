@@ -1,150 +1,213 @@
-/* --- Fond et split-screen --- */
+/* style.css - global neon look (use this file to replace your CSS)
+   IMPORTANT: file focuses on profile + creature UI, keeps nav styling you wanted.
+*/
+
+:root{
+  --neon1:#ff00ff;
+  --neon2:#9a00ff;
+  --bg-fade: rgba(0,0,0,0.55);
+}
+
+/* page background - keeps your Ville1.jpg */
 body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(120deg,#1f1c2c,#928dab);
+  margin: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+  background: url("Ville1.jpg") no-repeat center center fixed;
+  background-size: cover;
   color: #fff;
-  overflow-x: hidden;
-}
-
-.screen {
+  font-family: 'Poppins', sans-serif;
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Panels */
-.left-panel, .right-panel {
-  flex: 1;
+/* screen */
+.profile-screen {
+  text-align: center;
+  width: 100%;
   position: relative;
-  overflow: auto;
-  padding: 20px;
+  padding: 36px 16px 180px;
 }
 
-.left-panel {
-  background: url('https://images.unsplash.com/photo-1612831667763-7ed7926bb7b7?auto=format&fit=crop&w=800&q=80') no-repeat center/cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.6);
+/* header buttons row */
+.profile-header {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-bottom:8px;
 }
 
-.right-panel {
-  background: rgba(34,34,34,0.85);
-  backdrop-filter: blur(6px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 60px;
-}
-
-/* --- Mini-circle --- */
+/* mini circle */
 .mini-circle {
   position: fixed;
-  top: 80px;
-  left: 20px;
-  z-index: 50;
-  width: 60px;
-  height: 60px;
+  top: 20px;
+  left: 18px;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #0ff;
-  box-shadow: 0 0 12px #0ff;
+  background: radial-gradient(circle, rgba(255,0,255,0.25), rgba(0,0,0,0.6));
+  box-shadow: 0 0 20px rgba(255,0,255,0.9), 0 0 40px rgba(153,0,255,0.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2100;
+  cursor:grab;
 }
+.mini-circle:active{ cursor:grabbing; transform:scale(1.03); transition: transform 90ms;}
+.mini-circle img{ width:100%; height:100%; object-fit:cover; border-radius:50%; border:3px solid rgba(255,255,255,0.06); }
 
-.mini-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* --- Boutons neon / pill --- */
-.pill-btn {
-  padding: 8px 18px;
-  margin: 6px 0;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(45deg,#0ff,#00f);
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 0 8px #0ff, 0 0 20px #00f inset;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.pill-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px #0ff, 0 0 30px #00f inset;
-}
-
-.pill-btn.small-btn {
-  padding: 4px 12px;
-  font-size: 0.9em;
-}
-
-/* --- Popups --- */
-.popup {
-  position: absolute;
-  background: rgba(0,0,0,0.75);
-  padding: 12px;
-  border-radius: 12px;
-  display: none;
-  top: 50px;
-  z-index: 100;
-  box-shadow: 0 0 15px #0ff;
-}
-
-.popup button {
-  display: block;
-  width: 100%;
-  margin: 4px 0;
-}
-
-/* --- RPM modal --- */
-.rpm-modal {
+/* avatar container (3D) bottom */
+.avatar-container-large{
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 200;
+  bottom: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:5;
 }
+model-viewer#avatar3D{ width: 240px; height:240px; border-radius:14px; }
 
-.rpm-modal iframe {
-  width: 90%;
-  height: 90%;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 0 25px #0ff;
-}
-
-.rpm-modal button {
+/* creature container positioned relative to avatar; JS adjusts left/bottom for positions */
+.creature-container{
   position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background: #ff0066;
-  color: #fff;
-  font-weight: bold;
-  box-shadow: 0 0 12px #ff0066;
+  width: 200px;
+  height:200px;
+  right: 12%;
+  bottom: 34%;
+  pointer-events:none;
+  z-index:6;
+}
+model-viewer#animal3D{ width:180px; height:180px; }
+
+/* edit menu modal */
+.edit-menu {
+  display:none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+.menu-circle {
+  background: linear-gradient(180deg, rgba(20,6,40,0.95), rgba(10,2,30,0.9));
+  padding: 18px;
+  border-radius: 14px;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,0,255,0.08);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
 }
 
-/* --- Model-viewers --- */
-model-viewer {
-  border-radius: 12px;
-  box-shadow: 0 0 15px #0ff;
+/* creature panel */
+.creature-panel {
+  display:none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  justify-content:center;
+  align-items:center;
+  z-index:2500;
+}
+.creature-panel .panel-inner {
+  width: 92%;
+  max-width:520px;
+  background: linear-gradient(180deg, rgba(20,0,50,0.95), rgba(10,0,30,0.92));
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  color:#fff;
+}
+.pill-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:8px 0; }
+.pill { padding:8px 12px; border-radius:999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); cursor:pointer; color:#fff; }
+.pill:hover { box-shadow: 0 0 14px var(--neon1); border-color: var(--neon1); }
+
+/* creator controls */
+.creator { display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+.creator label { font-size:13px; margin-right:4px; }
+.creator input[type="range"] { width:120px; }
+
+/* preview */
+.creature-preview { margin-top:10px; display:flex; justify-content:center; }
+
+/* rpm modal */
+.rpm-modal{ display:none; position:fixed; inset:0; background: rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
+.rpm-frame{ width:92%; height:86%; border-radius:12px; border:none; }
+.rpm-close{ position:absolute; top:18px; right:18px; z-index:4100; padding:6px 10px; border-radius:8px; background:var(--neon1); color:#111; border:none; }
+
+/* glass buttons (neon) */
+.glass-btn, .menu-btn {
+  padding:10px 14px;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  color:#fff;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+.btn-neon {
+  box-shadow: 0 0 16px rgba(255,0,255,0.25), inset 0 0 20px rgba(255,0,255,0.08);
+  border: 1px solid rgba(255,0,255,0.25);
+}
+.menu-btn:hover, .glass-btn:hover { transform: translateY(-3px); box-shadow: 0 0 28px rgba(255,0,255,0.28); }
+
+/* bottom nav */
+.bottom-nav{ position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; align-items:center; padding:10px 0; background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6)); border-top: 1px solid rgba(255,0,255,0.12); z-index:5000; }
+.bottom-nav a{ color:#fff; font-size:22px; text-decoration:none; opacity:0.9; }
+
+/* small screens adjustments */
+@media (max-width:480px){
+  .avatar-container-large{ width:210px; height:210px; bottom:92px; }
+  model-viewer#avatar3D{ width:190px; height:190px; }
+  .mini-circle{ width:78px; height:78px; }
 }
 
-/* --- H2 / H3 styles --- */
-h2,h3 {
-  text-align: center;
-  text-shadow: 0 0 8px #0ff;
-  margin: 8px 0;
+/* STYLE DES BOUTONS PILLULE */
+.pill-btn {
+    padding: 14px 30px;
+    border-radius: 40px;
+    border: none;
+    background: rgba(255, 0, 200, 0.25);
+    color: white;
+    box-shadow: 0 0 15px #ff2cd6;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    margin: 8px 0;
+    font-size: 16px;
+}
+.pill-btn:hover {
+    box-shadow: 0 0 25px #ff4de3;
+}
+
+.small-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+/* POPUP */
+.popup {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40, 0, 65, 0.45);
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 0 20px #b300ff;
+    backdrop-filter: blur(12px);
+    z-index: 200;
+    text-align: center;
+}
+.hidden { display: none; }
+
+.create-container {
+    text-align: center;
+    margin-top: 15px;
 }
