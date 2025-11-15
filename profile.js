@@ -1,10 +1,10 @@
-// profile.js — Fix final : mini-circle draggable, supprime attach panel, corrige RPM boucle
-// Standalone (pas d'import), prêt pour Netlify / iPhone.
+// profile.js — FIX final (long-press cancel on move, RPM open guarded, attach hidden)
+// Replace your existing profile.js with this file (complete).
 
-// Safe DOM getter
+// safe DOM getter
 const $ = id => document.getElementById(id);
 
-// Elements (may be null)
+// DOM elements (may be null)
 const avatar3D = $('avatar3D');
 const animal3D = $('animal3D');
 const pseudoDisplay = $('pseudoDisplay');
@@ -31,18 +31,18 @@ const closeMenu = $('closeMenu');
 const DEFAULT_MINI = 'default.jpg';
 const DEFAULT_ANIMAL = 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb';
 
-// --- Remove/hide any attach-controls UI if present (guarantee no attach window) ---
+// hide attach UI if present
 try {
   const attachPanel = document.getElementById('attachControls') || document.querySelector('.attach-controls');
   if (attachPanel) attachPanel.style.display = 'none';
-} catch (e) { /* ignore */ }
+} catch (e) {}
 
-// --- INIT : restore mini circle, avatar, animal ---
+/* ------------------- INIT ------------------- */
 window.addEventListener('DOMContentLoaded', () => {
   try {
-    const circle = (() => { try { return localStorage.getItem('circlePhoto'); } catch (e) { return null; } })();
-    const avatarURL = (() => { try { return localStorage.getItem('avatarURL'); } catch (e) { return null; } })();
-    const animalURL = (() => { try { return localStorage.getItem('animalURL'); } catch (e) { return null; } })();
+    const circle = (() => { try { return localStorage.getItem('circlePhoto'); } catch(e){ return null; } })();
+    const avatarURL = (() => { try { return localStorage.getItem('avatarURL'); } catch(e){ return null; } })();
+    const animalURL = (() => { try { return localStorage.getItem('animalURL'); } catch(e){ return null; } })();
 
     if (miniAvatarImg) {
       if (circle) miniAvatarImg.src = circle;
@@ -64,40 +64,34 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// --- Edit menu toggle (safe) ---
+/* ------------------- Edit menu toggle ------------------- */
 if (editBtn && editMenu) {
   editBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     editMenu.style.display = editMenu.style.display === 'flex' ? 'none' : 'flex';
   });
-
   document.addEventListener('click', (e) => {
     if (editMenu.style.display === 'flex' && !editMenu.contains(e.target) && e.target !== editBtn) {
       editMenu.style.display = 'none';
     }
   });
-
   if (closeMenu) closeMenu.addEventListener('click', () => { editMenu.style.display = 'none'; });
 }
 
-// --- Mini-circle upload & camera ---
+/* ------------------- Mini-circle upload & camera ------------------- */
 if (uploadBtn && uploadPhoto) {
   uploadBtn.addEventListener('click', () => {
     uploadPhoto.click();
     if (editMenu) editMenu.style.display = 'none';
   });
-
   uploadPhoto.addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        if (miniAvatarImg) miniAvatarImg.src = ev.target.result;
-        localStorage.setItem('circlePhoto', ev.target.result);
-      } catch (err) { console.warn(err); }
+    const r = new FileReader();
+    r.onload = (ev) => {
+      try { if (miniAvatarImg) miniAvatarImg.src = ev.target.result; localStorage.setItem('circlePhoto', ev.target.result); } catch(err){ console.warn(err); }
     };
-    reader.readAsDataURL(f);
+    r.readAsDataURL(f);
   });
 }
 
@@ -110,69 +104,66 @@ if (takePhoto) {
     input.onchange = (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          if (miniAvatarImg) miniAvatarImg.src = ev.target.result;
-          localStorage.setItem('circlePhoto', ev.target.result);
-        } catch (err) {}
+      const r = new FileReader();
+      r.onload = (ev) => {
+        try { if (miniAvatarImg) miniAvatarImg.src = ev.target.result; localStorage.setItem('circlePhoto', ev.target.result); } catch(err) {}
       };
-      reader.readAsDataURL(f);
+      r.readAsDataURL(f);
     };
     input.click();
     if (editMenu) editMenu.style.display = 'none';
   });
 }
 
-// --- Ready Player Me: open only once, protect from loop ---
-// We set rpmFrame.src only when user clicks. In message handler we won't set src again.
-// We'll accept messages only when rpmModal is open OR data.eventName indicates final exported.
+/* ------------------- RPM open guard & message handling ------------------- */
+// State to avoid reloading src repeatedly
+let rpmOpened = false;
+const RPM_IFRAME_URL = 'https://iframe.readyplayer.me/avatar?frameApi';
+
 if (createAvatar && rpmModal && rpmFrame) {
   createAvatar.addEventListener('click', () => {
     try {
-      // only set src if not already set to avoid reload loops
-      if (!rpmFrame.src || rpmFrame.dataset.customOpened !== '1') {
-        rpmFrame.src = 'https://iframe.readyplayer.me/avatar?frameApi';
-        rpmFrame.dataset.customOpened = '1';
+      // set src only if not already opened in this session
+      if (!rpmOpened) {
+        rpmFrame.src = RPM_IFRAME_URL;
+        rpmOpened = true;
       }
       rpmModal.style.display = 'flex';
-      rpmModal.setAttribute('aria-hidden', 'false');
+      rpmModal.setAttribute('aria-hidden','false');
       if (editMenu) editMenu.style.display = 'none';
     } catch (e) { console.warn(e); }
   });
 }
 
-// --- message handler (RPM + animal creator) ---
+// message handler - only accept v1.avatar.exported and frame.ready when modal open
 window.addEventListener('message', (event) => {
   if (!event.data) return;
-  // try parse if string
   let data = event.data;
-  try { data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data; } catch (e) { data = event.data; }
+  try { data = (typeof event.data === 'string') ? JSON.parse(event.data) : event.data; } catch (e) { data = event.data; }
 
-  // Guard: prevent infinite loops by ignoring messages without known keys
-  const isRpmExport = data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported';
-  const isRpmReady = data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready';
-  const isAnimalReady = (data?.source === 'animalcreator' && (data?.event === 'avatar-ready' || data?.name === 'avatar-ready')) || data?.eventName === 'animal.avatar.exported';
+  const isExport = data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported';
+  const isFrameReady = data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready';
+  const isAnimalExport = (data?.source === 'animalcreator' && (data?.event === 'avatar-ready' || data?.name === 'avatar-ready')) || data?.eventName === 'animal.avatar.exported';
 
-  // Handle RPM exported avatar (final URL)
-  if (isRpmExport) {
+  // RPM export
+  if (isExport) {
     const avatarURL = data.data?.url || data.url || data.avatarUrl || null;
     if (avatarURL && avatar3D) {
       avatar3D.src = avatarURL;
-      try { localStorage.setItem('avatarURL', avatarURL); } catch (e) {}
+      try { localStorage.setItem('avatarURL', avatarURL); } catch(e){}
       const circle = localStorage.getItem('circlePhoto');
       if (!circle && miniAvatarImg) miniAvatarImg.src = avatarURL;
     }
-    // close modal and clear src marker (so next time we reload fresh)
+    // close modal and unload iframe to prevent loops
     if (rpmModal) rpmModal.style.display = 'none';
-    try { rpmFrame.dataset.customOpened = '0'; } catch(e){}
+    try { rpmFrame.src = ''; } catch(e) {}
+    rpmOpened = false;
     return;
   }
 
-  // When frame is ready, subscribe once (but only if modal open)
-  if (isRpmReady) {
+  // subscribe when frame ready (but only if our modal is open)
+  if (isFrameReady) {
     try {
-      // only subscribe if modal is open - avoids subscribing in background messages
       if (rpmModal && rpmModal.style.display === 'flex' && rpmFrame && rpmFrame.contentWindow) {
         rpmFrame.contentWindow.postMessage(JSON.stringify({ target: 'readyplayerme', type: 'subscribe', eventName: 'v1.avatar.exported' }), '*');
       }
@@ -180,8 +171,8 @@ window.addEventListener('message', (event) => {
     return;
   }
 
-  // Handle animal creator exported
-  if (isAnimalReady) {
+  // animal creator export
+  if (isAnimalExport) {
     const url = data.url || data.data?.url || data.avatarUrl || null;
     if (url && animal3D) {
       animal3D.src = url;
@@ -192,20 +183,19 @@ window.addEventListener('message', (event) => {
   }
 });
 
-// close rpm modal when clicking outside (and reset dataset so it can be reloaded next time)
+/* ------------------- Close rpm modal by clicking outside ------------------- */
 if (rpmModal && rpmFrame) {
   rpmModal.addEventListener('click', (e) => {
     if (e.target === rpmModal) {
       rpmModal.style.display = 'none';
-      try { rpmFrame.dataset.customOpened = '0'; } catch(e){}
-      // do NOT clear rpmFrame.src here to avoid losing immediate postMessage context,
-      // but it's safe to clear to free memory if needed:
-      // rpmFrame.src = '';
+      // unload iframe to avoid it continuing to run behind the scenes
+      try { rpmFrame.src = ''; } catch(e) {}
+      rpmOpened = false;
     }
   });
 }
 
-// --- load animal by URL/file from edit menu ---
+/* ------------------- Animal load (URL/file) ------------------- */
 if (loadAnimalUrl && animalUrlInput) {
   loadAnimalUrl.addEventListener('click', () => {
     const url = (animalUrlInput.value || '').trim();
@@ -221,48 +211,81 @@ if (animalFileInput && animal3D) {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
     try {
-      const u = URL.createObjectURL(f);
-      animal3D.src = u;
-      try { localStorage.setItem('animalURL', u); } catch(e){}
+      const obj = URL.createObjectURL(f);
+      animal3D.src = obj;
+      try { localStorage.setItem('animalURL', obj); } catch(e){}
       if (editMenu) editMenu.style.display = 'none';
     } catch (err) { alert('Erreur chargement fichier'); }
   });
 }
 
-// --- dance visual ---
+/* ------------------- dance visual ------------------- */
 if (danceBtn && avatar3D) {
   danceBtn.addEventListener('click', () => {
     try {
       avatar3D.style.transition = 'transform 1.6s ease';
       avatar3D.style.transform = 'rotateY(720deg)';
       setTimeout(() => { avatar3D.style.transform = ''; }, 1600);
-    } catch (e) { console.warn(e); }
+    } catch (e) {}
   });
 }
 
-// --- mini-circle draggable (touch + mouse) ---
-(function setupMiniDrag() {
-  if (!miniCircle) return;
-  // ensure position style exists
-  miniCircle.style.position = miniCircle.style.position || 'fixed';
-  // keep within viewport
-  let dragging = false;
-  let offsetX = 0, offsetY = 0;
+/* ------------------- Mini-circle draggable + LONG-PRESS handling (cancel on move) ------------------- */
+(function setupMiniDragAndLongPress() {
+  if (!miniCircle || !miniAvatarImg) return;
 
-  function start(e) {
-    dragging = true;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  // ensure positioned element
+  if (!miniCircle.style.position) miniCircle.style.position = 'fixed';
+
+  let dragging = false;
+  let pointerId = null;
+  let startX = 0, startY = 0;
+  let offsetX = 0, offsetY = 0;
+  let longPressTimer = null;
+  const MOVE_CANCEL_PX = 10; // if moved more than this, cancel long press
+
+  function startPointer(e) {
+    // accept mouse or touch (pointer)
+    const isTouch = e.type === 'touchstart';
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
     const rect = miniCircle.getBoundingClientRect();
     offsetX = clientX - rect.left;
     offsetY = clientY - rect.top;
-    if (e.touches) e.preventDefault();
+    startX = clientX;
+    startY = clientY;
+    dragging = true;
+
+    // schedule long-press (only if not moving)
+    clearTimeout(longPressTimer);
+    longPressTimer = setTimeout(() => {
+      // only fire if still dragging and not moved significantly
+      if (!dragging) return;
+      const dx = Math.abs((startX) - (startX)); // 0 by design— we check movement later in movePointer
+      // show confirm reset only if user didn't move (we'll also check lastMoveDistance)
+      if (lastMoveDistance < MOVE_CANCEL_PX) {
+        if (confirm('Réinitialiser la photo du mini-circle ?')) {
+          try { localStorage.removeItem('circlePhoto'); miniAvatarImg.src = DEFAULT_MINI; } catch(e) {}
+        }
+      }
+    }, 700); // 700ms long press
+
+    // prevent default on touch to avoid scrolling interfering
+    if (isTouch) e.preventDefault();
   }
 
-  function move(e) {
+  let lastMoveDistance = 0;
+  function movePointer(e) {
     if (!dragging) return;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const isTouch = e.type === 'touchmove';
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+    lastMoveDistance = Math.hypot(clientX - startX, clientY - startY);
+    // if moved more than threshold, cancel long-press timer
+    if (lastMoveDistance > MOVE_CANCEL_PX) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
     let x = clientX - offsetX;
     let y = clientY - offsetY;
     const maxX = window.innerWidth - miniCircle.offsetWidth - 8;
@@ -273,28 +296,23 @@ if (danceBtn && avatar3D) {
     miniCircle.style.top = y + 'px';
   }
 
-  function end() { dragging = false; }
+  function endPointer() {
+    dragging = false;
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    lastMoveDistance = 0;
+  }
 
-  miniCircle.addEventListener('mousedown', start);
-  miniCircle.addEventListener('touchstart', start, { passive: false });
-  document.addEventListener('mousemove', move);
-  document.addEventListener('touchmove', move, { passive: false });
-  document.addEventListener('mouseup', end);
-  document.addEventListener('touchend', end);
+  // Mouse events
+  miniCircle.addEventListener('mousedown', startPointer);
+  document.addEventListener('mousemove', movePointer);
+  document.addEventListener('mouseup', endPointer);
+
+  // Touch events
+  miniCircle.addEventListener('touchstart', startPointer, { passive: false });
+  document.addEventListener('touchmove', movePointer, { passive: false });
+  document.addEventListener('touchend', endPointer);
 })();
 
-// --- mini-circle quick reset (long press) ---
-if (miniCircle && miniAvatarImg) {
-  let t;
-  miniCircle.addEventListener('touchstart', () => {
-    t = setTimeout(() => {
-      if (confirm('Réinitialiser la photo du mini-circle ?')) {
-        try { localStorage.removeItem('circlePhoto'); miniAvatarImg.src = DEFAULT_MINI; } catch(e){}
-      }
-    }, 800);
-  });
-  miniCircle.addEventListener('touchend', () => clearTimeout(t));
-  miniCircle.addEventListener('dblclick', () => { if (editMenu) editMenu.style.display = 'flex'; });
-}
-
-console.log('[profile.js] fixes applied: mini-circle draggable, attach hidden, RPM loop guarded');
+/* ------------------- Safety fallback logs ------------------- */
+console.log('[profile.js] applied fixes: draggable mini-circle w/ safe long-press, RPM guarded, attach hidden');
