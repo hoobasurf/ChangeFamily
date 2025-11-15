@@ -17,61 +17,60 @@
   </div>
 
   <div class="screen profile-screen">
-    <!-- LEFT PANEL: avatar et créature -->
-    <div class="left-panel">
-      <model-viewer id="avatar3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:250px;height:250px;"></model-viewer>
-      <div id="creatureContainer" style="margin-top:20px;">
-        <model-viewer id="animal3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:180px;height:180px;"></model-viewer>
-      </div>
+    <div class="profile-header">
+      <h2 id="profileTitle">Mon profil</h2>
+      <input type="text" id="pseudoInput" placeholder="Choisis ton pseudo" class="neon-input">
     </div>
 
-    <!-- RIGHT PANEL: profil et menus -->
-    <div class="right-panel">
-      <h2>Mon profil</h2>
-      <h3 id="pseudoDisplay">Sans pseudo</h3>
+    <!-- BOUTON CREER -->
+    <div class="create-container">
+      <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
+    </div>
 
-      <!-- BOUTON CREER -->
-      <div class="create-container">
-        <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
-      </div>
+    <!-- MENU CREER -->
+    <div id="createMenu" class="popup hidden">
+      <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
+      <button id="btnAvatar" class="pill-btn small-btn">Avatar</button>
+      <button id="btnCreature" class="pill-btn small-btn">Créature</button>
+    </div>
 
-      <!-- MENU CREER -->
-      <div id="createMenu" class="popup hidden">
-        <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
-        <button id="btnAvatar" class="pill-btn small-btn">Avatar</button>
-        <button id="btnCreature" class="pill-btn small-btn">Créature</button>
-      </div>
+    <!-- SOUS-MENU PHOTO -->
+    <div id="menuPhoto" class="popup hidden">
+      <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
+      <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
+    </div>
 
-      <!-- SOUS-MENU PHOTO -->
-      <div id="menuPhoto" class="popup hidden">
-        <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
-        <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
-      </div>
+    <!-- SOUS-MENU CREATURE -->
+    <div id="menuCreature" class="popup hidden">
+      <button id="chooseCreature" class="pill-btn small-btn">Choisir une créature</button>
+      <button id="createCreature" class="pill-btn small-btn">Créer une créature</button>
+    </div>
 
-      <!-- SOUS-MENU CREATURE -->
-      <div id="menuCreature" class="popup hidden">
-        <button id="chooseCreature" class="pill-btn small-btn">Choisir une créature</button>
-        <button id="createCreature" class="pill-btn small-btn">Créer une créature</button>
-      </div>
+    <!-- LISTE CRÉATURES -->
+    <div id="chooseCreatureMenu" class="popup hidden">
+      <button class="pill-btn small-btn" data-creature="Licorne">Licorne</button>
+      <button class="pill-btn small-btn" data-creature="Dragon">Dragon</button>
+      <button class="pill-btn small-btn" data-creature="ChatAile">Chat ailé</button>
+    </div>
 
-      <!-- LISTE CRÉATURES -->
-      <div id="chooseCreatureMenu" class="popup hidden">
-        <button class="pill-btn small-btn" data-creature="Licorne">Licorne</button>
-        <button class="pill-btn small-btn" data-creature="Dragon">Dragon</button>
-        <button class="pill-btn small-btn" data-creature="ChatAile">Chat ailé</button>
-      </div>
+    <!-- CREATEUR DE CREATURE -->
+    <div id="createCreatureMenu" class="popup hidden">
+      <label>Couleur: <input type="color" id="colorCreature"></label>
+      <label>Taille:
+        <select id="sizeCreature">
+          <option>Petite</option>
+          <option>Moyenne</option>
+          <option>Grande</option>
+        </select>
+      </label>
+      <button id="validateCreature" class="pill-btn small-btn">Valider</button>
+    </div>
 
-      <!-- CREATEUR DE CREATURE -->
-      <div id="createCreatureMenu" class="popup hidden">
-        <label>Couleur: <input type="color" id="colorCreature"></label>
-        <label>Taille:
-          <select id="sizeCreature">
-            <option>Petite</option>
-            <option>Moyenne</option>
-            <option>Grande</option>
-          </select>
-        </label>
-        <button id="validateCreature" class="pill-btn small-btn">Valider</button>
+    <!-- AVATAR 3D BAS-CENTRÉ -->
+    <div class="avatar-container-large">
+      <model-viewer id="avatar3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:250px;height:250px;"></model-viewer>
+      <div id="creatureContainer">
+        <model-viewer id="animal3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1" style="width:180px;height:180px;"></model-viewer>
       </div>
     </div>
   </div>
@@ -82,11 +81,9 @@
     <button id="closeRpm">✖</button>
   </div>
 
-  <!-- Hidden file inputs -->
   <input id="hiddenFile" type="file" accept="image/*" style="display:none">
   <input id="hiddenFileChoose" type="file" accept="image/*" style="display:none">
 
-  <!-- Script JS séparé -->
   <script type="module" src="profile.js"></script>
 </body>
 </html>
