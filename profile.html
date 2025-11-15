@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Profil — ChangeFamily</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profil — ChangeFamily</title>
 
-<link rel="stylesheet" href="style.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -16,13 +16,10 @@
     <img id="miniAvatar" src="default.jpg" alt="mini avatar">
   </div>
 
-  <div class="screen profile-screen">
+  <div class="screen">
     <h2 id="profileTitle">Mon profil</h2>
+    <input type="text" id="pseudoInput" placeholder="Choisis ton pseudo">
 
-    <!-- Pseudo -->
-    <h3 id="pseudoDisplay" class="neon-text">Sans pseudo</h3>
-
-    <!-- BOUTON CREER -->
     <div class="create-container">
       <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
     </div>
@@ -48,9 +45,9 @@
 
     <!-- LISTE CRÉATURES -->
     <div id="chooseCreatureMenu" class="popup hidden">
-      <button class="pill-btn small-btn">Licorne</button>
-      <button class="pill-btn small-btn">Dragon</button>
-      <button class="pill-btn small-btn">Chat ailé</button>
+      <button class="pill-btn small-btn" data-creature="Licorne">Licorne</button>
+      <button class="pill-btn small-btn" data-creature="Dragon">Dragon</button>
+      <button class="pill-btn small-btn" data-creature="ChatAile">Chat ailé</button>
     </div>
 
     <!-- CREATEUR DE CREATURE -->
@@ -69,13 +66,10 @@
     <!-- AVATAR 3D -->
     <div class="avatar-container-large">
       <model-viewer id="avatar3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1"></model-viewer>
+      <div id="creatureContainer">
+        <model-viewer id="animal3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1"></model-viewer>
+      </div>
     </div>
-
-    <!-- CREATURE CONTAINER -->
-    <div id="creatureContainer" class="creature-container">
-      <model-viewer id="animal3D" camera-controls auto-rotate ar shadow-intensity="1" exposure="1"></model-viewer>
-    </div>
-
   </div>
 
   <!-- READY PLAYER ME MODAL -->
@@ -84,7 +78,6 @@
     <button id="closeRpm">✖</button>
   </div>
 
-  <!-- Hidden file inputs -->
   <input id="hiddenFile" type="file" accept="image/*" style="display:none">
   <input id="hiddenFileChoose" type="file" accept="image/*" style="display:none">
 
