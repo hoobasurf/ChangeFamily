@@ -368,3 +368,68 @@ document.addEventListener('keydown', (e) => {
     rpmModal.style.display = 'none';
   }
 });
+
+// Raccourci
+const $ = id => document.getElementById(id);
+
+// Menus
+const menus = [
+    "createMenu",
+    "menuPhoto",
+    "menuCreature",
+    "chooseCreatureMenu",
+    "createCreatureMenu"
+];
+
+function closeAllMenus() {
+    menus.forEach(id => $(id).classList.add("hidden"));
+}
+
+function openMenu(id) {
+    closeAllMenus();
+    $(id).classList.remove("hidden");
+}
+
+// OUVERTURE DU MENU CREER
+$("#openCreateMenu").onclick = e => {
+    e.stopPropagation();
+    openMenu("createMenu");
+};
+
+// PHOTO
+$("#btnPhoto").onclick = e => {
+    e.stopPropagation();
+    openMenu("menuPhoto");
+};
+
+// AVATAR
+$("#btnAvatar").onclick = e => {
+    e.stopPropagation();
+    // tu as déjà avatar.js → je n’y touche pas
+    openMenu("menuPhoto"); // à remplacer si tu veux un menu avatar plus tard
+};
+
+// CREATURE
+$("#btnCreature").onclick = e => {
+    e.stopPropagation();
+    openMenu("menuCreature");
+};
+
+// Sous-menu créature
+$("#chooseCreature").onclick = e => {
+    e.stopPropagation();
+    openMenu("chooseCreatureMenu");
+};
+
+$("#createCreature").onclick = e => {
+    e.stopPropagation();
+    openMenu("createCreatureMenu");
+};
+
+// FERMETURE EN CLIQUANT AILLEURS
+document.body.onclick = () => closeAllMenus();
+
+// Empêcher fermeture quand on clique dans un popup
+menus.forEach(id => {
+    if ($(id)) $(id).onclick = e => e.stopPropagation();
+});
