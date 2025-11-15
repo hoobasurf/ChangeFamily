@@ -1,8 +1,11 @@
-// profile.js (complet)
-// helper
+// profile.js (module complet — remplace ton profile.js par celui-ci)
+// ATTENTION : ce fichier suppose que creature-list.js est dans le même dossier
+import { realistic, fantasy } from "./creature-list.js";
+
+// helper rapide
 const $ = id => document.getElementById(id);
 
-// éléments importants
+// DOM
 const miniCircle = $('miniCircle');
 const miniAvatar = $('miniAvatar');
 const pseudoInput = $('pseudoInput');
@@ -30,7 +33,10 @@ const closeRpm = $('closeRpm');
 const avatar3D = $('avatar3D');
 const animal3D = $('animal3D');
 
-// --- mini-circle draggable (touch + mouse)
+// safety checks
+if (!miniCircle || !miniAvatar) console.warn("miniCircle or miniAvatar missing");
+
+// ========== mini-circle draggable ==========
 (function(){
   if(!miniCircle) return;
   let dragging=false, offX=0, offY=0;
@@ -61,14 +67,14 @@ const animal3D = $('animal3D');
   document.addEventListener('touchend', end);
 })();
 
-// --- pseudo
+// ========== pseudo ==========
 if(pseudoInput){
   const saved = localStorage.getItem('pseudo');
   if(saved) pseudoInput.value = saved;
   pseudoInput.addEventListener('change', ()=> localStorage.setItem('pseudo', pseudoInput.value));
 }
 
-// --- load saved mini avatar + models
+// ========== load saved models & mini photo ==========
 (function initSaved(){
   const savedMini = localStorage.getItem('circlePhoto');
   const savedAvatar = localStorage.getItem('avatarURL');
@@ -76,44 +82,41 @@ if(pseudoInput){
   const savedPosition = localStorage.getItem('creaturePosition') || 'shoulder';
 
   if(savedMini) miniAvatar.src = savedMini;
-  if(savedAvatar) avatar3D.src = savedAvatar;
-  if(savedCreature) {
+  if(savedAvatar && avatar3D) avatar3D.src = savedAvatar;
+  if(savedCreature && animal3D) {
     animal3D.src = savedCreature;
     applyCreaturePosition(savedPosition);
-  } else {
-    // default test model
+  } else if(animal3D) {
+    // default guest model
     animal3D.src = "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb";
     applyCreaturePosition(savedPosition);
   }
 })();
 
-// --- menus utilities
+// ========== menus utilities ==========
 const allPopups = [createMenu, menuPhoto, chooseCreatureMenu, createCreatureMenu, positionMenu, rpmModal].filter(Boolean);
-
-function closeAll(){
-  allPopups.forEach(p => p.classList.add('hidden'));
-}
-allPopups.forEach(p => p.addEventListener('click', e => e.stopPropagation()));
+function closeAll(){ allPopups.forEach(p => p.classList.add('hidden')); }
+allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
 document.body.addEventListener('click', closeAll);
 
-// --- open create
+// open/create menu
 openCreate.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
   createMenu.classList.toggle('hidden');
 });
 
-// --- Photo menu
+// --- Photo menu wiring
 btnPhoto.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
   menuPhoto.classList.remove('hidden');
 });
-$('photoLib').addEventListener('click', ()=> hiddenFileChoose.click());
-$('takePhoto').addEventListener('click', ()=> hiddenFile.click());
+if($('photoLib')) $('photoLib').addEventListener('click', ()=> hiddenFileChoose.click());
+if($('takePhoto')) $('takePhoto').addEventListener('click', ()=> hiddenFile.click());
 
-hiddenFileChoose.addEventListener('change', onChooseFile);
-hiddenFile.addEventListener('change', onChooseFile);
+if(hiddenFileChoose) hiddenFileChoose.addEventListener('change', onChooseFile);
+if(hiddenFile) hiddenFile.addEventListener('change', onChooseFile);
 
 function onChooseFile(e){
   const f = e.target.files[0];
@@ -127,7 +130,7 @@ function onChooseFile(e){
   reader.readAsDataURL(f);
 }
 
-// --- Avatar (Ready Player Me)
+// --- Avatar (Ready Player Me) wiring
 btnAvatar.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
@@ -135,27 +138,28 @@ btnAvatar.addEventListener('click', (e)=>{
   if(!rpmFrame.src) rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
 });
 
-closeRpm.addEventListener('click', () => {
+if(closeRpm) closeRpm.addEventListener('click', () => {
   rpmModal.classList.add('hidden');
   try { rpmFrame.src = ""; } catch(e){}
 });
 
-// listen messages from RPM
+// RPM message listener
 window.addEventListener('message', (event)=>{
   if(!event.data) return;
   let data = event.data;
   try { data = typeof data === 'string' ? JSON.parse(data) : data; } catch(e){}
+  // avatar exported
   if(data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported'){
     const url = data.data?.url || data.url || data.avatarUrl;
-    if(url){
+    if(url && avatar3D){
       avatar3D.src = url;
       localStorage.setItem('avatarURL', url);
     }
     rpmModal.classList.add('hidden');
     try { rpmFrame.src = ""; } catch(e){}
   }
+  // frame ready -> subscribe
   if(data?.eventName === 'v1.frame.ready'){
-    // subscribe to avatar exported (safe)
     if(rpmFrame && rpmFrame.contentWindow){
       rpmFrame.contentWindow.postMessage(JSON.stringify({
         target:'readyplayerme',
@@ -166,59 +170,91 @@ window.addEventListener('message', (event)=>{
   }
 });
 
-// --- Creature menu
+// ========== Creature menu build (utilise creature-list.js) ==========
+function buildCreatureMenu(){
+  // clear content
+  chooseCreatureMenu.innerHTML = '';
+  const title = document.createElement('div');
+  title.style.fontWeight = '700';
+  title.style.marginBottom = '8px';
+  title.textContent = 'Choisir une créature';
+  chooseCreatureMenu.appendChild(title);
+
+  const sectionReal = document.createElement('div');
+  const lblR = document.createElement('div'); lblR.textContent = 'Réaliste'; lblR.style.marginTop = '6px';
+  sectionReal.appendChild(lblR);
+
+  const rowR = document.createElement('div'); rowR.className = 'pill-row';
+  realistic.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'pill';
+    btn.textContent = item.name;
+    btn.onclick = () => {
+      if(!item.url || item.url.length===0) return alert('URL manquante pour ' + item.name);
+      setCreature(item.url, item.name);
+      closeAll();
+    };
+    rowR.appendChild(btn);
+  });
+  sectionReal.appendChild(rowR);
+  chooseCreatureMenu.appendChild(sectionReal);
+
+  const sectionF = document.createElement('div');
+  const lblF = document.createElement('div'); lblF.textContent = 'Fantaisie'; lblF.style.marginTop = '12px';
+  sectionF.appendChild(lblF);
+  const rowF = document.createElement('div'); rowF.className = 'pill-row';
+  fantasy.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'pill';
+    btn.textContent = item.name;
+    btn.onclick = () => {
+      if(!item.url || item.url.length===0) return alert('URL manquante pour ' + item.name);
+      setCreature(item.url, item.name);
+      closeAll();
+    };
+    rowF.appendChild(btn);
+  });
+  sectionF.appendChild(rowF);
+  chooseCreatureMenu.appendChild(sectionF);
+
+  // allow custom URL at bottom
+  const customRow = document.createElement('div');
+  customRow.style.marginTop = '12px';
+  const customBtn = document.createElement('button');
+  customBtn.className = 'pill';
+  customBtn.textContent = 'Coller URL .glb';
+  customBtn.onclick = () => {
+    const url = prompt('Colle une URL publique .glb :');
+    if(url) { setCreature(url, 'Custom'); closeAll(); }
+  };
+  customRow.appendChild(customBtn);
+  chooseCreatureMenu.appendChild(customRow);
+}
+buildCreatureMenu();
+
+// --- open creature menu action
 btnCreature.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
   chooseCreatureMenu.classList.remove('hidden');
 });
 
-// choose creature buttons (data-url or blank => will prompt input)
-document.querySelectorAll('#chooseCreatureMenu .creature-btn').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    const url = b.dataset.url;
-    if(url && url.length>0){
-      setCreature(url, b.dataset.name);
-      closeAll();
-      return;
-    }
-    // prompt user to paste GLB url (for copyrighted characters)
-    const paste = prompt(`Colle le lien .glb pour "${b.dataset.name}" (héberge ton .glb et colle l'URL)`);
-    if(paste && paste.trim()){
-      setCreature(paste.trim(), b.dataset.name);
-      closeAll();
-    }
-  });
-});
-
-// create creature (simple fake)
-validateCreature.addEventListener('click', ()=>{
-  // for demo just set a test model then close
-  const color = $('colorCreature').value;
-  const size = $('sizeCreature').value;
-  const chosen = "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb";
-  setCreature(chosen, 'Creature custom');
-  closeAll();
-});
-
-// position menu trigger
-$('btnCreature').addEventListener('click', (e)=>{
-  // already opens chooseCreatureMenu; also offer position selector
-  positionMenu.classList.remove('hidden');
-});
-
-// apply creature into the scene
+// ========== setCreature & position ==========
 function setCreature(url, name){
-  // reset src to avoid viewer caching glitch
+  if(!animal3D) return;
+  // reset then set to avoid caching glitches
   animal3D.src = "";
-  setTimeout(()=> { animal3D.src = url; }, 60);
+  setTimeout(()=> {
+    animal3D.src = url;
+  }, 60);
   localStorage.setItem('creatureURL', url);
-  // default position = shoulder
+  // default attach position (shoulder)
   applyCreaturePosition(localStorage.getItem('creaturePosition') || 'shoulder');
 }
 
-// position control
-document.querySelectorAll('input[name="position"]').forEach(r=>{
+// position radio wiring (if you have radio inputs with name="position")
+const posRadios = document.querySelectorAll('input[name="position"]');
+posRadios.forEach(r=>{
   r.addEventListener('change', ()=> {
     applyCreaturePosition(r.value);
     localStorage.setItem('creaturePosition', r.value);
@@ -226,8 +262,9 @@ document.querySelectorAll('input[name="position"]').forEach(r=>{
 });
 
 function applyCreaturePosition(pos){
-  // we fake attachment by CSS transform on #animal3D
+  if(!animal3D) return;
   animal3D.style.transition = 'transform 300ms ease';
+  // these CSS transforms approximate attachment; ajuste selon ton layout
   if(pos === 'shoulder'){
     animal3D.style.transform = 'translate(60px,-80px) scale(0.9) rotateY(0deg)';
     animal3D.style.left = '55%';
@@ -246,13 +283,7 @@ function applyCreaturePosition(pos){
   }
 }
 
-// allow user to enter direct URL for a creature (optional)
-function askAndSetCreature(){
-  const url = prompt("Colle l'URL publique .glb de la créature :");
-  if(url) setCreature(url, 'Custom');
-}
-
-// keyboard escape closes modals
+// ========== small helpers & keyboard escape ==========
 document.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape') closeAll();
 });
