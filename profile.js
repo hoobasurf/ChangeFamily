@@ -1,22 +1,27 @@
 const $ = id => document.getElementById(id);
 
-// ------- Mini-circle persist -------
+// --- Mini-circle ---
 const miniCircle = $('miniCircle');
 const miniAvatar = $('miniAvatar');
-const savedCircle = localStorage.getItem('circlePhoto');
-if(savedCircle) miniAvatar.src = savedCircle;
+if(localStorage.getItem('circlePhoto')) miniAvatar.src = localStorage.getItem('circlePhoto');
 
-// ------- Avatar persist -------
+// --- Avatar 3D ---
 const avatar3D = $('avatar3D');
-const savedAvatar = localStorage.getItem('avatarURL');
-if(savedAvatar) avatar3D.src = savedAvatar;
+if(localStorage.getItem('avatarURL')) avatar3D.src = localStorage.getItem('avatarURL');
 
-// ------- Menus -------
+// --- Pseudo ---
+const pseudoInput = $('pseudoInput');
+if(localStorage.getItem('pseudo')) pseudoInput.value = localStorage.getItem('pseudo');
+pseudoInput.addEventListener('change', ()=>{
+  localStorage.setItem('pseudo', pseudoInput.value);
+});
+
+// --- Menus ---
 const menus=['createMenu','menuPhoto','menuCreature','chooseCreatureMenu','createCreatureMenu','rpmModal'].map($);
 function closeAll(){menus.forEach(m=>m.classList.add('hidden'))}
 function openMenu(m){closeAll(); m.classList.remove('hidden')}
 
-// OPEN CREATE
+// --- Créer ---
 $('openCreateMenu').onclick=e=>{e.stopPropagation(); openMenu($('createMenu'))}
 $('btnPhoto').onclick=e=>{e.stopPropagation(); openMenu($('menuPhoto'))}
 $('btnAvatar').onclick=e=>{
@@ -28,12 +33,12 @@ $('btnCreature').onclick=e=>{e.stopPropagation(); openMenu($('menuCreature'))}
 $('chooseCreature').onclick=e=>{e.stopPropagation(); openMenu($('chooseCreatureMenu'))}
 $('createCreature').onclick=e=>{e.stopPropagation(); openMenu($('createCreatureMenu'))}
 
-// EMPÊCHE FERMETURE AU CLIQUE DANS POPUP
+// --- Empêche fermeture au clic dans popup ---
 menus.forEach(m=>{m.onclick=e=>e.stopPropagation()})
 document.body.onclick=closeAll
 document.addEventListener('keydown', e=>{if(e.key==='Escape')closeAll();})
 
-// ------- Mini-circle drag -------
+// --- Mini-circle draggable ---
 (function(){
   let dragging=false,offsetX=0,offsetY=0;
   const mini=miniCircle;
@@ -61,7 +66,7 @@ document.addEventListener('keydown', e=>{if(e.key==='Escape')closeAll();})
   function end(){dragging=false;}
 })();
 
-// ------- Photo -------
+// --- Photo ---
 $('photoLib').onclick=()=>$('hiddenFileChoose').click();
 $('takePhoto').onclick=()=>{
   const input=document.createElement('input');
@@ -80,7 +85,7 @@ function onChooseFile(e){
   reader.readAsDataURL(f);
 }
 
-// ------- RPM modal -------
+// --- RPM modal ---
 $('closeRpm').onclick=()=>{ $('rpmModal').classList.add('hidden'); $('rpmFrame').src=''; }
 window.addEventListener('message', event=>{
   if(!event.data) return;
@@ -96,7 +101,7 @@ window.addEventListener('message', event=>{
   }
 });
 
-// ------- Creature selection -------
+// --- Créature ---
 const CREATURE_MODELS={
   Licorne:'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/CesiumMilkTruck/glTF-Binary/CesiumMilkTruck.glb',
   Dragon:'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb',
@@ -106,7 +111,6 @@ const previewCreature=document.createElement('model-viewer');
 previewCreature.style.width='160px'; previewCreature.style.height='160px';
 $('createCreatureMenu').appendChild(previewCreature);
 
-// Choix créature
 document.querySelectorAll('#chooseCreatureMenu button').forEach(btn=>{
   btn.onclick=()=>{
     previewCreature.src=CREATURE_MODELS[btn.dataset.creature];
