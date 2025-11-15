@@ -1,4 +1,14 @@
-/* ---------- Base + fond ---------- */
+/* style.css - global neon look (use this file to replace your CSS)
+   IMPORTANT: file focuses on profile + creature UI, keeps nav styling you wanted.
+*/
+
+:root{
+  --neon1:#ff00ff;
+  --neon2:#9a00ff;
+  --bg-fade: rgba(0,0,0,0.55);
+}
+
+/* page background - keeps your Ville1.jpg */
 body {
   margin: 0;
   min-height: 100vh;
@@ -12,123 +22,150 @@ body {
   align-items: center;
 }
 
-/* Écran profil */
+/* screen */
 .profile-screen {
   text-align: center;
   width: 100%;
   position: relative;
-  padding: 40px 0 150px;
+  padding: 36px 16px 180px;
 }
 
-/* MINI CIRCLE */
+/* header buttons row */
+.profile-header {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-bottom:8px;
+}
+
+/* mini circle */
 .mini-circle {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,255,0.5), rgba(0,0,0,0.8));
-  box-shadow:
-    0 0 12px rgba(255,0,255,0.9),
-    0 0 28px rgba(153,0,255,0.35),
-    0 0 48px rgba(255,0,255,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: grab;
-  z-index: 2000;
-  transition: transform 0.12s ease;
-}
-.mini-circle:active { cursor: grabbing; transform: scale(1.04); }
-
-.mini-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
-}
-
-/* AVATAR 3D EN BAS */
-.avatar-container-large {
   position: fixed;
-  bottom: 70px;
+  top: 20px;
+  left: 18px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,255,0.25), rgba(0,0,0,0.6));
+  box-shadow: 0 0 20px rgba(255,0,255,0.9), 0 0 40px rgba(153,0,255,0.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2100;
+  cursor:grab;
+}
+.mini-circle:active{ cursor:grabbing; transform:scale(1.03); transition: transform 90ms;}
+.mini-circle img{ width:100%; height:100%; object-fit:cover; border-radius:50%; border:3px solid rgba(255,255,255,0.06); }
+
+/* avatar container (3D) bottom */
+.avatar-container-large{
+  position: fixed;
+  bottom: 86px;
   left: 50%;
   transform: translateX(-50%);
   width: 280px;
   height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:5;
 }
-model-viewer { width: 260px; height: 260px; border-radius: 50%; }
+model-viewer#avatar3D{ width: 240px; height:240px; border-radius:14px; }
 
-/* EDIT MENU */
+/* creature container positioned relative to avatar; JS adjusts left/bottom for positions */
+.creature-container{
+  position: absolute;
+  width: 200px;
+  height:200px;
+  right: 12%;
+  bottom: 34%;
+  pointer-events:none;
+  z-index:6;
+}
+model-viewer#animal3D{ width:180px; height:180px; }
+
+/* edit menu modal */
 .edit-menu {
-  display: none;
+  display:none;
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
 }
 .menu-circle {
-  background: rgba(20,20,30,0.95);
-  padding: 20px;
+  background: linear-gradient(180deg, rgba(20,6,40,0.95), rgba(10,2,30,0.9));
+  padding: 18px;
   border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 86%;
-  max-width: 360px;
-  text-align: center;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,0,255,0.08);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
 }
 
-/* RPM modal */
-.rpm-modal, #rpmModal {
-  display: none;
+/* creature panel */
+.creature-panel {
+  display:none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
-  justify-content: center;
-  align-items: center;
-  z-index: 3000;
+  background: rgba(0,0,0,0.45);
+  justify-content:center;
+  align-items:center;
+  z-index:2500;
 }
-.rpm-frame {
+.creature-panel .panel-inner {
   width: 92%;
-  height: 86%;
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
+  max-width:520px;
+  background: linear-gradient(180deg, rgba(20,0,50,0.95), rgba(10,0,30,0.92));
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  color:#fff;
 }
+.pill-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:8px 0; }
+.pill { padding:8px 12px; border-radius:999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); cursor:pointer; color:#fff; }
+.pill:hover { box-shadow: 0 0 14px var(--neon1); border-color: var(--neon1); }
 
-/* Buttons neon */
+/* creator controls */
+.creator { display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; margin:8px 0; }
+.creator label { font-size:13px; margin-right:4px; }
+.creator input[type="range"] { width:120px; }
+
+/* preview */
+.creature-preview { margin-top:10px; display:flex; justify-content:center; }
+
+/* rpm modal */
+.rpm-modal{ display:none; position:fixed; inset:0; background: rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
+.rpm-frame{ width:92%; height:86%; border-radius:12px; border:none; }
+.rpm-close{ position:absolute; top:18px; right:18px; z-index:4100; padding:6px 10px; border-radius:8px; background:var(--neon1); color:#111; border:none; }
+
+/* glass buttons (neon) */
 .glass-btn, .menu-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255,0,255,0.18);
-  color: white;
-  font-size: 16px;
-  box-shadow: 0 0 10px #ff00ff, 0 0 15px rgba(255,0,255,0.45);
+  padding:10px 14px;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  color:#fff;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
+.btn-neon {
+  box-shadow: 0 0 16px rgba(255,0,255,0.25), inset 0 0 20px rgba(255,0,255,0.08);
+  border: 1px solid rgba(255,0,255,0.25);
+}
+.menu-btn:hover, .glass-btn:hover { transform: translateY(-3px); box-shadow: 0 0 28px rgba(255,0,255,0.28); }
 
-/* Bottom nav */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: rgba(30,30,50,0.85);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255,0,255,0.3);
-  z-index: 5000;
+/* bottom nav */
+.bottom-nav{ position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; align-items:center; padding:10px 0; background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6)); border-top: 1px solid rgba(255,0,255,0.12); z-index:5000; }
+.bottom-nav a{ color:#fff; font-size:22px; text-decoration:none; opacity:0.9; }
+
+/* small screens adjustments */
+@media (max-width:480px){
+  .avatar-container-large{ width:210px; height:210px; bottom:92px; }
+  model-viewer#avatar3D{ width:190px; height:190px; }
+  .mini-circle{ width:78px; height:78px; }
 }
-.bottom-nav a { color: white; font-size: 22px; }
-.bottom-nav a.active { color: #ff00ff; }
