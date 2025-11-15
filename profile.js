@@ -1,312 +1,213 @@
-// profile.js — FIX final (long-press cancel on move, RPM open guarded, attach hidden)
-// Replace your existing profile.js with this file (complete).
+// profile.js - Intégration avatar (RPM), mini-circle photo, creature system
+// Remplace ton profile.js par ce fichier complet.
 
-// safe DOM getter
 const $ = id => document.getElementById(id);
 
-// DOM elements (may be null)
-const avatar3D = $('avatar3D');
-const animal3D = $('animal3D');
-const pseudoDisplay = $('pseudoDisplay');
-const editBtn = $('editBtn') || $('editProfile');
+// DOM
+const miniCircle = $('miniCircle');
+const miniAvatar = $('miniAvatar');
+
+const editBtn = $('editProfile');
 const editMenu = $('editMenu');
-const uploadPhoto = $('uploadPhoto');
-const uploadBtn = $('uploadBtn');
+const photoLib = $('photoLib');
 const takePhoto = $('takePhoto');
+const chooseFile = $('chooseFile');
+const hiddenFile = $('hiddenFile');
+const hiddenFileChoose = $('hiddenFileChoose');
+const closeEdit = $('closeEdit');
+
 const createAvatar = $('createAvatar');
 const rpmModal = $('rpmModal');
 const rpmFrame = $('rpmFrame');
-const danceBtn = $('danceBtn');
-const miniCircle = $('miniCircle');
-const miniAvatarImg = $('miniAvatarImg');
-const createAnimal = $('createAnimal');
-const animalModal = $('animalModal');
-const animalFrame = $('animalFrame');
-const animalUrlInput = $('animalUrlInput');
-const loadAnimalUrl = $('loadAnimalUrl');
-const animalFileInput = $('animalFileInput');
-const closeMenu = $('closeMenu');
+const closeRpm = $('closeRpm');
 
-// defaults
-const DEFAULT_MINI = 'default.jpg';
-const DEFAULT_ANIMAL = 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb';
+const avatar3D = $('avatar3D');
+const pseudoDisplay = $('pseudoDisplay');
 
-// hide attach UI if present
-try {
-  const attachPanel = document.getElementById('attachControls') || document.querySelector('.attach-controls');
-  if (attachPanel) attachPanel.style.display = 'none';
-} catch (e) {}
+const toggleCreaturePanel = $('toggleCreaturePanel');
+const creaturePanel = $('creaturePanel');
+const creatureChoices = document.querySelectorAll('.creature-choice');
+const previewCreature = $('previewCreature');
+const creatureColor = $('creatureColor');
+const creatureScale = $('creatureScale');
+const creaturePosition = $('creaturePosition');
+const applyCreature = $('applyCreature');
+const closeCreature = $('closeCreature');
+const animal3D = $('animal3D') || $('animal3D'); // if exists later
+const creatureContainer = $('creatureContainer');
 
-/* ------------------- INIT ------------------- */
-window.addEventListener('DOMContentLoaded', () => {
+// default models (public sample glb urls)
+const CREATURE_MODELS = {
+  Fox: 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb',
+  Unicorn: 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/CesiumMilkTruck/glTF-Binary/CesiumMilkTruck.glb', // placeholder
+  WingedCat: 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb', // placeholder
+  Dragon: 'https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb' // placeholder
+};
+
+// persistence keys
+const K = {
+  CIRCLE: 'circlePhoto',
+  AVATAR: 'avatarURL',
+  CREATURE: 'creatureState'
+};
+
+// ------- init load persisted data -------
+function initProfile() {
   try {
-    const circle = (() => { try { return localStorage.getItem('circlePhoto'); } catch(e){ return null; } })();
-    const avatarURL = (() => { try { return localStorage.getItem('avatarURL'); } catch(e){ return null; } })();
-    const animalURL = (() => { try { return localStorage.getItem('animalURL'); } catch(e){ return null; } })();
+    const circle = localStorage.getItem(K.CIRCLE);
+    if (circle) miniAvatar.src = circle;
 
-    if (miniAvatarImg) {
-      if (circle) miniAvatarImg.src = circle;
-      else if (avatarURL) miniAvatarImg.src = avatarURL;
-      else miniAvatarImg.src = DEFAULT_MINI;
-    }
+    const avatarURL = localStorage.getItem(K.AVATAR);
+    if (avatarURL && avatar3D) avatar3D.src = avatarURL;
 
-    if (avatar3D) {
-      if (avatarURL) avatar3D.src = avatarURL;
-      else avatar3D.removeAttribute && avatar3D.removeAttribute('src');
+    const creatureState = JSON.parse(localStorage.getItem(K.CREATURE) || '{}');
+    if (creatureState && creatureState.model && creatureContainer) {
+      // create or update animal model viewer inside creatureContainer
+      ensureAnimalViewer();
+      setCreatureFromState(creatureState);
     }
+  } catch (e) { console.warn(e); }
+}
+initProfile();
 
-    if (animal3D) {
-      if (animalURL) animal3D.src = animalURL;
-      else { animal3D.src = DEFAULT_ANIMAL; try { localStorage.setItem('animalURL', DEFAULT_ANIMAL); } catch(e){} }
-    }
-  } catch (e) {
-    console.warn('[profile] init error', e);
+// ------- helpers to ensure animal model-viewer exists -------
+function ensureAnimalViewer() {
+  if (!document.getElementById('animal3D')) {
+    const mv = document.createElement('model-viewer');
+    mv.id = 'animal3D';
+    mv.setAttribute('camera-controls','');
+    mv.setAttribute('auto-rotate','');
+    mv.setAttribute('shadow-intensity','1');
+    mv.style.width = '180px';
+    mv.style.height = '180px';
+    mv.style.transition = 'transform 300ms ease';
+    creatureContainer.appendChild(mv);
+  }
+}
+
+// ------- EDIT MENU logic -------
+editBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const visible = editMenu.style.display === 'flex';
+  editMenu.style.display = visible ? 'none' : 'flex';
+  editMenu.setAttribute('aria-hidden', visible ? 'true' : 'false');
+});
+
+// close edit menu clicking outside
+document.addEventListener('click', e => {
+  if (editMenu.style.display === 'flex' && !editMenu.contains(e.target) && e.target !== editBtn) {
+    editMenu.style.display = 'none';
+  }
+});
+closeEdit.addEventListener('click', () => {
+  editMenu.style.display = 'none';
+});
+
+// ------- PhotoLib / TakePhoto / ChooseFile -------
+photoLib.addEventListener('click', () => hiddenFileChoose.click());
+chooseFile.addEventListener('click', () => hiddenFile.click());
+hiddenFileChoose.addEventListener('change', onChooseFile);
+hiddenFile.addEventListener('change', onChooseFile);
+
+function onChooseFile(e) {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    miniAvatar.src = ev.target.result;
+    localStorage.setItem(K.CIRCLE, ev.target.result);
+    // close menu automatically
+    editMenu.style.display = 'none';
+  };
+  reader.readAsDataURL(f);
+}
+
+// take photo uses capture attribute to open camera on mobile
+takePhoto.addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.capture = 'environment';
+  input.onchange = onChooseFile;
+  input.click();
+  editMenu.style.display = 'none';
+});
+
+// ------- Ready Player Me (RPM) integration -------
+const RPM_URL = 'https://iframe.readyplayer.me/avatar?frameApi';
+
+createAvatar.addEventListener('click', () => {
+  rpmModal.style.display = 'flex';
+  rpmModal.setAttribute('aria-hidden','false');
+  // set src only when opening to avoid constant reload
+  if (!rpmFrame.src || rpmFrame.src === '') rpmFrame.src = RPM_URL;
+  editMenu.style.display = 'none';
+});
+
+// close RPM
+closeRpm.addEventListener('click', () => {
+  rpmModal.style.display = 'none';
+  rpmFrame.src = '';
+});
+
+// close RPM by clicking background
+rpmModal.addEventListener('click', (e) => {
+  if (e.target === rpmModal) {
+    rpmModal.style.display = 'none';
+    rpmFrame.src = '';
   }
 });
 
-/* ------------------- Edit menu toggle ------------------- */
-if (editBtn && editMenu) {
-  editBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    editMenu.style.display = editMenu.style.display === 'flex' ? 'none' : 'flex';
-  });
-  document.addEventListener('click', (e) => {
-    if (editMenu.style.display === 'flex' && !editMenu.contains(e.target) && e.target !== editBtn) {
-      editMenu.style.display = 'none';
-    }
-  });
-  if (closeMenu) closeMenu.addEventListener('click', () => { editMenu.style.display = 'none'; });
-}
-
-/* ------------------- Mini-circle upload & camera ------------------- */
-if (uploadBtn && uploadPhoto) {
-  uploadBtn.addEventListener('click', () => {
-    uploadPhoto.click();
-    if (editMenu) editMenu.style.display = 'none';
-  });
-  uploadPhoto.addEventListener('change', (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = (ev) => {
-      try { if (miniAvatarImg) miniAvatarImg.src = ev.target.result; localStorage.setItem('circlePhoto', ev.target.result); } catch(err){ console.warn(err); }
-    };
-    r.readAsDataURL(f);
-  });
-}
-
-if (takePhoto) {
-  takePhoto.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = 'environment';
-    input.onchange = (e) => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
-      const r = new FileReader();
-      r.onload = (ev) => {
-        try { if (miniAvatarImg) miniAvatarImg.src = ev.target.result; localStorage.setItem('circlePhoto', ev.target.result); } catch(err) {}
-      };
-      r.readAsDataURL(f);
-    };
-    input.click();
-    if (editMenu) editMenu.style.display = 'none';
-  });
-}
-
-/* ------------------- READY PLAYER ME (robust anti-loop block) ------------------- */
-// State to avoid reloading src repeatedly and to track subscription
-let rpmOpened = false;
-let rpmSubscribed = false;
-const RPM_IFRAME_URL = 'https://iframe.readyplayer.me/avatar?frameApi';
-
-// Open RPM modal & set iframe only once per interaction
-if (createAvatar && rpmModal && rpmFrame) {
-  createAvatar.addEventListener('click', () => {
-    try {
-      // open modal
-      rpmModal.style.display = 'flex';
-      rpmModal.setAttribute('aria-hidden','false');
-      if (editMenu) editMenu.style.display = 'none';
-
-      // set src only when needed (prevent repeated reloads)
-      if (!rpmOpened || !rpmFrame.src || rpmFrame.src === '') {
-        rpmFrame.src = RPM_IFRAME_URL;
-        rpmOpened = true;
-        rpmSubscribed = false;
-      }
-    } catch (e) {
-      console.warn('RPM open error', e);
-    }
-  });
-}
-
-// Close modal by clicking background: unload iframe to stop background activity
-if (rpmModal && rpmFrame) {
-  rpmModal.addEventListener('click', (e) => {
-    if (e.target === rpmModal) {
-      rpmModal.style.display = 'none';
-      rpmModal.setAttribute('aria-hidden','true');
-      try { rpmFrame.src = ''; } catch(e){}
-      rpmOpened = false;
-      rpmSubscribed = false;
-    }
-  });
-}
-
-// Message handler: accept only RPM relevant events and animal creator export
+// listen for messages from RPM
 window.addEventListener('message', (event) => {
   if (!event.data) return;
-
-  // prefer to filter by origin when available to avoid stray messages
-  try {
-    if (event.origin && !event.origin.includes('readyplayer.me') && !event.origin.includes('readyplayer')) {
-      // not from RPM — but continue to check animal creators which may use other origins
-    }
-  } catch (e) {}
-
   let data = event.data;
-  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch(e) { data = event.data; }
+  try { data = (typeof event.data === 'string') ? JSON.parse(event.data) : event.data; } catch(e) { data = event.data; }
 
-  // 1) RPM exported (final): apply avatar, clear iframe, reset flags
+  // exported avatar
   if (data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported') {
     const avatarURL = data.data?.url || data.url || data.avatarUrl || null;
     if (avatarURL && avatar3D) {
       avatar3D.src = avatarURL;
-      try { localStorage.setItem('avatarURL', avatarURL); } catch(e){}
-      const circle = localStorage.getItem('circlePhoto');
-      if (!circle && miniAvatarImg) miniAvatarImg.src = avatarURL;
+      localStorage.setItem(K.AVATAR, avatarURL);
+      // if mini-circle has no custom photo, set it to avatar
+      if (!localStorage.getItem(K.CIRCLE)) miniAvatar.src = avatarURL;
     }
-    // cleanup to avoid loops
-    try { rpmModal.style.display = 'none'; } catch(e){}
-    try { rpmFrame.src = ''; } catch(e){}
-    rpmOpened = false;
-    rpmSubscribed = false;
-    return;
+    // close rpm and clean src to free camera
+    rpmModal.style.display = 'none';
+    rpmFrame.src = '';
   }
 
-  // 2) RPM frame ready -> subscribe (only if modal open and not subscribed)
+  // frame ready -> subscribe
   if (data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready') {
     try {
-      if (rpmModal && rpmModal.style.display === 'flex' && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
-        rpmFrame.contentWindow.postMessage(JSON.stringify({
-          target: 'readyplayerme',
-          type: 'subscribe',
-          eventName: 'v1.avatar.exported'
-        }), '*');
-        rpmSubscribed = true;
-      }
-    } catch (e) { /* ignore */ }
-    return;
+      rpmFrame.contentWindow.postMessage(JSON.stringify({
+        target: 'readyplayerme',
+        type: 'subscribe',
+        eventName: 'v1.avatar.exported'
+      }), '*');
+    } catch(e) {}
   }
-
-  // 3) animal creator export (several possible shapes)
-  try {
-    if ((data?.source === 'animalcreator' && (data?.event === 'avatar-ready' || data?.name === 'avatar-ready')) || data?.eventName === 'animal.avatar.exported') {
-      const url = data.url || data.data?.url || data.avatarUrl || null;
-      if (url && animal3D) {
-        animal3D.src = url;
-        try { localStorage.setItem('animalURL', url); } catch(e){}
-      }
-      if (animalModal) animalModal.style.display = 'none';
-      return;
-    }
-  } catch (e) {}
 });
 
-/* ------------------- Animal load (URL/file) ------------------- */
-if (loadAnimalUrl && animalUrlInput) {
-  loadAnimalUrl.addEventListener('click', () => {
-    const url = (animalUrlInput.value || '').trim();
-    if (!url) { alert('Colle une URL .glb valide'); return; }
-    if (animal3D) animal3D.src = url;
-    try { localStorage.setItem('animalURL', url); } catch(e){}
-    if (editMenu) editMenu.style.display = 'none';
-  });
-}
-
-if (animalFileInput && animal3D) {
-  animalFileInput.addEventListener('change', (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    try {
-      const obj = URL.createObjectURL(f);
-      animal3D.src = obj;
-      try { localStorage.setItem('animalURL', obj); } catch(e){}
-      if (editMenu) editMenu.style.display = 'none';
-    } catch (err) { alert('Erreur chargement fichier'); }
-  });
-}
-
-/* ------------------- dance visual ------------------- */
-if (danceBtn && avatar3D) {
-  danceBtn.addEventListener('click', () => {
-    try {
-      avatar3D.style.transition = 'transform 1.6s ease';
-      avatar3D.style.transform = 'rotateY(720deg)';
-      setTimeout(() => { avatar3D.style.transform = ''; }, 1600);
-    } catch (e) {}
-  });
-}
-
-/* ------------------- Mini-circle draggable + LONG-PRESS handling (cancel on move) ------------------- */
-(function setupMiniDragAndLongPress() {
-  if (!miniCircle || !miniAvatarImg) return;
-
-  // ensure positioned element
-  if (!miniCircle.style.position) miniCircle.style.position = 'fixed';
-
+// ------- mini-circle draggable (touch + mouse) -------
+(function makeDraggable() {
   let dragging = false;
-  let pointerId = null;
-  let startX = 0, startY = 0;
   let offsetX = 0, offsetY = 0;
-  let longPressTimer = null;
-  const MOVE_CANCEL_PX = 10; // if moved more than this, cancel long press
 
-  function startPointer(e) {
-    // accept mouse or touch (pointer)
-    const isTouch = e.type === 'touchstart';
-    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-    const rect = miniCircle.getBoundingClientRect();
-    offsetX = clientX - rect.left;
-    offsetY = clientY - rect.top;
-    startX = clientX;
-    startY = clientY;
+  function start(e) {
     dragging = true;
-
-    // schedule long-press (only if not moving)
-    clearTimeout(longPressTimer);
-    longPressTimer = setTimeout(() => {
-      // only fire if still dragging and not moved significantly
-      if (!dragging) return;
-      // show confirm reset only if user didn't move (we'll also check lastMoveDistance)
-      if (lastMoveDistance < MOVE_CANCEL_PX) {
-        if (confirm('Réinitialiser la photo du mini-circle ?')) {
-          try { localStorage.removeItem('circlePhoto'); miniAvatarImg.src = DEFAULT_MINI; } catch(e) {}
-        }
-      }
-    }, 700); // 700ms long press
-
-    // prevent default on touch to avoid scrolling interfering
-    if (isTouch) e.preventDefault();
+    const p = (e.touches && e.touches[0]) || e;
+    const rect = miniCircle.getBoundingClientRect();
+    offsetX = p.clientX - rect.left;
+    offsetY = p.clientY - rect.top;
+    if (e.touches) e.preventDefault();
   }
-
-  let lastMoveDistance = 0;
-  function movePointer(e) {
+  function move(e) {
     if (!dragging) return;
-    const isTouch = e.type === 'touchmove';
-    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-    lastMoveDistance = Math.hypot(clientX - startX, clientY - startY);
-    // if moved more than threshold, cancel long-press timer
-    if (lastMoveDistance > MOVE_CANCEL_PX) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
-    let x = clientX - offsetX;
-    let y = clientY - offsetY;
+    const p = (e.touches && e.touches[0]) || e;
+    let x = p.clientX - offsetX;
+    let y = p.clientY - offsetY;
     const maxX = window.innerWidth - miniCircle.offsetWidth - 8;
     const maxY = window.innerHeight - miniCircle.offsetHeight - 8;
     x = Math.max(8, Math.min(maxX, x));
@@ -314,24 +215,156 @@ if (danceBtn && avatar3D) {
     miniCircle.style.left = x + 'px';
     miniCircle.style.top = y + 'px';
   }
+  function end() { dragging = false; }
 
-  function endPointer() {
-    dragging = false;
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-    lastMoveDistance = 0;
-  }
+  miniCircle.addEventListener('mousedown', start);
+  document.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', end);
 
-  // Mouse events
-  miniCircle.addEventListener('mousedown', startPointer);
-  document.addEventListener('mousemove', movePointer);
-  document.addEventListener('mouseup', endPointer);
-
-  // Touch events
-  miniCircle.addEventListener('touchstart', startPointer, { passive: false });
-  document.addEventListener('touchmove', movePointer, { passive: false });
-  document.addEventListener('touchend', endPointer);
+  miniCircle.addEventListener('touchstart', start, { passive: false });
+  document.addEventListener('touchmove', move, { passive: false });
+  document.addEventListener('touchend', end);
 })();
 
-/* ------------------- Safety fallback logs ------------------- */
-console.log('[profile.js] applied fixes: draggable mini-circle w/ safe long-press, RPM guarded, attach hidden');
+// ------- Dance button (visual) -------
+const danceBtnEl = $('danceBtn');
+if (danceBtnEl && avatar3D) {
+  danceBtnEl.addEventListener('click', () => {
+    try {
+      avatar3D.style.transition = 'transform 1.6s ease';
+      avatar3D.style.transform = 'rotateY(720deg)';
+      setTimeout(() => avatar3D.style.transform = '', 1600);
+    } catch(e) {}
+  });
+}
+
+// ------- Creature panel toggle -------
+toggleCreaturePanel.addEventListener('click', () => {
+  const visible = creaturePanel.style.display === 'flex';
+  creaturePanel.style.display = visible ? 'none' : 'flex';
+  creaturePanel.setAttribute('aria-hidden', visible ? 'true' : 'false');
+});
+
+// close creature panel
+closeCreature.addEventListener('click', () => {
+  creaturePanel.style.display = 'none';
+});
+
+// creature choice buttons populate preview
+creatureChoices.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.creature;
+    const model = CREATURE_MODELS[key] || CREATURE_MODELS.Fox;
+    previewCreature.src = model;
+    // save choice on preview element dataset
+    previewCreature.dataset.model = model;
+  });
+});
+
+// apply creature to main screen
+applyCreature.addEventListener('click', () => {
+  const model = previewCreature.dataset.model || CREATURE_MODELS.Fox;
+  const color = creatureColor.value || '#ff69b4';
+  const scale = parseFloat(creatureScale.value || '1');
+  const position = creaturePosition.value || 'shoulder';
+  ensureAnimalViewer();
+  const animal = document.getElementById('animal3D');
+  animal.src = model;
+  // simple style transform to reflect scale and position
+  animal.style.transform = `scale(${scale})`;
+  setCreaturePosition(position, animal, scale);
+  // persist creature state
+  const state = { model, color, scale, position };
+  localStorage.setItem(K.CREATURE, JSON.stringify(state));
+  // show creature container
+  creaturePanel.style.display = 'none';
+});
+
+// set creature from saved state on init
+function setCreatureFromState(state) {
+  ensureAnimalViewer();
+  const animal = document.getElementById('animal3D');
+  animal.src = state.model;
+  animal.style.transform = `scale(${state.scale || 1})`;
+  setCreaturePosition(state.position || 'side', animal, state.scale || 1);
+  // color not used here as we use glb placeholders (would require material editing)
+}
+
+// simple placement logic for creature relative to avatar container
+function setCreaturePosition(position, animalEl, scale = 1) {
+  const c = creatureContainer;
+  if (!c || !animalEl) return;
+  // reset styles
+  c.style.position = 'absolute';
+  c.style.transition = 'transform 220ms ease, bottom 220ms ease';
+  switch(position) {
+    case 'shoulder':
+      c.style.left = '60%';
+      c.style.bottom = '40%';
+      animalEl.style.transform = `translateX(-20px) scale(${scale})`;
+      break;
+    case 'hand':
+      c.style.left = '70%';
+      c.style.bottom = '18%';
+      animalEl.style.transform = `translateX(0) scale(${scale})`;
+      break;
+    case 'side':
+      c.style.left = '10%';
+      c.style.bottom = '20%';
+      animalEl.style.transform = `translateX(0) scale(${scale})`;
+      break;
+    case 'ride':
+      c.style.left = '50%';
+      c.style.bottom = '50%';
+      animalEl.style.transform = `translateX(0) scale(${scale})`;
+      break;
+    default:
+      c.style.left = '65%';
+      c.style.bottom = '20%';
+  }
+}
+
+// ------- utility: set creature from saved state after ensureAnimalViewer -------
+(function loadCreatureFromStorage() {
+  const s = localStorage.getItem(K.CREATURE);
+  if (!s) return;
+  try {
+    const st = JSON.parse(s);
+    ensureAnimalViewer();
+    setCreatureFromState(st);
+  } catch(e) {}
+})();
+
+// Close creature & RPM when clicking outside relevant panels
+document.addEventListener('click', (e) => {
+  if (creaturePanel.style.display === 'flex' && !creaturePanel.contains(e.target) && e.target !== toggleCreaturePanel) {
+    creaturePanel.style.display = 'none';
+  }
+  if (rpmModal.style.display === 'flex' && !rpmModal.contains(e.target) && e.target !== createAvatar) {
+    // NO automatic close here because rpmModal covers whole screen; keep close button
+  }
+});
+
+// ensure animal viewer created if needed (called earlier too)
+function ensureAnimalViewer() {
+  if (!document.getElementById('animal3D')) {
+    const mv = document.createElement('model-viewer');
+    mv.id = 'animal3D';
+    mv.setAttribute('camera-controls', '');
+    mv.setAttribute('auto-rotate', '');
+    mv.setAttribute('shadow-intensity', '1');
+    mv.style.width = '180px';
+    mv.style.height = '180px';
+    mv.style.position = 'relative';
+    creatureContainer.appendChild(mv);
+  }
+}
+
+// Accessibility: keyboard Escape closes panels
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    editMenu.style.display = 'none';
+    creaturePanel.style.display = 'none';
+    rpmModal.style.display = 'none';
+  }
+});
