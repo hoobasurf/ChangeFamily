@@ -24,6 +24,62 @@
   <div class="screen profile-screen">
     <h2 id="profileTitle">Mon profil</h2>
 
+    <!-- AJOUT DU BOUTON CREER ET MENUS ASSOCIÉS -->
+    <!-- BOUTON CREER -->
+    <div class="create-container">
+        <button id="openCreateMenu" class="pill-btn neon-btn">Créer</button>
+    </div>
+
+    <!-- MENU CREER -->
+    <div id="createMenu" class="popup hidden">
+        <button class="pill-btn small-btn" id="btnPhoto">Photo</button>
+        <button class="pill-btn small-btn" id="btnAvatar">Avatar</button>
+        <button class="pill-btn small-btn" id="btnCreature">Créature</button>
+    </div>
+
+    <!-- SOUS-MENU PHOTO -->
+    <div id="menuPhoto" class="popup hidden">
+        <button class="pill-btn small-btn">Prendre une photo</button>
+        <button class="pill-btn small-btn">Photothèque</button>
+        <button class="pill-btn small-btn">Importer une photo</button>
+    </div>
+
+    <!-- SOUS-MENU CREATURE -->
+    <div id="menuCreature" class="popup hidden">
+        <button class="pill-btn small-btn" id="chooseCreature">Choisir une créature</button>
+        <button class="pill-btn small-btn" id="createCreature">Créer une créature</button>
+    </div>
+
+    <!-- LISTE 8 CRÉATURES -->
+    <div id="chooseCreatureMenu" class="popup hidden">
+        <button class="pill-btn small-btn">Licorne</button>
+        <button class="pill-btn small-btn">Dragon</button>
+        <button class="pill-btn small-btn">Chat ailé</button>
+        <button class="pill-btn small-btn">Tigre spectral</button>
+        <button class="pill-btn small-btn">Loup mystique</button>
+        <button class="pill-btn small-btn">Petit monstre mignon</button>
+        <button class="pill-btn small-btn">Slime magique</button>
+        <button class="pill-btn small-btn">Pokémon-like</button>
+    </div>
+
+    <!-- CREATEUR DE CREATURE -->
+    <div id="createCreatureMenu" class="popup hidden">
+        <label>Couleur :</label>
+        <input type="color" id="colorCreature">
+
+        <label>Taille :</label>
+        <select id="sizeCreature">
+            <option>Petite</option>
+            <option>Moyenne</option>
+            <option>Grande</option>
+        </select>
+
+        <label><input type="checkbox" id="wingsCreature"> Ailes</label>
+        <label><input type="checkbox" id="hornsCreature"> Cornes</label>
+
+        <button class="pill-btn small-btn">Valider</button>
+    </div>
+
     <!-- header buttons -->
     <div class="profile-header">
       <button id="editProfile" class="glass-btn btn-neon">Modifier</button>
