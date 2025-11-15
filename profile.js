@@ -115,38 +115,62 @@ if (takePhoto) {
   });
 }
 
-/* ------------------- RPM open guard & message handling ------------------- */
-// State to avoid reloading src repeatedly
+/* ------------------- READY PLAYER ME (robust anti-loop block) ------------------- */
+// State to avoid reloading src repeatedly and to track subscription
 let rpmOpened = false;
+let rpmSubscribed = false;
 const RPM_IFRAME_URL = 'https://iframe.readyplayer.me/avatar?frameApi';
 
+// Open RPM modal & set iframe only once per interaction
 if (createAvatar && rpmModal && rpmFrame) {
   createAvatar.addEventListener('click', () => {
     try {
-      // set src only if not already opened in this session
-      if (!rpmOpened) {
-        rpmFrame.src = RPM_IFRAME_URL;
-        rpmOpened = true;
-      }
+      // open modal
       rpmModal.style.display = 'flex';
       rpmModal.setAttribute('aria-hidden','false');
       if (editMenu) editMenu.style.display = 'none';
-    } catch (e) { console.warn(e); }
+
+      // set src only when needed (prevent repeated reloads)
+      if (!rpmOpened || !rpmFrame.src || rpmFrame.src === '') {
+        rpmFrame.src = RPM_IFRAME_URL;
+        rpmOpened = true;
+        rpmSubscribed = false;
+      }
+    } catch (e) {
+      console.warn('RPM open error', e);
+    }
   });
 }
 
-// message handler - only accept v1.avatar.exported and frame.ready when modal open
+// Close modal by clicking background: unload iframe to stop background activity
+if (rpmModal && rpmFrame) {
+  rpmModal.addEventListener('click', (e) => {
+    if (e.target === rpmModal) {
+      rpmModal.style.display = 'none';
+      rpmModal.setAttribute('aria-hidden','true');
+      try { rpmFrame.src = ''; } catch(e){}
+      rpmOpened = false;
+      rpmSubscribed = false;
+    }
+  });
+}
+
+// Message handler: accept only RPM relevant events and animal creator export
 window.addEventListener('message', (event) => {
   if (!event.data) return;
+
+  // prefer to filter by origin when available to avoid stray messages
+  try {
+    if (event.origin && !event.origin.includes('readyplayer.me') && !event.origin.includes('readyplayer')) {
+      // not from RPM — but continue to check animal creators which may use other origins
+    }
+  } catch (e) {}
+
   let data = event.data;
-  try { data = (typeof event.data === 'string') ? JSON.parse(event.data) : event.data; } catch (e) { data = event.data; }
+  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch(e) { data = event.data; }
 
-  const isExport = data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported';
-  const isFrameReady = data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready';
-  const isAnimalExport = (data?.source === 'animalcreator' && (data?.event === 'avatar-ready' || data?.name === 'avatar-ready')) || data?.eventName === 'animal.avatar.exported';
-
-  // RPM export
-  if (isExport) {
+  // 1) RPM exported (final): apply avatar, clear iframe, reset flags
+  if (data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported') {
     const avatarURL = data.data?.url || data.url || data.avatarUrl || null;
     if (avatarURL && avatar3D) {
       avatar3D.src = avatarURL;
@@ -154,46 +178,42 @@ window.addEventListener('message', (event) => {
       const circle = localStorage.getItem('circlePhoto');
       if (!circle && miniAvatarImg) miniAvatarImg.src = avatarURL;
     }
-    // close modal and unload iframe to prevent loops
-    if (rpmModal) rpmModal.style.display = 'none';
-    try { rpmFrame.src = ''; } catch(e) {}
+    // cleanup to avoid loops
+    try { rpmModal.style.display = 'none'; } catch(e){}
+    try { rpmFrame.src = ''; } catch(e){}
     rpmOpened = false;
+    rpmSubscribed = false;
     return;
   }
 
-  // subscribe when frame ready (but only if our modal is open)
-  if (isFrameReady) {
+  // 2) RPM frame ready -> subscribe (only if modal open and not subscribed)
+  if (data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready') {
     try {
-      if (rpmModal && rpmModal.style.display === 'flex' && rpmFrame && rpmFrame.contentWindow) {
-        rpmFrame.contentWindow.postMessage(JSON.stringify({ target: 'readyplayerme', type: 'subscribe', eventName: 'v1.avatar.exported' }), '*');
+      if (rpmModal && rpmModal.style.display === 'flex' && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
+        rpmFrame.contentWindow.postMessage(JSON.stringify({
+          target: 'readyplayerme',
+          type: 'subscribe',
+          eventName: 'v1.avatar.exported'
+        }), '*');
+        rpmSubscribed = true;
       }
     } catch (e) { /* ignore */ }
     return;
   }
 
-  // animal creator export
-  if (isAnimalExport) {
-    const url = data.url || data.data?.url || data.avatarUrl || null;
-    if (url && animal3D) {
-      animal3D.src = url;
-      try { localStorage.setItem('animalURL', url); } catch(e){}
+  // 3) animal creator export (several possible shapes)
+  try {
+    if ((data?.source === 'animalcreator' && (data?.event === 'avatar-ready' || data?.name === 'avatar-ready')) || data?.eventName === 'animal.avatar.exported') {
+      const url = data.url || data.data?.url || data.avatarUrl || null;
+      if (url && animal3D) {
+        animal3D.src = url;
+        try { localStorage.setItem('animalURL', url); } catch(e){}
+      }
+      if (animalModal) animalModal.style.display = 'none';
+      return;
     }
-    if (animalModal) animalModal.style.display = 'none';
-    return;
-  }
+  } catch (e) {}
 });
-
-/* ------------------- Close rpm modal by clicking outside ------------------- */
-if (rpmModal && rpmFrame) {
-  rpmModal.addEventListener('click', (e) => {
-    if (e.target === rpmModal) {
-      rpmModal.style.display = 'none';
-      // unload iframe to avoid it continuing to run behind the scenes
-      try { rpmFrame.src = ''; } catch(e) {}
-      rpmOpened = false;
-    }
-  });
-}
 
 /* ------------------- Animal load (URL/file) ------------------- */
 if (loadAnimalUrl && animalUrlInput) {
@@ -261,7 +281,6 @@ if (danceBtn && avatar3D) {
     longPressTimer = setTimeout(() => {
       // only fire if still dragging and not moved significantly
       if (!dragging) return;
-      const dx = Math.abs((startX) - (startX)); // 0 by design— we check movement later in movePointer
       // show confirm reset only if user didn't move (we'll also check lastMoveDistance)
       if (lastMoveDistance < MOVE_CANCEL_PX) {
         if (confirm('Réinitialiser la photo du mini-circle ?')) {
