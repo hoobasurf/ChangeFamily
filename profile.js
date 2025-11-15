@@ -1,105 +1,114 @@
-// ====== UTILS ======
-const $ = id => document.getElementById(id);
+// ==========================
+// MINI CIRCLE PHOTO FIX
+// ==========================
+let savedMiniAvatar = localStorage.getItem("miniAvatar");
+const miniAvatarImg = document.getElementById("miniAvatarImg");
 
-// ====== MENUS ======
-const createMenu = $("createMenu");
-const photoMenu = $("photoMenu");
-const avatarMenu = $("avatarMenu");
-const creatureMenu = $("creatureMenu");
+if (savedMiniAvatar) {
+    miniAvatarImg.src = savedMiniAvatar;
+}
 
-// ====== BOUTONS ======
-const btnCreate = $("btnCreate");
-const btnPhoto = $("btnPhoto");
-const btnAvatar = $("btnAvatar");
-const btnCreature = $("btnCreature");
-
-const photoLib = $("photoLib");
-const takePhoto = $("takePhoto");
-
-const chooseCreature = $("chooseCreature");
-const createCreature = $("createCreature");
-
-const creatureChoiceMenu = $("creatureChoiceMenu");
-const creatureCreateMenu = $("creatureCreateMenu");
+function setMiniAvatar(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        miniAvatarImg.src = e.target.result;
+        localStorage.setItem("miniAvatar", e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
 
 
-// ====== FERMETURE GLOBALE ======
+// ==========================
+// MENUS / BOUTONS
+// ==========================
+const btnCreate = document.getElementById("btnCreate");
+const createMenu = document.getElementById("createMenu");
+
+const btnPhoto = document.getElementById("btnPhoto");
+const btnAvatar = document.getElementById("btnAvatar");
+const btnCreature = document.getElementById("btnCreature");
+
+const photoMenu = document.getElementById("photoMenu");
+const libraryBtn = document.getElementById("libraryBtn");
+const cameraBtn = document.getElementById("cameraBtn");
+
+
+// ==========================
+// FERMETURE DES MENUS
+// ==========================
 function closeAll() {
     createMenu.style.display = "none";
     photoMenu.style.display = "none";
-    avatarMenu.style.display = "none";
-    creatureMenu.style.display = "none";
-    creatureChoiceMenu.style.display = "none";
-    creatureCreateMenu.style.display = "none";
 }
 
-document.body.addEventListener("click", closeAll);
-
-
-// ====== EMPÊCHER FERMETURE INSTANTANÉE ======
-[
-    createMenu, photoMenu, avatarMenu, creatureMenu,
-    creatureChoiceMenu, creatureCreateMenu
-].forEach(menu => {
-    if (menu) menu.addEventListener("click", e => e.stopPropagation());
-});
-
-[
-    btnCreate, btnPhoto, btnAvatar, btnCreature,
-    photoLib, takePhoto, chooseCreature, createCreature
-].forEach(btn => {
-    if (btn) btn.addEventListener("click", e => e.stopPropagation());
-});
-
-
-// ====== OUVERTURES DES MENUS ======
-
-// ---- Main button "Créer"
-btnCreate.addEventListener("click", e => {
-    e.stopPropagation();
+document.addEventListener("click", () => {
     closeAll();
-    createMenu.style.display = "flex";
 });
 
-// ---- Inside "Créer"
-btnPhoto.addEventListener("click", e => {
+
+// Empêche la fermeture lorsqu'on clique sur les menus
+createMenu.addEventListener("click", e => e.stopPropagation());
+photoMenu.addEventListener("click", e => e.stopPropagation());
+
+
+// ==========================
+// BOUTON CREER (FIX)
+// ==========================
+btnCreate.addEventListener("click", function (e) {
+    e.stopPropagation(); // IMPORTANT : empêche le body de fermer
+    if (createMenu.style.display === "flex") {
+        createMenu.style.display = "none";
+    } else {
+        closeAll();
+        createMenu.style.display = "flex";
+    }
+});
+
+
+// ==========================
+// BOUTON PHOTO
+// ==========================
+btnPhoto.addEventListener("click", function (e) {
     e.stopPropagation();
     closeAll();
     photoMenu.style.display = "flex";
 });
 
-btnAvatar.addEventListener("click", e => {
+
+// ==========================
+// BOUTON AVATAR
+// ==========================
+btnAvatar.addEventListener("click", function (e) {
     e.stopPropagation();
     closeAll();
-    avatarMenu.style.display = "flex";
+
+    // OUVERTURE REALITY PLAYER ME
+    window.location.href = "/avatar.html"; 
 });
 
-btnCreature.addEventListener("click", e => {
+
+// ==========================
+// BOUTON CREATURE
+// ==========================
+btnCreature.addEventListener("click", function (e) {
     e.stopPropagation();
     closeAll();
-    creatureMenu.style.display = "flex";
+
+    // PAGE SELECTION CREATURE
+    window.location.href = "/creature.html";
 });
 
 
-// ====== PHOTO MENU ======
-photoLib.addEventListener("click", () => {
-    console.log("Photothèque ouverte");
+// ==========================
+// PHOTO : OUVERTURE LIBRARY
+// ==========================
+libraryBtn.addEventListener("click", function () {
+    document.getElementById("photoInput").click();
 });
 
-takePhoto.addEventListener("click", () => {
-    console.log("Prendre photo");
-});
-
-
-// ====== CREATURE MENU ======
-chooseCreature.addEventListener("click", e => {
-    e.stopPropagation();
-    closeAll();
-    creatureChoiceMenu.style.display = "flex";
-});
-
-createCreature.addEventListener("click", e => {
-    e.stopPropagation();
-    closeAll();
-    creatureCreateMenu.style.display = "flex";
+// ==========================
+// PHOTO : OUVERTURE CAMERA
+// ==========================
+cameraBtn.addEventListener("click", function () {
+    document.getElementById("cameraInput").click();
 });
