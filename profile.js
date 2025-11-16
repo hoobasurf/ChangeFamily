@@ -95,18 +95,23 @@ if(pseudoInput){
 
 // ========== menus utilities ==========
 const allPopups = [createMenu, menuPhoto, chooseCreatureMenu, createCreatureMenu, positionMenu, rpmModal].filter(Boolean);
+
 function closeAll(){ allPopups.forEach(p => p.classList.add('hidden')); }
+
+// empêche fermeture si on clique *dans* le menu
 allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
+
+// fermeture globale
 document.body.addEventListener('click', closeAll);
 
-// open/create menu
+// === Open Create Menu ===
 openCreate.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
   createMenu.classList.toggle('hidden');
 });
 
-// --- Photo menu wiring
+// === Photo ===
 btnPhoto.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
@@ -130,7 +135,7 @@ function onChooseFile(e){
   reader.readAsDataURL(f);
 }
 
-// --- Avatar (Ready Player Me) wiring
+// === avatar RPM ===
 btnAvatar.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
@@ -143,12 +148,11 @@ if(closeRpm) closeRpm.addEventListener('click', () => {
   try { rpmFrame.src = ""; } catch(e){}
 });
 
-// RPM message listener
+// listener
 window.addEventListener('message', (event)=>{
   if(!event.data) return;
   let data = event.data;
   try { data = typeof data === 'string' ? JSON.parse(data) : data; } catch(e){}
-  // avatar exported
   if(data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported'){
     const url = data.data?.url || data.url || data.avatarUrl;
     if(url && avatar3D){
@@ -158,7 +162,6 @@ window.addEventListener('message', (event)=>{
     rpmModal.classList.add('hidden');
     try { rpmFrame.src = ""; } catch(e){}
   }
-  // frame ready -> subscribe
   if(data?.eventName === 'v1.frame.ready'){
     if(rpmFrame && rpmFrame.contentWindow){
       rpmFrame.contentWindow.postMessage(JSON.stringify({
@@ -170,9 +173,8 @@ window.addEventListener('message', (event)=>{
   }
 });
 
-// ========== Creature menu build (utilise creature-list.js) ==========
+// ========== Creature menu build ==========
 function buildCreatureMenu(){
-  // clear content
   chooseCreatureMenu.innerHTML = '';
   const title = document.createElement('div');
   title.style.fontWeight = '700';
@@ -183,14 +185,13 @@ function buildCreatureMenu(){
   const sectionReal = document.createElement('div');
   const lblR = document.createElement('div'); lblR.textContent = 'Réaliste'; lblR.style.marginTop = '6px';
   sectionReal.appendChild(lblR);
-
   const rowR = document.createElement('div'); rowR.className = 'pill-row';
   realistic.forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'pill';
     btn.textContent = item.name;
     btn.onclick = () => {
-      if(!item.url || item.url.length===0) return alert('URL manquante pour ' + item.name);
+      if(!item.url) return alert('URL manquante pour ' + item.name);
       setCreature(item.url, item.name);
       closeAll();
     };
@@ -208,7 +209,7 @@ function buildCreatureMenu(){
     btn.className = 'pill';
     btn.textContent = item.name;
     btn.onclick = () => {
-      if(!item.url || item.url.length===0) return alert('URL manquante pour ' + item.name);
+      if(!item.url) return alert('URL manquante pour ' + item.name);
       setCreature(item.url, item.name);
       closeAll();
     };
@@ -217,7 +218,6 @@ function buildCreatureMenu(){
   sectionF.appendChild(rowF);
   chooseCreatureMenu.appendChild(sectionF);
 
-  // allow custom URL at bottom
   const customRow = document.createElement('div');
   customRow.style.marginTop = '12px';
   const customBtn = document.createElement('button');
@@ -232,27 +232,23 @@ function buildCreatureMenu(){
 }
 buildCreatureMenu();
 
-// --- open creature menu action
+// === Open creature menu
 btnCreature.addEventListener('click', (e)=>{
   e.stopPropagation();
   closeAll();
   chooseCreatureMenu.classList.remove('hidden');
 });
 
-// ========== setCreature & position ==========
+// ========== setCreature ==========
 function setCreature(url, name){
   if(!animal3D) return;
-  // reset then set to avoid caching glitches
   animal3D.src = "";
-  setTimeout(()=> {
-    animal3D.src = url;
-  }, 60);
+  setTimeout(()=> animal3D.src = url, 60);
   localStorage.setItem('creatureURL', url);
-  // default attach position (shoulder)
   applyCreaturePosition(localStorage.getItem('creaturePosition') || 'shoulder');
 }
 
-// position radio wiring (if you have radio inputs with name="position")
+// ========== Position ==========
 const posRadios = document.querySelectorAll('input[name="position"]');
 posRadios.forEach(r=>{
   r.addEventListener('change', ()=> {
@@ -264,7 +260,6 @@ posRadios.forEach(r=>{
 function applyCreaturePosition(pos){
   if(!animal3D) return;
   animal3D.style.transition = 'transform 300ms ease';
-  // these CSS transforms approximate attachment; ajuste selon ton layout
   if(pos === 'shoulder'){
     animal3D.style.transform = 'translate(60px,-80px) scale(0.9) rotateY(0deg)';
     animal3D.style.left = '55%';
@@ -283,7 +278,7 @@ function applyCreaturePosition(pos){
   }
 }
 
-// ========== small helpers & keyboard escape ==========
+// ESC close
 document.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape') closeAll();
 });
