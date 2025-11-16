@@ -26,50 +26,31 @@
     </div>
 
     <!-- MENU CREER -->
-    <div id="createMenu" class="popup hidden">
+    <div id="createMenu" class="popup hidden" onclick="event.stopPropagation()">
       <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
       <button id="btnAvatar" class="pill-btn small-btn">Avatar (Ready Player Me)</button>
       <button id="btnCreature" class="pill-btn small-btn">Créature 3D</button>
     </div>
 
     <!-- SOUS-MENU PHOTO -->
-    <div id="menuPhoto" class="popup hidden">
+    <div id="menuPhoto" class="popup hidden" onclick="event.stopPropagation()">
       <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
       <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
       <input id="hiddenFileChoose" type="file" accept="image/*" style="display:none">
       <input id="hiddenFile" type="file" accept="image/*" style="display:none">
     </div>
 
-    <!-- SOUS-MENU CREATURE -->
-    <div id="menuCreature" class="popup hidden">
-      <button id="chooseCreature" class="pill-btn small-btn">Choisir une créature</button>
-      <button id="createCreature" class="pill-btn small-btn">Créer une créature (options)</button>
-    </div>
-
     <!-- LISTE CRÉATURES -->
-    <div id="chooseCreatureMenu" class="popup hidden">
+    <div id="chooseCreatureMenu" class="popup hidden" onclick="event.stopPropagation()">
       <p class="small-muted">Choisis une créature — les modèles célèbres demandent ton .glb</p>
-      <button class="pill-btn small-btn creature-btn" data-name="Pikachu" data-url="">Pikachu (fournir .glb)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Dracaufeu" data-url="">Dracaufeu (fournir .glb)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Evoli" data-url="">Évoli (fournir .glb)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Mewtwo" data-url="">Mewtwo (fournir .glb)</button>
-
-      <hr>
-
-      <button class="pill-btn small-btn creature-btn" data-name="Stitch" data-url="">Stitch (fournir .glb)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Simba" data-url="">Simba (fournir .glb)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Vaiana" data-url="">Vaiana (fournir .glb)</button>
-
-      <hr>
-
-      <!-- exemples libres pour TEST (GLB publiques) -->
-      <button class="pill-btn small-btn creature-btn" data-name="Fox (test)" data-url="https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb">Fox (test)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Robot (test)" data-url="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb">Robot (test)</button>
-      <button class="pill-btn small-btn creature-btn" data-name="Unicorn (demo)" data-url="https://modelviewer.dev/shared-assets/models/Monster.glb">Unicorn (demo)</button>
+      <button id="toggleView" class="pill-btn small-btn">Grille ⇄ Liste</button>
+      <div id="creatureContainer" class="pill-row">
+        <!-- Les créatures seront injectées par JS -->
+      </div>
     </div>
 
     <!-- CREATE CREATURE SIMPLE -->
-    <div id="createCreatureMenu" class="popup hidden">
+    <div id="createCreatureMenu" class="popup hidden" onclick="event.stopPropagation()">
       <label>Couleur : <input id="colorCreature" type="color" value="#ff66ee"></label>
       <label>Taille : 
         <select id="sizeCreature">
@@ -82,7 +63,7 @@
     </div>
 
     <!-- POSITIONS -->
-    <div id="positionMenu" class="popup hidden">
+    <div id="positionMenu" class="popup hidden" onclick="event.stopPropagation()">
       <p>Position de la créature :</p>
       <label><input type="radio" name="position" value="shoulder" checked/> Épaule</label>
       <label><input type="radio" name="position" value="hand" /> Main</label>
@@ -92,15 +73,13 @@
     <!-- AVATAR 3D + ANIMAL 3D -->
     <div class="avatar-container-large">
       <model-viewer id="avatar3D" camera-controls auto-rotate ar exposure="1" shadow-intensity="1"></model-viewer>
-
-      <!-- animal3D est positionné par CSS et par JS selon la position choisie -->
       <model-viewer id="animal3D" camera-controls auto-rotate ar exposure="1" shadow-intensity="0.9" class="animal3d"></model-viewer>
     </div>
 
   </div>
 
   <!-- READY PLAYER ME (modal intégré) -->
-  <div id="rpmModal" class="rpm-modal hidden">
+  <div id="rpmModal" class="rpm-modal hidden" onclick="event.stopPropagation()">
     <iframe id="rpmFrame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me"></iframe>
     <button id="closeRpm" class="pill-btn small-btn">✖</button>
   </div>
