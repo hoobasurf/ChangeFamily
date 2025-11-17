@@ -79,10 +79,42 @@ btnAvatar.addEventListener('click', e=>{
   e.stopPropagation();
   closeAll();
   rpmModal.classList.remove('hidden');
-  if(!rpmFrame.src) rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
-});
-if(closeRpm) closeRpm.addEventListener('click', ()=>{ rpmModal.classList.add('hidden'); rpmFrame.src=""; });
 
+  if (!rpmFrame.src)
+    rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+});
+
+// fermeture
+if (closeRpm) closeRpm.addEventListener('click', e => {
+  e.stopPropagation();
+  rpmModal.classList.add('hidden');
+  rpmFrame.src = "";
+});
+
+// écoute Ready Player Me
+window.addEventListener('message', event => {
+  if (!event.data) return;
+
+  let data = event.data;
+  try { data = JSON.parse(event.data); } catch {}
+
+  if (data.eventName === "v1.avatar.exported") {
+    const url = data.data.url;
+    avatar3D.src = url;
+    localStorage.setItem('avatarURL', url);
+
+    rpmModal.classList.add("hidden");
+    rpmFrame.src = "";
+  }
+
+  if (data.eventName === "v1.frame.ready") {
+    rpmFrame.contentWindow.postMessage(JSON.stringify({
+      target: "readyplayerme",
+      type: "subscribe",
+      eventName: "v1.avatar.exported"
+    }), "*");
+  }
+});
 // ========== Creature Menu (F1) ==========
 function buildCreatureMenu(){
   creatureContainer.innerHTML = '';
