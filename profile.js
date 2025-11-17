@@ -43,21 +43,37 @@ btnPhoto.addEventListener('click', e=>{
   menuPhoto.classList.remove('hidden');
 });
 
-if(hiddenFileChoose) hiddenFileChoose.addEventListener('change', e=>{
-  const f = e.target.files[0];
-  if(!f) return;
+// Photothèque
+if (hiddenFileChoose) hiddenFileChoose.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
   const reader = new FileReader();
-  reader.onload = ev => miniAvatar.src = ev.target.result;
-  reader.readAsDataURL(f);
-});
-if(hiddenFile) hiddenFile.addEventListener('change', e=>{
-  const f = e.target.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = ev => miniAvatar.src = ev.target.result;
-  reader.readAsDataURL(f);
+  reader.onload = ev => {
+    const img = ev.target.result;
+    miniAvatar.src = img;
+    localStorage.setItem('circlePhoto', img); // SAUVEGARDE FIX
+  };
+  reader.readAsDataURL(file);
+
+  closeAll();
 });
 
+// Prendre photo (camera)
+if (hiddenFile) hiddenFile.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = ev.target.result;
+    miniAvatar.src = img;
+    localStorage.setItem('circlePhoto', img); // SAUVEGARDE FIX
+  };
+  reader.readAsDataURL(file);
+
+  closeAll();
+});
 // === Avatar RPM ===
 btnAvatar.addEventListener('click', e=>{
   e.stopPropagation();
