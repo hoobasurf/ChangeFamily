@@ -15,6 +15,8 @@ const btnAvatar = $('btnAvatar');
 const btnCreature = $('btnCreature');
 
 const menuPhoto = $('menuPhoto');
+const photoLib = $('photoLib');          // <-- nécessaire
+const takePhoto = $('takePhoto');        // <-- nécessaire
 const hiddenFileChoose = $('hiddenFileChoose');
 const hiddenFile = $('hiddenFile');
 
@@ -35,7 +37,7 @@ if (!miniCircle || !miniAvatar) {
 }
 
 // ---------------------------
-// Mini-circle draggable (mouse + touch)
+// Mini-circle draggable
 // ---------------------------
 (function initMiniDrag() {
   if (!miniCircle) return;
@@ -51,7 +53,6 @@ if (!miniCircle || !miniAvatar) {
     const rect = miniCircle.getBoundingClientRect();
     offsetX = p.clientX - rect.left;
     offsetY = p.clientY - rect.top;
-    // prevent page scroll on touch while dragging
     if (e.touches) e.preventDefault();
   }
 
@@ -60,7 +61,6 @@ if (!miniCircle || !miniAvatar) {
     const p = e.touches ? e.touches[0] : e;
     let x = p.clientX - offsetX;
     let y = p.clientY - offsetY;
-    // clamp into viewport
     x = Math.max(8, Math.min(window.innerWidth - miniCircle.offsetWidth - 8, x));
     y = Math.max(8, Math.min(window.innerHeight - miniCircle.offsetHeight - 8, y));
     miniCircle.style.left = x + 'px';
@@ -108,7 +108,6 @@ if (pseudoInput) {
       const creatureURL = localStorage.getItem('creatureURL');
       if (creatureURL) animal3D.src = creatureURL;
       else {
-        // default test model so animal viewer exists
         animal3D.src = "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb";
       }
     }
@@ -118,7 +117,7 @@ if (pseudoInput) {
 })();
 
 // ---------------------------
-// Popups helpers (ne garde pas d'autres modifs)
+// Popups helpers
 // ---------------------------
 const allPopups = [createMenu, menuPhoto, chooseCreatureMenu, rpmModal].filter(Boolean);
 function closeAll() { allPopups.forEach(p => p.classList.add('hidden')); }
@@ -137,13 +136,29 @@ if (openCreate) {
 }
 
 // ---------------------------
-// Photo menu wiring -> works (photoLib & takePhoto)
+// Photo menu wiring
 // ---------------------------
 if (btnPhoto) {
   btnPhoto.addEventListener('click', e => {
     e.stopPropagation();
     closeAll();
     if (menuPhoto) menuPhoto.classList.remove('hidden');
+  });
+}
+
+// 📌 ***CORRECTION 1 : Photothèque***
+if (photoLib) {
+  photoLib.addEventListener('click', e => {
+    e.stopPropagation();
+    if (hiddenFileChoose) hiddenFileChoose.click();
+  });
+}
+
+// 📌 ***CORRECTION 2 : Prendre une photo***
+if (takePhoto) {
+  takePhoto.addEventListener('click', e => {
+    e.stopPropagation();
+    if (hiddenFile) hiddenFile.click();
   });
 }
 
@@ -176,17 +191,8 @@ if (hiddenFile) {
 }
 
 // ---------------------------
-// Avatar (Ready Player Me) modal integrated & direct import
+// Avatar (Ready Player Me)
 // ---------------------------
-
-/*
- Behavior:
-  - btnAvatar opens rpmModal and sets iframe src (only if not already set) to avoid reload loops
-  - listens to window.postMessage from RPM (string JSON or object)
-  - when event 'v1.avatar.exported' arrives, set avatar3D.src and (if no circlePhoto) set miniAvatar.src
-  - close modal and clear iframe.src to free camera
-*/
-
 let rpmOpened = false;
 let rpmSubscribed = false;
 const RPM_IFRAME = "https://iframe.readyplayer.me/avatar?frameApi";
@@ -197,7 +203,6 @@ if (btnAvatar) {
     closeAll();
     if (rpmModal) rpmModal.classList.remove('hidden');
 
-    // set src only once per open to avoid repeated camera permissions
     if (!rpmOpened || !rpmFrame || !rpmFrame.src) {
       try {
         rpmFrame.src = RPM_IFRAME;
@@ -219,7 +224,6 @@ if (closeRpm) {
   });
 }
 
-// Close RPM modal by clicking outside iframe (if you clicked on modal background)
 if (rpmModal) {
   rpmModal.addEventListener('click', (ev) => {
     if (ev.target === rpmModal) {
@@ -231,45 +235,38 @@ if (rpmModal) {
   });
 }
 
-// Handle messages from RPM (and tolerate different message shapes)
 window.addEventListener('message', (event) => {
   if (!event.data) return;
 
-  // try to parse strings
   let data = event.data;
-  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch (err) { /* keep original */ }
+  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch {}
 
-  // Accept only readyplayerme events (and similar shapes)
   const isRPM = (data && (data.source === 'readyplayerme' || data.eventName || data.name));
   if (!isRPM) return;
 
-  // avatar exported — set avatar immediately
   if (data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported' || data?.type === 'avatar-exported') {
-    const avatarURL = data?.data?.url || data?.url || data?.avatarUrl || data?.avatarURL || null;
+    const avatarURL = data?.data?.url || data?.url || data?.avatarUrl || null;
     if (avatarURL) {
       if (avatar3D) avatar3D.src = avatarURL;
-      // if mini-circle doesn't have a persistent photo, show the avatar there too
       try {
         const circle = localStorage.getItem('circlePhoto');
         if (!circle && miniAvatar) miniAvatar.src = avatarURL;
-      } catch (e) {}
-      try { localStorage.setItem('avatarURL', avatarURL); } catch (_) {}
+      } catch {}
+      try { localStorage.setItem('avatarURL', avatarURL); } catch {}
     }
 
-    // cleanup modal & iframe (free camera)
     try {
       if (rpmModal) rpmModal.classList.add('hidden');
-      if (rpmFrame) { rpmFrame.src = ""; }
-    } catch (e) {}
+      if (rpmFrame) rpmFrame.src = "";
+    } catch {}
     rpmOpened = false;
     rpmSubscribed = false;
     return;
   }
 
-  // frame ready -> subscribe (only once)
-  if (data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready') {
+  if (data?.eventName === 'v1.frame.ready') {
     try {
-      if (rpmModal && rpmModal.classList && !rpmModal.classList.contains('hidden') && rpmFrame && rpmFrame.contentWindow && !rpmSubscribed) {
+      if (!rpmSubscribed) {
         rpmFrame.contentWindow.postMessage(JSON.stringify({
           target: 'readyplayerme',
           type: 'subscribe',
@@ -277,15 +274,12 @@ window.addEventListener('message', (event) => {
         }), '*');
         rpmSubscribed = true;
       }
-    } catch (e) {
-      console.warn("subscribe error", e);
-    }
-    return;
+    } catch {}
   }
 });
 
 // ---------------------------
-// Creature list build (keeps your UI intact)
+// Creature list build
 // ---------------------------
 function buildCreatureMenu() {
   if (!creatureContainer) return;
@@ -298,15 +292,13 @@ function buildCreatureMenu() {
     btn.dataset.url = item.url || '';
     btn.onclick = () => {
       if (!animal3D) return;
-      // set creature (if url empty we alert)
       if (!item.url || item.url.length === 0) {
-        alert("Modèle .glb manquant pour " + item.name + " — colle un .glb public.");
+        alert("Modèle .glb manquant pour " + item.name);
         return;
       }
-      // safe set (reset to avoid some viewer caching)
       animal3D.src = "";
       setTimeout(() => { animal3D.src = item.url; }, 60);
-      try { localStorage.setItem('creatureURL', item.url); } catch (_) {}
+      try { localStorage.setItem('creatureURL', item.url); } catch {}
       closeAll();
     };
     creatureContainer.appendChild(btn);
@@ -314,7 +306,7 @@ function buildCreatureMenu() {
 }
 buildCreatureMenu();
 
-// toggle grid/list (if toggle exists)
+// toggle grid/list
 if (toggleViewBtn && creatureContainer) {
   let isGrid = true;
   toggleViewBtn.addEventListener('click', () => {
@@ -335,7 +327,7 @@ if (btnCreature) {
 }
 
 // ---------------------------
-// Helpers: close on ESC
+// ESC = close menus
 // ---------------------------
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeAll();
