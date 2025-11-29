@@ -80,7 +80,12 @@
 
   <!-- READY PLAYER ME (modal intégré) -->
   <div id="rpmModal" class="rpm-modal hidden" onclick="event.stopPropagation()">
-    <iframe id="rpmFrame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me"></iframe>
+    <iframe id="rpmFrame"
+  allow="camera *; microphone *; clipboard-write; fullscreen; xr-spatial-tracking"
+  allowfullscreen
+  webkitallowfullscreen
+  title="Ready Player Me"
+></iframe>
     <button id="closeRpm" class="pill-btn small-btn">✖</button>
   </div>
 
