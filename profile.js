@@ -217,7 +217,7 @@ try {
 if (closeRpm) {
   closeRpm.addEventListener('click', () => {
     if (rpmModal) rpmModal.classList.add('hidden');
-    try { if (rpmFrame) rpmFrame.src = ""; } catch (_) {}
+    // NE PAS vider l'iframe ici sinon RPM ne se recharge plus
     rpmOpened = false;
     rpmSubscribed = false;
   });
