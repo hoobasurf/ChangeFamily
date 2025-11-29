@@ -1,4 +1,4 @@
-// profile.js (complet) — ajoute ceci à la place de ton ancien profile.js
+// profile.js (complet) — remplace ton fichier par celui-ci
 import { realistic, fantasy } from "./creature-list.js";
 
 const $ = id => document.getElementById(id);
@@ -15,8 +15,8 @@ const btnAvatar = $('btnAvatar');
 const btnCreature = $('btnCreature');
 
 const menuPhoto = $('menuPhoto');
-const photoLib = $('photoLib');          // <-- nécessaire
-const takePhoto = $('takePhoto');        // <-- nécessaire
+const photoLib = $('photoLib');
+const takePhoto = $('takePhoto');
 const hiddenFileChoose = $('hiddenFileChoose');
 const hiddenFile = $('hiddenFile');
 
@@ -37,7 +37,7 @@ if (!miniCircle || !miniAvatar) {
 }
 
 // ---------------------------
-// Mini-circle draggable
+// Mini-circle draggable (mouse + touch)
 // ---------------------------
 (function initMiniDrag() {
   if (!miniCircle) return;
@@ -53,6 +53,7 @@ if (!miniCircle || !miniAvatar) {
     const rect = miniCircle.getBoundingClientRect();
     offsetX = p.clientX - rect.left;
     offsetY = p.clientY - rect.top;
+    // prevent page scroll on touch while dragging
     if (e.touches) e.preventDefault();
   }
 
@@ -61,6 +62,7 @@ if (!miniCircle || !miniAvatar) {
     const p = e.touches ? e.touches[0] : e;
     let x = p.clientX - offsetX;
     let y = p.clientY - offsetY;
+    // clamp into viewport
     x = Math.max(8, Math.min(window.innerWidth - miniCircle.offsetWidth - 8, x));
     y = Math.max(8, Math.min(window.innerHeight - miniCircle.offsetHeight - 8, y));
     miniCircle.style.left = x + 'px';
@@ -108,6 +110,7 @@ if (pseudoInput) {
       const creatureURL = localStorage.getItem('creatureURL');
       if (creatureURL) animal3D.src = creatureURL;
       else {
+        // default test model so animal viewer exists
         animal3D.src = "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb";
       }
     }
@@ -117,7 +120,7 @@ if (pseudoInput) {
 })();
 
 // ---------------------------
-// Popups helpers
+// Popups helpers (ne garde pas d'autres modifs)
 // ---------------------------
 const allPopups = [createMenu, menuPhoto, chooseCreatureMenu, rpmModal].filter(Boolean);
 function closeAll() { allPopups.forEach(p => p.classList.add('hidden')); }
@@ -136,7 +139,7 @@ if (openCreate) {
 }
 
 // ---------------------------
-// Photo menu wiring
+// Photo menu wiring -> works (photoLib & takePhoto)
 // ---------------------------
 if (btnPhoto) {
   btnPhoto.addEventListener('click', e => {
@@ -146,7 +149,6 @@ if (btnPhoto) {
   });
 }
 
-// 📌 ***CORRECTION 1 : Photothèque***
 if (photoLib) {
   photoLib.addEventListener('click', e => {
     e.stopPropagation();
@@ -154,7 +156,6 @@ if (photoLib) {
   });
 }
 
-// 📌 ***CORRECTION 2 : Prendre une photo***
 if (takePhoto) {
   takePhoto.addEventListener('click', e => {
     e.stopPropagation();
@@ -191,92 +192,121 @@ if (hiddenFile) {
 }
 
 // ---------------------------
-// Avatar (Ready Player Me)
+// Avatar (Ready Player Me) modal integrated & direct import
 // ---------------------------
-let rpmOpened = false;
-let rpmSubscribed = false;
-const RPM_IFRAME = "https://iframe.readyplayer.me/avatar?frameApi";
 
+/*
+ Behavior:
+  - btnAvatar opens rpmModal and sets iframe src (only if not already set) to avoid reload loops
+  - listens to window.postMessage from RPM (string JSON or object)
+  - when event 'v1.avatar.exported' arrives, set avatar3D.src and (if no circlePhoto) set miniAvatar.src
+  - close modal and clear iframe.src to free camera
+*/
+
+// We'll load the iframe on demand and subscribe safely
 if (btnAvatar) {
   btnAvatar.addEventListener('click', e => {
     e.stopPropagation();
     closeAll();
-    if (rpmModal) rpmModal.classList.remove('hidden');
+    if (!rpmModal) {
+      console.warn("rpmModal absent");
+      return;
+    }
+    rpmModal.classList.remove('hidden');
 
-    // Charger l’iframe uniquement au moment de l’ouverture
+    // set src each time to ensure a fresh iframe and camera permission flow
     try {
-      rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+      if (rpmFrame) {
+        // Use the official frame API URL
+        rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+        console.info("RPM iframe src set");
+      } else {
+        console.warn("rpmFrame absent");
+      }
     } catch (err) {
-      console.warn("Impossible d’ouvrir Ready Player Me", err);
+      console.warn("Impossible d'ouvrir RPM iframe", err);
     }
   });
 }
 
+// Close RPM modal (button)
 if (closeRpm) {
   closeRpm.addEventListener('click', () => {
     if (rpmModal) rpmModal.classList.add('hidden');
-    // NE PAS vider l'iframe ici sinon RPM ne se recharge plus
-    rpmOpened = false;
-    rpmSubscribed = false;
+    try { if (rpmFrame) rpmFrame.src = ""; } catch (e) { console.warn("clear rpmFrame failed", e); }
   });
 }
 
+// Close RPM by clicking modal background
 if (rpmModal) {
   rpmModal.addEventListener('click', (ev) => {
     if (ev.target === rpmModal) {
       rpmModal.classList.add('hidden');
-      try { rpmFrame.src = ""; } catch (_) {}
-      rpmOpened = false;
-      rpmSubscribed = false;
+      try { if (rpmFrame) rpmFrame.src = ""; } catch (e) { console.warn("clear rpmFrame failed", e); }
     }
   });
 }
 
+// Handle messages from RPM (and tolerate different message shapes)
 window.addEventListener('message', (event) => {
-  if (!event.data) return;
+  if (!event || !event.data) return;
 
   let data = event.data;
-  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch {}
+  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch (err) { /* keep original */ }
 
-  const isRPM = (data && (data.source === 'readyplayerme' || data.eventName || data.name));
+  // Accept readyplayerme events — tolerate variations
+  const isRPM = data && (data.source === 'readyplayerme' || data.eventName || data.name);
   if (!isRPM) return;
 
+  // When avatar exported
   if (data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported' || data?.type === 'avatar-exported') {
-    const avatarURL = data?.data?.url || data?.url || data?.avatarUrl || null;
+    const avatarURL = data?.data?.url || data?.url || data?.avatarUrl || data?.avatarURL || null;
     if (avatarURL) {
-      if (avatar3D) avatar3D.src = avatarURL;
+      console.info("Avatar exported from RPM:", avatarURL);
+      if (avatar3D) {
+        try { avatar3D.src = avatarURL; } catch (e) { console.warn("set avatar3D failed", e); }
+      }
+      // update mini circle if no custom circle photo
       try {
         const circle = localStorage.getItem('circlePhoto');
         if (!circle && miniAvatar) miniAvatar.src = avatarURL;
-      } catch {}
-      try { localStorage.setItem('avatarURL', avatarURL); } catch {}
+      } catch (e) { /* ignore */ }
+      try { localStorage.setItem('avatarURL', avatarURL); } catch (e) {}
+    } else {
+      console.warn("RPM exported event had no avatar URL", data);
     }
 
+    // cleanup modal & iframe (free camera)
     try {
       if (rpmModal) rpmModal.classList.add('hidden');
-      if (rpmFrame) rpmFrame.src = "";
-    } catch {}
-    rpmOpened = false;
-    rpmSubscribed = false;
+      if (rpmFrame && rpmFrame.src) rpmFrame.src = "";
+      console.info("RPM modal closed and iframe cleared");
+    } catch (e) { console.warn("RPM cleanup failed", e); }
     return;
   }
 
-  if (data?.eventName === 'v1.frame.ready') {
+  // Frame ready -> subscribe safely (only if iframe exists)
+  if (data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready') {
     try {
-      if (!rpmSubscribed) {
+      if (rpmFrame && rpmFrame.contentWindow) {
         rpmFrame.contentWindow.postMessage(JSON.stringify({
           target: 'readyplayerme',
           type: 'subscribe',
           eventName: 'v1.avatar.exported'
         }), '*');
-        rpmSubscribed = true;
+        console.info("Subscribed to RPM avatar export");
+      } else {
+        console.warn("rpmFrame.contentWindow not ready for subscribe");
       }
-    } catch {}
+    } catch (e) {
+      console.warn("subscribe error", e);
+    }
+    return;
   }
 });
 
 // ---------------------------
-// Creature list build
+// Creature list build (keeps your UI intact)
 // ---------------------------
 function buildCreatureMenu() {
   if (!creatureContainer) return;
@@ -289,13 +319,15 @@ function buildCreatureMenu() {
     btn.dataset.url = item.url || '';
     btn.onclick = () => {
       if (!animal3D) return;
+      // set creature (if url empty we alert)
       if (!item.url || item.url.length === 0) {
-        alert("Modèle .glb manquant pour " + item.name);
+        alert("Modèle .glb manquant pour " + item.name + " — colle un .glb public.");
         return;
       }
+      // safe set (reset to avoid some viewer caching)
       animal3D.src = "";
       setTimeout(() => { animal3D.src = item.url; }, 60);
-      try { localStorage.setItem('creatureURL', item.url); } catch {}
+      try { localStorage.setItem('creatureURL', item.url); } catch (_) {}
       closeAll();
     };
     creatureContainer.appendChild(btn);
@@ -303,7 +335,7 @@ function buildCreatureMenu() {
 }
 buildCreatureMenu();
 
-// toggle grid/list
+// toggle grid/list (if toggle exists)
 if (toggleViewBtn && creatureContainer) {
   let isGrid = true;
   toggleViewBtn.addEventListener('click', () => {
@@ -324,7 +356,7 @@ if (btnCreature) {
 }
 
 // ---------------------------
-// ESC = close menus
+// Helpers: close on ESC
 // ---------------------------
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeAll();
