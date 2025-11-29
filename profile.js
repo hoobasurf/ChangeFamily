@@ -1,9 +1,8 @@
-// profile.js (complet) — remplace ton fichier par celui-ci
 import { realistic, fantasy } from "./creature-list.js";
 
 const $ = id => document.getElementById(id);
 
-// DOM (peut être absent si page différente — on protège)
+// DOM refs
 const miniCircle = $('miniCircle');
 const miniAvatar = $('miniAvatar');
 const pseudoInput = $('pseudoInput');
@@ -15,8 +14,6 @@ const btnAvatar = $('btnAvatar');
 const btnCreature = $('btnCreature');
 
 const menuPhoto = $('menuPhoto');
-const photoLib = $('photoLib');
-const takePhoto = $('takePhoto');
 const hiddenFileChoose = $('hiddenFileChoose');
 const hiddenFile = $('hiddenFile');
 
@@ -31,18 +28,13 @@ const closeRpm = $('closeRpm');
 const avatar3D = $('avatar3D');
 const animal3D = $('animal3D');
 
-// fallback guards
-if (!miniCircle || !miniAvatar) {
-  console.warn("miniCircle / miniAvatar manquant(s) — drag non initialisé");
-}
-
 // ---------------------------
-// Mini-circle draggable (mouse + touch)
+// Mini-circle draggable
 // ---------------------------
 (function initMiniDrag() {
   if (!miniCircle) return;
 
-  miniCircle.style.position = miniCircle.style.position || 'fixed';
+  miniCircle.style.position = 'fixed';
   let dragging = false;
   let offsetX = 0;
   let offsetY = 0;
@@ -53,7 +45,6 @@ if (!miniCircle || !miniAvatar) {
     const rect = miniCircle.getBoundingClientRect();
     offsetX = p.clientX - rect.left;
     offsetY = p.clientY - rect.top;
-    // prevent page scroll on touch while dragging
     if (e.touches) e.preventDefault();
   }
 
@@ -62,9 +53,10 @@ if (!miniCircle || !miniAvatar) {
     const p = e.touches ? e.touches[0] : e;
     let x = p.clientX - offsetX;
     let y = p.clientY - offsetY;
-    // clamp into viewport
+
     x = Math.max(8, Math.min(window.innerWidth - miniCircle.offsetWidth - 8, x));
     y = Math.max(8, Math.min(window.innerHeight - miniCircle.offsetHeight - 8, y));
+
     miniCircle.style.left = x + 'px';
     miniCircle.style.top = y + 'px';
   }
@@ -88,31 +80,40 @@ if (!miniCircle || !miniAvatar) {
 if (pseudoInput) {
   const saved = localStorage.getItem('pseudo');
   if (saved) pseudoInput.value = saved;
-  pseudoInput.addEventListener('change', () => localStorage.setItem('pseudo', pseudoInput.value));
+
+  pseudoInput.addEventListener('change', () => {
+    localStorage.setItem('pseudo', pseudoInput.value);
+  });
 }
 
 // ---------------------------
-// Load saved mini-avatar / avatar / creature
+// Load saved mini-avatar + avatar + creature
 // ---------------------------
 (function initSaved() {
   try {
     if (miniAvatar) {
       const circle = localStorage.getItem('circlePhoto');
       const avatarURL = localStorage.getItem('avatarURL');
-      if (circle) miniAvatar.src = circle;
-      else if (avatarURL) miniAvatar.src = avatarURL;
+
+      if (circle && circle !== "") {
+        miniAvatar.src = circle;
+      } else if (avatarURL && avatarURL !== "") {
+        miniAvatar.src = avatarURL;
+      } else {
+        miniAvatar.src = "default.jpg";
+      }
     }
+
     if (avatar3D) {
       const avatarURL = localStorage.getItem('avatarURL');
       if (avatarURL) avatar3D.src = avatarURL;
     }
+
     if (animal3D) {
       const creatureURL = localStorage.getItem('creatureURL');
       if (creatureURL) animal3D.src = creatureURL;
-      else {
-        // default test model so animal viewer exists
-        animal3D.src = "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb";
-      }
+      else animal3D.src =
+        "https://rawcdn.githack.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb";
     }
   } catch (e) {
     console.warn("initSaved error", e);
@@ -120,26 +121,33 @@ if (pseudoInput) {
 })();
 
 // ---------------------------
-// Popups helpers (ne garde pas d'autres modifs)
+// Popups helpers
 // ---------------------------
 const allPopups = [createMenu, menuPhoto, chooseCreatureMenu, rpmModal].filter(Boolean);
-function closeAll() { allPopups.forEach(p => p.classList.add('hidden')); }
-allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
+
+function closeAll() {
+  allPopups.forEach(p => p.classList.add('hidden'));
+}
+
+// CLOSE ON CLICK OUTSIDE (compat iPhone)
 document.body.addEventListener('click', closeAll);
+document.body.addEventListener('touchstart', closeAll);
+
+allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
 
 // ---------------------------
-// Create menu toggle
+// Create menu
 // ---------------------------
 if (openCreate) {
   openCreate.addEventListener('click', e => {
+    e.preventDefault();
     e.stopPropagation();
-    closeAll();
     createMenu.classList.toggle('hidden');
   });
 }
 
 // ---------------------------
-// Photo menu wiring -> works (photoLib & takePhoto)
+// Photo menu
 // ---------------------------
 if (btnPhoto) {
   btnPhoto.addEventListener('click', e => {
@@ -149,218 +157,151 @@ if (btnPhoto) {
   });
 }
 
-if (photoLib) {
-  photoLib.addEventListener('click', e => {
-    e.stopPropagation();
-    if (hiddenFileChoose) hiddenFileChoose.click();
-  });
-}
-
-if (takePhoto) {
-  takePhoto.addEventListener('click', e => {
-    e.stopPropagation();
-    if (hiddenFile) hiddenFile.click();
-  });
+function handleImageSelection(f) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    if (miniAvatar) miniAvatar.src = ev.target.result;
+    try { localStorage.setItem('circlePhoto', ev.target.result); } catch (_) {}
+    closeAll();
+  };
+  reader.readAsDataURL(f);
 }
 
 if (hiddenFileChoose) {
   hiddenFileChoose.addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      if (miniAvatar) miniAvatar.src = ev.target.result;
-      try { localStorage.setItem('circlePhoto', ev.target.result); } catch (_) {}
-      closeAll();
-    };
-    reader.readAsDataURL(f);
+    const f = e.target.files[0];
+    if (f) handleImageSelection(f);
   });
 }
 
 if (hiddenFile) {
   hiddenFile.addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      if (miniAvatar) miniAvatar.src = ev.target.result;
-      try { localStorage.setItem('circlePhoto', ev.target.result); } catch (_) {}
-      closeAll();
-    };
-    reader.readAsDataURL(f);
+    const f = e.target.files[0];
+    if (f) handleImageSelection(f);
   });
 }
 
 // ---------------------------
-// Avatar (Ready Player Me) modal integrated & direct import
+// Ready Player Me (Avatar)
 // ---------------------------
-
-/*
- Behavior:
-  - btnAvatar opens rpmModal and sets iframe src (only if not already set) to avoid reload loops
-  - listens to window.postMessage from RPM (string JSON or object)
-  - when event 'v1.avatar.exported' arrives, set avatar3D.src and (if no circlePhoto) set miniAvatar.src
-  - close modal and clear iframe.src to free camera
-*/
-
-// We'll load the iframe on demand and subscribe safely
 if (btnAvatar) {
   btnAvatar.addEventListener('click', e => {
-  e.stopPropagation();
-  closeAll();
+    e.stopPropagation();
+    closeAll();
+    rpmModal.classList.remove('hidden');
 
-  rpmModal.classList.remove('hidden');
-
-  // IMPORTANT : toujours recharger sur iPhone
-  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
-});
-
-    // set src each time to ensure a fresh iframe and camera permission flow
-    try {
-      if (rpmFrame) {
-        // Use the official frame API URL
-        rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
-        console.info("RPM iframe src set");
-      } else {
-        console.warn("rpmFrame absent");
-      }
-    } catch (err) {
-      console.warn("Impossible d'ouvrir RPM iframe", err);
-    }
+    // IMPORTANT iOS: toujours recharger l’iframe
+    rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
   });
 }
 
-// Close RPM modal (button)
 if (closeRpm) {
   closeRpm.addEventListener('click', () => {
-    if (rpmModal) rpmModal.classList.add('hidden');
-    try { if (rpmFrame) rpmFrame.src = ""; } catch (e) { console.warn("clear rpmFrame failed", e); }
+    rpmModal.classList.add('hidden');
+    rpmFrame.src = "";
   });
 }
 
-// Close RPM by clicking modal background
+// Close modal by clicking backdrop
 if (rpmModal) {
-  rpmModal.addEventListener('click', (ev) => {
+  rpmModal.addEventListener('click', ev => {
     if (ev.target === rpmModal) {
       rpmModal.classList.add('hidden');
-      try { if (rpmFrame) rpmFrame.src = ""; } catch (e) { console.warn("clear rpmFrame failed", e); }
+      rpmFrame.src = "";
     }
   });
 }
 
-// Handle messages from RPM (and tolerate different message shapes)
-window.addEventListener('message', (event) => {
-  if (!event || !event.data) return;
+// ---------------------------
+// RPM events
+// ---------------------------
+window.addEventListener('message', event => {
+  if (!event.data) return;
 
   let data = event.data;
-  try { data = (typeof data === 'string') ? JSON.parse(data) : data; } catch (err) { /* keep original */ }
+  try {
+    data = typeof data === "string" ? JSON.parse(data) : data;
+  } catch (_) {}
 
-  // Accept readyplayerme events — tolerate variations
-  const isRPM = data && (data.source === 'readyplayerme' || data.eventName || data.name);
-  if (!isRPM) return;
+  if (data?.source !== "readyplayerme") return;
 
-  // When avatar exported
-  if (data?.eventName === 'v1.avatar.exported' || data?.name === 'avatar-exported' || data?.type === 'avatar-exported') {
-    const avatarURL = data?.data?.url || data?.url || data?.avatarUrl || data?.avatarURL || null;
-    if (avatarURL) {
-      console.info("Avatar exported from RPM:", avatarURL);
-      if (avatar3D) {
-        try { avatar3D.src = avatarURL; } catch (e) { console.warn("set avatar3D failed", e); }
-      }
-      // update mini circle if no custom circle photo
-      try {
-        const circle = localStorage.getItem('circlePhoto');
-        if (!circle && miniAvatar) miniAvatar.src = avatarURL;
-      } catch (e) { /* ignore */ }
-      try { localStorage.setItem('avatarURL', avatarURL); } catch (e) {}
-    } else {
-      console.warn("RPM exported event had no avatar URL", data);
-    }
-
-    // cleanup modal & iframe (free camera)
-    try {
-      if (rpmModal) rpmModal.classList.add('hidden');
-      if (rpmFrame && rpmFrame.src) rpmFrame.src = "";
-      console.info("RPM modal closed and iframe cleared");
-    } catch (e) { console.warn("RPM cleanup failed", e); }
-    return;
+  // FRAME READY
+  if (data.eventName === "v1.frame.ready") {
+    rpmFrame.contentWindow.postMessage(JSON.stringify({
+      target: "readyplayerme",
+      type: "subscribe",
+      eventName: "v1.avatar.exported"
+    }), "*");
   }
 
-  // Frame ready -> subscribe safely (only if iframe exists)
-  if (data?.eventName === 'v1.frame.ready' || data?.name === 'frame-ready') {
-    try {
-      if (rpmFrame && rpmFrame.contentWindow) {
-        rpmFrame.contentWindow.postMessage(JSON.stringify({
-          target: 'readyplayerme',
-          type: 'subscribe',
-          eventName: 'v1.avatar.exported'
-        }), '*');
-        console.info("Subscribed to RPM avatar export");
-      } else {
-        console.warn("rpmFrame.contentWindow not ready for subscribe");
-      }
-    } catch (e) {
-      console.warn("subscribe error", e);
+  // AVATAR EXPORTED
+  if (data.eventName === "v1.avatar.exported") {
+    const avatarUrl = data?.data?.url;
+
+    if (avatarUrl) {
+      if (avatar3D) avatar3D.src = avatarUrl;
+
+      const circle = localStorage.getItem('circlePhoto');
+      if (!circle && miniAvatar) miniAvatar.src = avatarUrl;
+
+      try { localStorage.setItem('avatarURL', avatarUrl); } catch (_) {}
     }
-    return;
+
+    rpmModal.classList.add('hidden');
+    rpmFrame.src = "";
   }
 });
 
 // ---------------------------
-// Creature list build (keeps your UI intact)
+// Creature menu
 // ---------------------------
 function buildCreatureMenu() {
   if (!creatureContainer) return;
-  creatureContainer.innerHTML = '';
-  const all = [...(realistic || []), ...(fantasy || [])];
+  creatureContainer.innerHTML = "";
+
+  const all = [...realistic, ...fantasy];
+
   all.forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'pill';
     btn.textContent = item.name;
-    btn.dataset.url = item.url || '';
+    btn.dataset.url = item.url;
+
     btn.onclick = () => {
-      if (!animal3D) return;
-      // set creature (if url empty we alert)
-      if (!item.url || item.url.length === 0) {
-        alert("Modèle .glb manquant pour " + item.name + " — colle un .glb public.");
+      if (!item.url) {
+        alert("Modèle .glb manquant : " + item.name);
         return;
       }
-      // safe set (reset to avoid some viewer caching)
       animal3D.src = "";
-      setTimeout(() => { animal3D.src = item.url; }, 60);
+      setTimeout(() => animal3D.src = item.url, 50);
+
       try { localStorage.setItem('creatureURL', item.url); } catch (_) {}
       closeAll();
     };
+
     creatureContainer.appendChild(btn);
   });
 }
+
 buildCreatureMenu();
 
-// toggle grid/list (if toggle exists)
-if (toggleViewBtn && creatureContainer) {
-  let isGrid = true;
+if (toggleViewBtn) {
+  let grid = true;
   toggleViewBtn.addEventListener('click', () => {
-    isGrid = !isGrid;
-    creatureContainer.style.flexDirection = isGrid ? 'row' : 'column';
+    grid = !grid;
+    creatureContainer.style.flexDirection = grid ? 'row' : 'column';
   });
 }
 
-// ---------------------------
-// Open creature menu
-// ---------------------------
 if (btnCreature) {
   btnCreature.addEventListener('click', e => {
     e.stopPropagation();
     closeAll();
-    if (chooseCreatureMenu) chooseCreatureMenu.classList.remove('hidden');
+    chooseCreatureMenu.classList.remove('hidden');
   });
 }
 
-// ---------------------------
-// Helpers: close on ESC
-// ---------------------------
-document.addEventListener('keydown', (e) => {
+// ESC closes popups
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
 });
-
-// End of file
