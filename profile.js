@@ -206,13 +206,14 @@ if (hiddenFile) {
 // We'll load the iframe on demand and subscribe safely
 if (btnAvatar) {
   btnAvatar.addEventListener('click', e => {
-    e.stopPropagation();
-    closeAll();
-    if (!rpmModal) {
-      console.warn("rpmModal absent");
-      return;
-    }
-    rpmModal.classList.remove('hidden');
+  e.stopPropagation();
+  closeAll();
+
+  rpmModal.classList.remove('hidden');
+
+  // IMPORTANT : toujours recharger sur iPhone
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+});
 
     // set src each time to ensure a fresh iframe and camera permission flow
     try {
