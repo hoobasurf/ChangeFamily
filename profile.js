@@ -203,14 +203,12 @@ if (btnAvatar) {
     closeAll();
     if (rpmModal) rpmModal.classList.remove('hidden');
 
-    // Toujours recharger l'iframe pour forcer RPM à s'ouvrir correctement
-try {
-  rpmFrame.src = RPM_IFRAME;
-  rpmOpened = true;
-  rpmSubscribed = false;
-} catch (err) {
-  console.warn("Impossible d'ouvrir RPM iframe", err);
-}
+    // Charger l’iframe uniquement au moment de l’ouverture
+    try {
+      rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+    } catch (err) {
+      console.warn("Impossible d’ouvrir Ready Player Me", err);
+    }
   });
 }
 
