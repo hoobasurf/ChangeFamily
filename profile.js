@@ -203,15 +203,14 @@ if (btnAvatar) {
     closeAll();
     if (rpmModal) rpmModal.classList.remove('hidden');
 
-    if (!rpmOpened || !rpmFrame || !rpmFrame.src) {
-      try {
-        rpmFrame.src = RPM_IFRAME;
-        rpmOpened = true;
-        rpmSubscribed = false;
-      } catch (err) {
-        console.warn("Impossible d'ouvrir RPM iframe", err);
-      }
-    }
+    // Toujours recharger l'iframe pour forcer RPM à s'ouvrir correctement
+try {
+  rpmFrame.src = RPM_IFRAME;
+  rpmOpened = true;
+  rpmSubscribed = false;
+} catch (err) {
+  console.warn("Impossible d'ouvrir RPM iframe", err);
+}
   });
 }
 
