@@ -127,10 +127,8 @@ function closeAll() {
   allPopups.forEach(p => p.classList.add('hidden'));
 }
 
-// CLOSE ON CLICK OUTSIDE
 // CLOSE ON CLICK OUTSIDE (corrigé)
 document.body.addEventListener('click', (e) => {
-  // Ne ferme pas si on clique sur les popups, boutons ou inputs file
   if (e.target.closest('.popup') || e.target.closest('.pill-btn') || e.target.closest('input[type="file"]')) {
     return;
   }
@@ -193,11 +191,14 @@ hiddenFile?.addEventListener('change', e => {
 // ---------------------------
 // Ready Player Me
 // ---------------------------
+// ✅ Changement ici : délai avant de set le src pour garantir que le modal est rendu
 btnAvatar?.addEventListener('click', e => {
   e.stopPropagation();
   closeAll();
   rpmModal.classList.remove('hidden');
-  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+  setTimeout(() => {
+    rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi=1";
+  }, 50);
 });
 
 closeRpm?.addEventListener('click', () => {
