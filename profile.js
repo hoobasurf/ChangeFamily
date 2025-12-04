@@ -14,7 +14,11 @@ const btnAvatar = $('btnAvatar');
 const btnCreature = $('btnCreature');
 
 const menuPhoto = $('menuPhoto');
-const hiddenFileChoose = $('hiddenFileChoose');
+
+const photoLib = $('photoLib');     // ← ajouté
+const takePhoto = $('takePhoto');   // ← ajouté
+
+const hiddenFileChoose = $('hiddenFileChoose'); 
 const hiddenFile = $('hiddenFile');
 
 const chooseCreatureMenu = $('chooseCreatureMenu');
@@ -61,9 +65,7 @@ const animal3D = $('animal3D');
     miniCircle.style.top = y + 'px';
   }
 
-  function end() {
-    dragging = false;
-  }
+  function end() { dragging = false; }
 
   miniCircle.addEventListener('mousedown', start);
   document.addEventListener('mousemove', move);
@@ -95,13 +97,9 @@ if (pseudoInput) {
       const circle = localStorage.getItem('circlePhoto');
       const avatarURL = localStorage.getItem('avatarURL');
 
-      if (circle && circle !== "") {
-        miniAvatar.src = circle;
-      } else if (avatarURL && avatarURL !== "") {
-        miniAvatar.src = avatarURL;
-      } else {
-        miniAvatar.src = "default.jpg";
-      }
+      if (circle && circle !== "") miniAvatar.src = circle;
+      else if (avatarURL && avatarURL !== "") miniAvatar.src = avatarURL;
+      else miniAvatar.src = "default.jpg";
     }
 
     if (avatar3D) {
@@ -129,100 +127,87 @@ function closeAll() {
   allPopups.forEach(p => p.classList.add('hidden'));
 }
 
-// 🔧 Correction MINIMALE :  
-// clic dehors oui → ferme  
-// clic sur bouton Créer / popups → NON
-document.body.addEventListener('click', e => {
-  if (!e.target.closest('.popup') && e.target.id !== 'openCreateMenu') {
-    closeAll();
-  }
-});
+// CLOSE ON CLICK OUTSIDE
+document.body.addEventListener('click', closeAll);
+document.body.addEventListener('touchstart', closeAll);
 
-document.body.addEventListener('touchstart', e => {
-  if (!e.target.closest('.popup') && e.target.id !== 'openCreateMenu') {
-    closeAll();
-  }
-});
-
-allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
+allPopups.forEach(p => p.addEventListener('click', e => e.stopPropagation()));
 
 // ---------------------------
 // Create menu
 // ---------------------------
-if (openCreate) {
-  openCreate.addEventListener('click', e => {
-    e.preventDefault();
-    e.stopPropagation();
-    createMenu.classList.toggle('hidden');
-  });
-}
+openCreate?.addEventListener('click', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  createMenu.classList.toggle('hidden');
+});
 
 // ---------------------------
 // Photo menu
 // ---------------------------
-if (btnPhoto) {
-  btnPhoto.addEventListener('click', e => {
-    e.stopPropagation();
-    closeAll();
-    if (menuPhoto) menuPhoto.classList.remove('hidden');
-  });
-}
+btnPhoto?.addEventListener('click', e => {
+  e.stopPropagation();
+  closeAll();
+  menuPhoto.classList.remove('hidden');
+});
 
+// --- Photothèque ---
+photoLib?.addEventListener('click', e => {
+  e.stopPropagation();
+  hiddenFileChoose.click();
+});
+
+// --- Prendre photo ---
+takePhoto?.addEventListener('click', e => {
+  e.stopPropagation();
+  hiddenFile.click();
+});
+
+// File handlers
 function handleImageSelection(f) {
   const reader = new FileReader();
   reader.onload = ev => {
-    if (miniAvatar) miniAvatar.src = ev.target.result;
+    miniAvatar.src = ev.target.result;
     try { localStorage.setItem('circlePhoto', ev.target.result); } catch (_) {}
     closeAll();
   };
   reader.readAsDataURL(f);
 }
 
-if (hiddenFileChoose) {
-  hiddenFileChoose.addEventListener('change', e => {
-    const f = e.target.files[0];
-    if (f) handleImageSelection(f);
-  });
-}
+hiddenFileChoose?.addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (f) handleImageSelection(f);
+});
 
-if (hiddenFile) {
-  hiddenFile.addEventListener('change', e => {
-    const f = e.target.files[0];
-    if (f) handleImageSelection(f);
-  });
-}
+hiddenFile?.addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (f) handleImageSelection(f);
+});
 
 // ---------------------------
-// Ready Player Me (Avatar)
+// Ready Player Me
 // ---------------------------
-if (btnAvatar) {
-  btnAvatar.addEventListener('click', e => {
-    e.stopPropagation();
-    closeAll();
-    rpmModal.classList.remove('hidden');
-    rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
-  });
-}
+btnAvatar?.addEventListener('click', e => {
+  e.stopPropagation();
+  closeAll();
+  rpmModal.classList.remove('hidden');
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+});
 
-if (closeRpm) {
-  closeRpm.addEventListener('click', () => {
+closeRpm?.addEventListener('click', () => {
+  rpmModal.classList.add('hidden');
+  rpmFrame.src = "";
+});
+
+// Close modal by clicking backdrop
+rpmModal?.addEventListener('click', ev => {
+  if (ev.target === rpmModal) {
     rpmModal.classList.add('hidden');
     rpmFrame.src = "";
-  });
-}
+  }
+});
 
-if (rpmModal) {
-  rpmModal.addEventListener('click', ev => {
-    if (ev.target === rpmModal) {
-      rpmModal.classList.add('hidden');
-      rpmFrame.src = "";
-    }
-  });
-}
-
-// ---------------------------
 // RPM events
-// ---------------------------
 window.addEventListener('message', event => {
   if (!event.data) return;
 
@@ -278,6 +263,7 @@ function buildCreatureMenu() {
         alert("Modèle .glb manquant : " + item.name);
         return;
       }
+
       animal3D.src = "";
       setTimeout(() => animal3D.src = item.url, 50);
 
@@ -291,22 +277,18 @@ function buildCreatureMenu() {
 
 buildCreatureMenu();
 
-if (toggleViewBtn) {
-  let grid = true;
-  toggleViewBtn.addEventListener('click', () => {
-    grid = !grid;
-    creatureContainer.style.flexDirection = grid ? 'row' : 'column';
-  });
-}
+toggleViewBtn?.addEventListener('click', () => {
+  const isRow = creatureContainer.style.flexDirection !== 'column';
+  creatureContainer.style.flexDirection = isRow ? 'column' : 'row';
+});
 
-if (btnCreature) {
-  btnCreature.addEventListener('click', e => {
-    e.stopPropagation();
-    closeAll();
-    chooseCreatureMenu.classList.remove('hidden');
-  });
-}
+btnCreature?.addEventListener('click', e => {
+  e.stopPropagation();
+  closeAll();
+  chooseCreatureMenu.classList.remove('hidden');
+});
 
+// ESC closes popups
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
 });
