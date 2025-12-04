@@ -129,9 +129,20 @@ function closeAll() {
   allPopups.forEach(p => p.classList.add('hidden'));
 }
 
-// CLOSE ON CLICK OUTSIDE (compat iPhone)
-document.body.addEventListener('click', closeAll);
-document.body.addEventListener('touchstart', closeAll);
+// 🔧 Correction MINIMALE :  
+// clic dehors oui → ferme  
+// clic sur bouton Créer / popups → NON
+document.body.addEventListener('click', e => {
+  if (!e.target.closest('.popup') && e.target.id !== 'openCreateMenu') {
+    closeAll();
+  }
+});
+
+document.body.addEventListener('touchstart', e => {
+  if (!e.target.closest('.popup') && e.target.id !== 'openCreateMenu') {
+    closeAll();
+  }
+});
 
 allPopups.forEach(p => p && p.addEventListener('click', e => e.stopPropagation()));
 
@@ -189,8 +200,6 @@ if (btnAvatar) {
     e.stopPropagation();
     closeAll();
     rpmModal.classList.remove('hidden');
-
-    // IMPORTANT iOS: toujours recharger l’iframe
     rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
   });
 }
@@ -202,7 +211,6 @@ if (closeRpm) {
   });
 }
 
-// Close modal by clicking backdrop
 if (rpmModal) {
   rpmModal.addEventListener('click', ev => {
     if (ev.target === rpmModal) {
@@ -225,7 +233,6 @@ window.addEventListener('message', event => {
 
   if (data?.source !== "readyplayerme") return;
 
-  // FRAME READY
   if (data.eventName === "v1.frame.ready") {
     rpmFrame.contentWindow.postMessage(JSON.stringify({
       target: "readyplayerme",
@@ -234,7 +241,6 @@ window.addEventListener('message', event => {
     }), "*");
   }
 
-  // AVATAR EXPORTED
   if (data.eventName === "v1.avatar.exported") {
     const avatarUrl = data?.data?.url;
 
@@ -301,7 +307,6 @@ if (btnCreature) {
   });
 }
 
-// ESC closes popups
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAll();
 });
