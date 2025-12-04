@@ -15,8 +15,8 @@ const btnCreature = $('btnCreature');
 
 const menuPhoto = $('menuPhoto');
 
-const photoLib = $('photoLib');     // ← ajouté
-const takePhoto = $('takePhoto');   // ← ajouté
+const photoLib = $('photoLib');
+const takePhoto = $('takePhoto');
 
 const hiddenFileChoose = $('hiddenFileChoose'); 
 const hiddenFile = $('hiddenFile');
@@ -129,10 +129,7 @@ function closeAll() {
 
 // CLOSE ON CLICK OUTSIDE
 document.body.addEventListener('click', (e) => {
-  // Ne ferme pas si on clique sur les popups, boutons ou inputs file
-  if (e.target.closest('.popup') || e.target.closest('.pill-btn') || e.target.closest('input[type="file"]')) {
-    return;
-  }
+  if (e.target.closest('.popup') || e.target.closest('.pill-btn') || e.target.closest('input[type="file"]')) return;
   closeAll();
 });
 
@@ -156,19 +153,16 @@ btnPhoto?.addEventListener('click', e => {
   menuPhoto.classList.remove('hidden');
 });
 
-// --- Photothèque ---
 photoLib?.addEventListener('click', e => {
   e.stopPropagation();
   hiddenFileChoose.click();
 });
 
-// --- Prendre photo ---
 takePhoto?.addEventListener('click', e => {
   e.stopPropagation();
   hiddenFile.click();
 });
 
-// File handlers
 function handleImageSelection(f) {
   const reader = new FileReader();
   reader.onload = ev => {
@@ -191,15 +185,17 @@ hiddenFile?.addEventListener('change', e => {
 
 // ---------------------------
 // Ready Player Me (CORRIGÉ)
+// ---------------------------
 btnAvatar?.addEventListener('click', (e) => {
   e.preventDefault();
-  rpmModal.classList.remove('hidden');   // Ouvre le modal
-  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";  // Charge l'iframe
+  e.stopPropagation();
+  rpmModal.classList.remove('hidden');
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
 });
 
 closeRpm?.addEventListener('click', () => {
   rpmModal.classList.add('hidden');
-  rpmFrame.src = "";  // Vide l'iframe
+  rpmFrame.src = "";
 });
 
 rpmModal?.addEventListener('click', (e) => {
@@ -209,13 +205,12 @@ rpmModal?.addEventListener('click', (e) => {
   }
 });
 
-// Écoute messages de l'iframe Ready Player Me
 window.addEventListener('message', (event) => {
   if (!event.data) return;
-  let data = event.data;
-  try { data = typeof data === "string" ? JSON.parse(data) : data; } catch (_) {}
-
-  if (data?.source !== "readyplayerme") return;
+  let data;
+  try { data = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } 
+  catch { return; }
+  if (data.source !== "readyplayerme") return;
 
   if (data.eventName === "v1.frame.ready") {
     rpmFrame.contentWindow.postMessage(JSON.stringify({
@@ -226,7 +221,7 @@ window.addEventListener('message', (event) => {
   }
 
   if (data.eventName === "v1.avatar.exported") {
-    const avatarUrl = data?.data?.url;
+    const avatarUrl = data.data.url;
     if (avatarUrl) {
       avatar3D.src = avatarUrl;
       if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl;
@@ -257,10 +252,8 @@ function buildCreatureMenu() {
         alert("Modèle .glb manquant : " + item.name);
         return;
       }
-
       animal3D.src = "";
       setTimeout(() => animal3D.src = item.url, 50);
-
       try { localStorage.setItem('creatureURL', item.url); } catch (_) {}
       closeAll();
     };
