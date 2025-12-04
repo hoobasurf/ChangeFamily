@@ -22,7 +22,8 @@
     <input id="pseudoInput" placeholder="Choisis ton pseudo" />
 
     <div class="create-container">
-      <button id="openCreateMenu" class="pill-btn">Créer</button>
+      <!-- 🔧 Correction : éviter la fermeture immédiate -->
+      <button id="openCreateMenu" class="pill-btn" onclick="event.stopPropagation()">Créer</button>
     </div>
 
     <!-- MENU CREER -->
@@ -44,9 +45,7 @@
     <div id="chooseCreatureMenu" class="popup hidden" onclick="event.stopPropagation()">
       <p class="small-muted">Choisis une créature — les modèles célèbres demandent ton .glb</p>
       <button id="toggleView" class="pill-btn small-btn">Grille ⇄ Liste</button>
-      <div id="creatureContainer" class="pill-row">
-        <!-- Les créatures seront injectées par JS -->
-      </div>
+      <div id="creatureContainer" class="pill-row"></div>
     </div>
 
     <!-- CREATE CREATURE SIMPLE -->
@@ -78,14 +77,14 @@
 
   </div>
 
-  <!-- READY PLAYER ME (modal intégré) -->
+  <!-- READY PLAYER ME MODAL -->
   <div id="rpmModal" class="rpm-modal hidden" onclick="event.stopPropagation()">
     <iframe id="rpmFrame"
-  allow="camera *; microphone *; clipboard-write; fullscreen; xr-spatial-tracking"
-  allowfullscreen
-  webkitallowfullscreen
-  title="Ready Player Me"
-></iframe>
+      allow="camera *; microphone *; clipboard-write; fullscreen; xr-spatial-tracking"
+      allowfullscreen
+      webkitallowfullscreen
+      title="Ready Player Me">
+    </iframe>
     <button id="closeRpm" class="pill-btn small-btn">✖</button>
   </div>
 
