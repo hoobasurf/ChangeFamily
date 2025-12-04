@@ -191,41 +191,65 @@ hiddenFile?.addEventListener('change', e => {
 // ---------------------------
 // Ready Player Me
 // ---------------------------
-btnAvatar?.addEventListener('click', e => {
-  e.stopPropagation();
-  rpmModal.classList.remove('hidden');  // ouvre le modal
-  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi"; // charge l'iframe
+const btnAvatar = document.getElementById('btnAvatar');
+const rpmModal = document.getElementById('rpmModal');
+const rpmFrame = document.getElementById('rpmFrame');
+const closeRpm = document.getElementById('closeRpm');
+const miniAvatar = document.getElementById('miniAvatar');
+const avatar3D = document.getElementById('avatar3D');
+
+if (btnAvatar) {
+    btnAvatar.addEventListener('click', (e) => {
+        e.preventDefault();
+        rpmModal.classList.remove('hidden');   // Ouvre le modal
+        rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";  // Charge iframe
+    });
+}
+
+if (closeRpm) {
+    closeRpm.addEventListener('click', () => {
+        rpmModal.classList.add('hidden');
+        rpmFrame.src = "";
+    });
+}
+
+if (rpmModal) {
+    rpmModal.addEventListener('click', (e) => {
+        if (e.target === rpmModal) {
+            rpmModal.classList.add('hidden');
+            rpmFrame.src = "";
+        }
+    });
+}
+
+// Écoute messages de l'iframe Ready Player Me
+window.addEventListener('message', (event) => {
+    if (!event.data) return;
+    let data = event.data;
+    try { data = typeof data === "string" ? JSON.parse(data) : data; } catch (_) {}
+
+    if (data?.source !== "readyplayerme") return;
+
+    if (data.eventName === "v1.frame.ready") {
+        rpmFrame.contentWindow.postMessage(JSON.stringify({
+            target: "readyplayerme",
+            type: "subscribe",
+            eventName: "v1.avatar.exported"
+        }), "*");
+    }
+
+    if (data.eventName === "v1.avatar.exported") {
+        const avatarUrl = data?.data?.url;
+        if (avatarUrl) {
+            avatar3D.src = avatarUrl;
+            if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl;
+            localStorage.setItem('avatarURL', avatarUrl);
+        }
+        rpmModal.classList.add('hidden');
+        rpmFrame.src = "";
+    }
 });
 
-closeRpm?.addEventListener('click', () => {
-  rpmModal.classList.add('hidden');
-  rpmFrame.src = "";  // vide l'iframe pour éviter les bugs
-});
-
-// Ferme modal en cliquant sur le fond
-rpmModal?.addEventListener('click', ev => {
-  if (ev.target === rpmModal) {
-    rpmModal.classList.add('hidden');
-    rpmFrame.src = "";
-  }
-});
-
-// Écoute messages de l'iframe
-window.addEventListener('message', event => {
-  if (!event.data) return;
-
-  let data = event.data;
-  try { data = typeof data === "string" ? JSON.parse(data) : data; } catch (_) {}
-
-  if (data?.source !== "readyplayerme") return;
-
-  if (data.eventName === "v1.frame.ready") {
-    rpmFrame.contentWindow.postMessage(JSON.stringify({
-      target: "readyplayerme",
-      type: "subscribe",
-      eventName: "v1.avatar.exported"
-    }), "*");
-  }
 
   if (data.eventName === "v1.avatar.exported") {
     const avatarUrl = data?.data?.url;
