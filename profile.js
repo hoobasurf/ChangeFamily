@@ -127,8 +127,9 @@ function closeAll() {
   allPopups.forEach(p => p.classList.add('hidden'));
 }
 
-// CLOSE ON CLICK OUTSIDE (corrigé)
+// CLOSE ON CLICK OUTSIDE
 document.body.addEventListener('click', (e) => {
+  // Ne ferme pas si on clique sur les popups, boutons ou inputs file
   if (e.target.closest('.popup') || e.target.closest('.pill-btn') || e.target.closest('input[type="file"]')) {
     return;
   }
@@ -189,89 +190,30 @@ hiddenFile?.addEventListener('change', e => {
 });
 
 // ---------------------------
-// Ready Player Me
-// ---------------------------
-const btnAvatar = document.getElementById('btnAvatar');
-const rpmModal = document.getElementById('rpmModal');
-const rpmFrame = document.getElementById('rpmFrame');
-const closeRpm = document.getElementById('closeRpm');
-const miniAvatar = document.getElementById('miniAvatar');
-const avatar3D = document.getElementById('avatar3D');
+// Ready Player Me (CORRIGÉ)
+btnAvatar?.addEventListener('click', (e) => {
+  e.preventDefault();
+  rpmModal.classList.remove('hidden');   // Ouvre le modal
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";  // Charge l'iframe
+});
 
-if (btnAvatar) {
-    btnAvatar.addEventListener('click', (e) => {
-        e.preventDefault();
-        rpmModal.classList.remove('hidden');   // Ouvre le modal
-        rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";  // Charge iframe
-    });
-}
+closeRpm?.addEventListener('click', () => {
+  rpmModal.classList.add('hidden');
+  rpmFrame.src = "";  // Vide l'iframe
+});
 
-if (closeRpm) {
-    closeRpm.addEventListener('click', () => {
-        rpmModal.classList.add('hidden');
-        rpmFrame.src = "";
-    });
-}
-
-if (rpmModal) {
-    rpmModal.addEventListener('click', (e) => {
-        if (e.target === rpmModal) {
-            rpmModal.classList.add('hidden');
-            rpmFrame.src = "";
-        }
-    });
-}
+rpmModal?.addEventListener('click', (e) => {
+  if (e.target === rpmModal) {
+    rpmModal.classList.add('hidden');
+    rpmFrame.src = "";
+  }
+});
 
 // Écoute messages de l'iframe Ready Player Me
 window.addEventListener('message', (event) => {
-    if (!event.data) return;
-    let data = event.data;
-    try { data = typeof data === "string" ? JSON.parse(data) : data; } catch (_) {}
-
-    if (data?.source !== "readyplayerme") return;
-
-    if (data.eventName === "v1.frame.ready") {
-        rpmFrame.contentWindow.postMessage(JSON.stringify({
-            target: "readyplayerme",
-            type: "subscribe",
-            eventName: "v1.avatar.exported"
-        }), "*");
-    }
-
-    if (data.eventName === "v1.avatar.exported") {
-        const avatarUrl = data?.data?.url;
-        if (avatarUrl) {
-            avatar3D.src = avatarUrl;
-            if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl;
-            localStorage.setItem('avatarURL', avatarUrl);
-        }
-        rpmModal.classList.add('hidden');
-        rpmFrame.src = "";
-    }
-});
-
-
-  if (data.eventName === "v1.avatar.exported") {
-    const avatarUrl = data?.data?.url;
-
-    if (avatarUrl) {
-      avatar3D.src = avatarUrl;          // met à jour l'avatar 3D
-      if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl; // mini-avatar si vide
-      localStorage.setItem('avatarURL', avatarUrl);  // sauvegarde localStorage
-    }
-
-    rpmModal.classList.add('hidden');    // ferme modal
-    rpmFrame.src = "";                   // vide iframe
-  }
-});
-// RPM events
-window.addEventListener('message', event => {
   if (!event.data) return;
-
   let data = event.data;
-  try {
-    data = typeof data === "string" ? JSON.parse(data) : data;
-  } catch (_) {}
+  try { data = typeof data === "string" ? JSON.parse(data) : data; } catch (_) {}
 
   if (data?.source !== "readyplayerme") return;
 
@@ -285,16 +227,11 @@ window.addEventListener('message', event => {
 
   if (data.eventName === "v1.avatar.exported") {
     const avatarUrl = data?.data?.url;
-
     if (avatarUrl) {
-      if (avatar3D) avatar3D.src = avatarUrl;
-
-      const circle = localStorage.getItem('circlePhoto');
-      if (!circle && miniAvatar) miniAvatar.src = avatarUrl;
-
-      try { localStorage.setItem('avatarURL', avatarUrl); } catch (_) {}
+      avatar3D.src = avatarUrl;
+      if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl;
+      localStorage.setItem('avatarURL', avatarUrl);
     }
-
     rpmModal.classList.add('hidden');
     rpmFrame.src = "";
   }
