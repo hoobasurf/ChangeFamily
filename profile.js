@@ -189,7 +189,7 @@ hiddenFile?.addEventListener('change', e => {
 });
 
 // ---------------------------
-// Ready Player Me (CORRIGE)
+// Ready Player Me (fonctionnel)
 btnAvatar?.addEventListener('click', (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -197,10 +197,50 @@ btnAvatar?.addEventListener('click', (e) => {
   // Affiche le modal
   rpmModal.classList.remove('hidden');
 
-  // Injecte l'iframe après un petit délai
-  setTimeout(() => {
-    rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
-  }, 50);
+  // Injecte l'iframe juste après que le modal soit visible
+  rpmFrame.src = "https://iframe.readyplayer.me/avatar?frameApi";
+});
+
+// Fermer modal
+closeRpm?.addEventListener('click', () => {
+  rpmModal.classList.add('hidden');
+  rpmFrame.src = "";
+});
+
+// Click sur le fond ferme modal
+rpmModal?.addEventListener('click', (e) => {
+  if (e.target === rpmModal) {
+    rpmModal.classList.add('hidden');
+    rpmFrame.src = "";
+  }
+});
+
+// Événements Ready Player Me
+window.addEventListener('message', (event) => {
+  if (!event.data) return;
+  let data;
+  try { data = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } 
+  catch { return; }
+  if (data.source !== "readyplayerme") return;
+
+  if (data.eventName === "v1.frame.ready") {
+    rpmFrame.contentWindow.postMessage(JSON.stringify({
+      target: "readyplayerme",
+      type: "subscribe",
+      eventName: "v1.avatar.exported"
+    }), "*");
+  }
+
+  if (data.eventName === "v1.avatar.exported") {
+    const avatarUrl = data.data.url;
+    if (avatarUrl) {
+      avatar3D.src = avatarUrl;
+      if (!localStorage.getItem('circlePhoto')) miniAvatar.src = avatarUrl;
+      localStorage.setItem('avatarURL', avatarUrl);
+    }
+    rpmModal.classList.add('hidden');
+    rpmFrame.src = "";
+  }
 });
 
 // Fermer modal
