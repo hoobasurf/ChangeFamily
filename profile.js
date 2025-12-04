@@ -128,8 +128,14 @@ function closeAll() {
 }
 
 // CLOSE ON CLICK OUTSIDE
-document.body.addEventListener('click', closeAll);
-document.body.addEventListener('touchstart', closeAll);
+// CLOSE ON CLICK OUTSIDE (corrigé)
+document.body.addEventListener('click', (e) => {
+  // Ne ferme pas si on clique sur les popups, boutons ou inputs file
+  if (e.target.closest('.popup') || e.target.closest('.pill-btn') || e.target.closest('input[type="file"]')) {
+    return;
+  }
+  closeAll();
+});
 
 allPopups.forEach(p => p.addEventListener('click', e => e.stopPropagation()));
 
