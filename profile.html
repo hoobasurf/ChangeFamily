@@ -1,92 +1,167 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Profil — 3D animaux</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profil — Snap Clone Neon</title>
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+  <link rel="icon" href="loov.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* small layout tweak to put the two viewers side-by-side without changing main design */
+    .avatar-pair {
+      display: flex;
+      gap: 6vw;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+    }
+    .viewer-wrap { width: 40vw; max-width: 280px; text-align:center; }
+    .viewer-label { font-size:12px; color:#ddd; margin-top:6px; }
+    /* attach-controls minimal style */
+    .attach-controls {
+      position: fixed;
+      right: 12px;
+      top: 120px;
+      width: 260px;
+      background: rgba(10,10,18,0.8);
+      border-radius:10px;
+      padding:10px;
+      z-index:4000;
+      color:#fff;
+      font-family:Poppins, sans-serif;
+      box-shadow:0 6px 20px rgba(0,0,0,0.6);
+    }
+    .attach-controls label { font-size:12px; color:#ccc; display:block; margin-top:8px; }
+    .attach-controls input[type="range"] { width:100%; }
+    .attach-controls button { margin-top:8px; width:100%; padding:8px; border-radius:8px; border:none; background:#ff00ff33; color:#fff; cursor:pointer; }
+    @media(max-width:700px) {
+      .avatar-pair { gap: 6vw; }
+      .attach-controls { right: 8px; top: 80px; width:200px; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- MINI CIRCLE -->
-  <div id="miniCircle" class="mini-circle" title="Mini avatar - draggable">
-    <img id="miniAvatar" src="default.jpg" alt="mini avatar">
+  <!-- MINI CERCLE -->
+  <div id="miniCircle" class="mini-circle" aria-label="Mini avatar draggable">
+    <img id="miniAvatarImg" src="default.jpg" alt="mini avatar" />
   </div>
 
   <div class="screen profile-screen">
-    <h2 id="profileTitle">Mon profil</h2>
+    <h2>Mon profil</h2>
 
-    <input id="pseudoInput" placeholder="Choisis ton pseudo" />
+    <div class="profile-btns">
+      <button id="editBtn" class="glass-btn">Modifier</button>
+      <button id="danceBtn" class="glass-btn">💃 Danser</button>
+    </div>
+    <div id="createAnimal" class="editLine">Créer animal 3D</div>
 
-    <div class="create-container">
-      <button id="openCreateMenu" class="pill-btn">Créer</button>
+    <!-- PAIR VIEWERS: HUMAIN + ANIMAL (COTE A COTE) -->
+    <div class="avatar-container-large" aria-hidden="false">
+      <div class="avatar-pair">
+        <div class="viewer-wrap">
+          <model-viewer id="avatar3D" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="40deg" ar shadow-intensity="1" exposure="1" style="width:100%; height:100%; max-width:280px; max-height:280px;"></model-viewer>
+          <div class="viewer-label">Humain (Ready Player Me)</div>
+        </div>
+
+        <div class="viewer-wrap">
+          <model-viewer id="animal3D" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="40deg" ar shadow-intensity="1" exposure="1" style="width:100%; height:100%; max-width:280px; max-height:280px;"></model-viewer>
+          <div class="viewer-label">Animal / Créature</div>
+        </div>
+      </div>
     </div>
 
-    <!-- MENU CREER -->
-    <div id="createMenu" class="popup hidden" onclick="event.stopPropagation()">
-      <button id="btnPhoto" class="pill-btn small-btn">Photo</button>
-      <button id="btnAvatar" class="pill-btn small-btn">Avatar (Ready Player Me)</button>
-      <button id="btnCreature" class="pill-btn small-btn">Créature 3D</button>
-    </div>
-
-    <!-- SOUS-MENU PHOTO -->
-    <div id="menuPhoto" class="popup hidden" onclick="event.stopPropagation()">
-      <button id="photoLib" class="pill-btn small-btn">Photothèque</button>
-      <button id="takePhoto" class="pill-btn small-btn">Prendre une photo</button>
-      <input id="hiddenFileChoose" type="file" accept="image/*" style="display:none">
-      <input id="hiddenFile" type="file" accept="image/*" style="display:none" capture="camera">
-    </div>
-
-    <!-- LISTE CRÉATURES -->
-    <div id="chooseCreatureMenu" class="popup hidden" onclick="event.stopPropagation()">
-      <p class="small-muted">Choisis une créature — les modèles célèbres demandent ton .glb</p>
-      <button id="toggleView" class="pill-btn small-btn">Grille ⇄ Liste</button>
-      <div id="creatureContainer" class="pill-row"></div>
-    </div>
-
-    <!-- CREATE CREATURE SIMPLE -->
-    <div id="createCreatureMenu" class="popup hidden" onclick="event.stopPropagation()">
-      <label>Couleur : <input id="colorCreature" type="color" value="#ff66ee"></label>
-      <label>Taille : 
-        <select id="sizeCreature">
-          <option value="small">Petite</option>
-          <option value="medium" selected>Moyenne</option>
-          <option value="large">Grande</option>
-        </select>
-      </label>
-      <button id="validateCreature" class="pill-btn small-btn">Valider (créer)</button>
-    </div>
-
-    <!-- POSITIONS -->
-    <div id="positionMenu" class="popup hidden" onclick="event.stopPropagation()">
-      <p>Position de la créature :</p>
-      <label><input type="radio" name="position" value="shoulder" checked/> Épaule</label>
-      <label><input type="radio" name="position" value="hand" /> Main</label>
-      <label><input type="radio" name="position" value="mount" /> Monter dessus</label>
-    </div>
-
-    <!-- AVATAR 3D + ANIMAL 3D -->
-    <div class="avatar-container-large">
-      <model-viewer id="avatar3D" camera-controls auto-rotate ar exposure="1" shadow-intensity="1"></model-viewer>
-      <model-viewer id="animal3D" camera-controls auto-rotate ar exposure="1" shadow-intensity="0.9" class="animal3d"></model-viewer>
-    </div>
-
+    <h3 id="pseudoDisplay">Sans pseudo</h3>
   </div>
 
-  <!-- READY PLAYER ME -->
-<div id="rpmModal" class="rpm-modal hidden">
-  <iframe id="rpmFrame" class="rpm-frame"
-    allow="camera *; microphone *; clipboard-write; fullscreen; xr-spatial-tracking"
-    allowfullscreen
-    webkitallowfullscreen
-    src="">
-  </iframe>
-  <button id="closeRpm" class="rpm-close">✖</button>
-</div>
+  <!-- MENU MODIFIER -->
+  <div id="editMenu" class="edit-menu" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="menu-circle">
+      <label class="menu-label">Modifier le profil</label>
+      <input type="file" id="uploadPhoto" accept="image/*" hidden />
+      <button id="uploadBtn" class="menu-btn">📷 Photothèque</button>
+      <button id="takePhoto" class="menu-btn">🤳 Prendre une photo</button>
+      <button id="createAvatar" class="menu-btn">✨ Créer avatar</button>
+      <button id="openFusionBtn" class="menu-btn">🔗 Fusionner humain+animal</button>
+    </div>
+  </div>
 
-<script type="module" src="profile.js"></script>
+  <!-- RPM modal -->
+  <div id="rpmModal" class="rpm-modal" aria-hidden="true">
+    <iframe id="rpmFrame" class="rpm-frame" allow="camera *; microphone *; clipboard-write" title="Ready Player Me"></iframe>
+  </div>
+
+  <!-- ANIMAL CREATOR MODAL -->
+  <div id="animalModal" class="modal" style="display:none;">
+    <div class="modalContent">
+      <iframe id="animalFrame" src="" allow="camera *; microphone *" style="width:100%; height:100%; border:0;"></iframe>
+    </div>
+  </div>
+
+  <!-- FUSION EDITOR (Three.js) modal & controls (kept minimal) -->
+  <div id="fusionModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:99999; justify-content:center; align-items:center;">
+    <div id="fusionPanel" style="width:94%; max-width:1100px; height:86%; background:#080810; border-radius:12px; display:grid; grid-template-columns:1fr 340px;">
+      <div id="fusionViewport" style="background:#000;"></div>
+      <div id="fusionControls" style="padding:12px; color:#fff; overflow:auto;">
+        <h3 style="margin:0 0 8px 0">Fusion human + animal</h3>
+        <div class="small">Charger/positionner puis exporter (ou sauvegarder presets)</div>
+
+        <div style="margin-top:8px;">
+          <button id="useCurrentHuman" class="fusion-btn">Charger humain actuel</button>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label>Animal URL (.glb)</label>
+          <input id="animalUrlInput" type="text" placeholder="https://.../animal.glb" style="width:100%; padding:8px; border-radius:6px; border:1px solid #333; background:#050509; color:#fff;">
+          <button id="loadAnimalUrl" class="fusion-btn">Charger URL</button>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label>Ou fichier .glb local</label>
+          <input id="animalFileInput" type="file" accept=".glb,.gltf" style="width:100%;">
+        </div>
+
+        <hr style="border:none; height:1px; background:#222; margin:12px 0;">
+
+        <label>Offset X</label><input id="posX" type="range" min="-2" max="2" step="0.01" value="0">
+        <label>Offset Y</label><input id="posY" type="range" min="-2" max="2" step="0.01" value="0">
+        <label>Offset Z</label><input id="posZ" type="range" min="-2" max="2" step="0.01" value="0">
+        <label>Rotation Y (deg)</label><input id="rotY" type="range" min="-180" max="180" step="1" value="0">
+        <label>Scale</label><input id="scaleAnimal" type="range" min="0.1" max="3" step="0.01" value="1">
+
+        <div style="margin-top:10px;">
+          <button id="savePreset" class="fusion-btn">✚ Sauvegarder preset</button>
+          <select id="presetList" style="width:100%; margin-top:6px; padding:8px; border-radius:6px;"></select>
+          <button id="exportMerged" class="fusion-btn">Exporter GLB fusionné (upload si configuré)</button>
+          <button id="closeFusion" class="fusion-btn" style="background:#ff0044;">Fermer</button>
+        </div>
+      </div>
+    </div>
+    <div id="fusionClose" title="Fermer" style="position:absolute; right:18px; top:14px; z-index:100000; font-size:20px; color:#fff; cursor:pointer;">✕</div>
+  </div>
+
+  <!-- Attach controls (floating) -->
+  <div class="attach-controls" id="attachControls" style="display:block;">
+    <div style="font-weight:600; margin-bottom:6px;">Position / Attacher</div>
+    <label>X</label><input id="a_posX" type="range" min="-2" max="2" step="0.01" value="0">
+    <label>Y</label><input id="a_posY" type="range" min="-2" max="2" step="0.01" value="0">
+    <label>Z</label><input id="a_posZ" type="range" min="-2" max="2" step="0.01" value="0">
+    <label>Rot Y</label><input id="a_rotY" type="range" min="-180" max="180" step="1" value="0">
+    <label>Scale</label><input id="a_scale" type="range" min="0.1" max="3" step="0.01" value="1">
+    <button id="applyAttach">Appliquer</button>
+    <button id="resetAttach">Réinitialiser</button>
+  </div>
+
+  <div class="bottom-nav" role="navigation" aria-label="Navigation principale">
+    <a href="home.html" title="Accueil"><i class="fa-solid fa-house"></i></a>
+    <a href="camera.html" title="Caméra"><i class="fa-solid fa-camera"></i></a>
+    <a href="chat.html" title="Messages"><i class="fa-solid fa-comment-dots"></i></a>
+    <a href="profile.html" title="Profil" class="active"><i class="fa-solid fa-user"></i></a>
+  </div>
+
+  <script type="module" src="profile.js"></script>
 </body>
 </html>
